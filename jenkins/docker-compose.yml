@@ -1,0 +1,41 @@
+version: "3.1"
+
+services:
+  jenkins:
+    build:
+      context: . 
+      dockerfile: Dockerfile 
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+    environment:
+      - JENKINS_ARGS=--prefix=/jenkins
+    volumes:
+      - "jenkins_home:/var/jenkins_home"
+
+  sonarqube:
+    image: sonarqube:latest
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+
+  db:
+    image: postgres:latest
+    container_name: sonarqube_sql  
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
+    volumes:
+      - sonarqube_sql:/var/lib/postgresql/data  
+
+volumes:
+  jenkins_home:
+  sonarqube_sql:  
+  sonarqube_data:

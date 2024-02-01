@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    options {
+        timeout(time:30, unit: 'MINUTES')
+    }
+    environment {
+        scannerHome = tool 'SonarQube'
+    }
+    stages {
+        stage('Checkout repository') {
+            steps {
+                echo "Entering 'Checkout repository' stage"
+                checkout scm
+                echo "Completed 'Checkout repository' stage"
+            }
+        }
+
+        stage('Check Current Directory') {
+            steps {
+                sh "ls -la"
+            }
+        }   
+    } 
+}
+
