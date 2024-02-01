@@ -19,7 +19,24 @@ pipeline {
             steps {
                 sh "ls -la"
             }
-        }   
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                // Define SonarQube Scanner
+                    def sonarScannerHome = tool 'SonarQube';
+                    env.PATH = "${sonarScannerHome}/bin:${env.PATH}"
+
+                    // Execute SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=OWASP \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://sonarqube:9000 \
+                        -Dsonar.login=sqp_f6537c6972e2a3359994fa842ef85976a1817521
+                        """
+            }
+        }     
     } 
 }
 
