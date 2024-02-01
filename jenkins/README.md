@@ -23,9 +23,8 @@ The [docker-compose.yml](docker-compose.yml) will create 3 containers - Jenkins,
 2. To configure OWASP Dependency Check:
     *  Manage Jenkins > Tool Configuration > Add Dependency Check > Install Automatically > Add installer automatically and select the git version.
 3. Setting up SonarQube:
-    * Follow X09 SonarQube Lab.
     * Login using admin/admin.
-    * Create project manually > name your project **OWASP** with Project Key **OWASP** > Use Global Settings > Locally > Generate a Token for the OWASP project.
+    * Create project manually > name your project **R2D SonarQube** with Project Key **R2D SonarQube** > Use Global Settings > Locally > Generate a Token for the OWASP project.
     * SonarQube is now configured. You can integrate SonarQube with Jenkins using the SonarQube Scanner.
 4. Integrating SonarQube with SonarQube Scanner.
     * Manage Jenkins > System Configuration > Add SonarQube > Add authentication token as secret text (the token u generated for OWASP project). 

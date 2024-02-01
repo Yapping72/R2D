@@ -4,7 +4,7 @@ pipeline {
         timeout(time:30, unit: 'MINUTES')
     }
     environment {
-        scannerHome = tool 'Sonar'
+        scannerHome = tool 'SonarQube'
     }
     stages {
         stage('Checkout repository') {
