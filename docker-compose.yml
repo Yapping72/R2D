@@ -1,23 +1,25 @@
 version: '3.3'
 
 services:
-  web:  # Django service
+  django_backend_r2d:  # Django service
     build:
       context: ./django_backend_r2d
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - postgres_r2d_db
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     entrypoint: /app/entrypoint.sh  # bash script will create the database if it doesnt exists
     container_name: django_backend_r2d
 
-  frontend: # React service
+  react_frontend_r2d: # React service
     build: 
       context: ./react_frontend_r2d
     command: npm start
@@ -33,15 +35,16 @@ services:
       - WDS_SOCKET_PORT=0
     container_name: react_frontend_r2d
     
-  db:
+  postgres_r2d_db:
     image: postgres:latest
     volumes:
       - postgres_r2d_db_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     container_name: postgres_r2d_db_data
 
 volumes:
   postgres_r2d_db_data:
+  node_modules:
