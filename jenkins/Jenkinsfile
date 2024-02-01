@@ -20,23 +20,40 @@ pipeline {
                 sh "ls -la"
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                // Define SonarQube Scanner
-                def sonarScannerHome = tool 'SonarQube'
-                env.PATH = "${sonarScannerHome}/bin:${env.PATH}"
 
-                // Execute SonarQube analysis
-                withSonarQubeEnv('SonarQube') {
-                    sh """
-                    sonar-scanner \
-                    -Dsonar.projectKey=OWASP \
-                    -Dsonar.sources=. \
-                    -Dsonar.host.url=http://sonarqube:9000 \
-                    -Dsonar.login=sqp_f6537c6972e2a3359994fa842ef85976a1817521
-                    """
+        stage('OWASP Dependency-Check Vulnerabilities') {
+            steps {
+                dependencyCheck additionalArguments: ''' 
+                            -o './'
+                            -s './'
+                            -f 'ALL' 
+                            --prettyPrint''', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+                
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+
+        stage('Code Quality Check via SonarQube') {
+            steps {
+                 script {
+                    // Define SonarQube Scanner
+                    def sonarScannerHome = tool 'SonarQube';
+                    env.PATH = "${sonarScannerHome}/bin:${env.PATH}"
+
+                    // Execute SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=R2D \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://sonarqube:9000 \
+                        -Dsonar.login=sqp_f6537c6972e2a3359994fa842ef85976a1817521
+                        """
+                    }
                 }
             }
-        }     
+        }
+
     } 
 }
+
