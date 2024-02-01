@@ -30,7 +30,8 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y python3 python3-pip
 # Clean up APT caches to reduce image size
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-# Switch back to the Jenkins user
-USER jenkins
+
 RUN jenkins-plugin-cli --plugins "dependency-check-jenkins-plugin:5.4.3"
 RUN jenkins-plugin-cli --plugins "sonar:2.17.1"
+# Switch back to the Jenkins user
+USER jenkin
