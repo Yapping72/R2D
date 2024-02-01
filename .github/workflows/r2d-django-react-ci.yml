@@ -36,7 +36,7 @@ jobs:
       run: |
         sed -i 's/\r$//' django_backend_r2d/entrypoint.sh
         chmod +x django_backend_r2d/entrypoint.sh
-        ls la django_backend_r2d
+        ls -la django_backend_r2d
         
     - name: Build Docker Image
       run: |
