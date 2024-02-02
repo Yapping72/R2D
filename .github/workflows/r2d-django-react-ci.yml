@@ -45,4 +45,8 @@ jobs:
         docker-compose -f docker-compose.yml up -d
         sleep 15
         docker-compose -f docker-compose.yml ps
-        
+
+    - name: Run Accounts Test
+      run: |
+          docker-compose -f docker-compose.yml exec -T django_backend_r2d bash -c "python manage.py test authentication"
+      
