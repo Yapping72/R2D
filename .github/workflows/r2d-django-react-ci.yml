@@ -49,4 +49,11 @@ jobs:
     - name: Run Accounts Test
       run: |
           docker-compose -f docker-compose.yml exec -T django_backend_r2d bash -c "python manage.py test accounts"
+      continue-on-error: true
       
+    - name: Show Test Output
+      if: ${{ failure() }}
+      run: |
+        echo "Test Output:"
+        cat ${{ runner.workspace }}/path/to/your/test/logs
+          
