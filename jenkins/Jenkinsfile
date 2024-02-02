@@ -47,7 +47,7 @@ pipeline {
                         -Dsonar.projectKey=R2D \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=http://sonarqube:9000 \
-                        -Dsonar.login=sqp_f6537c6972e2a3359994fa842ef85976a1817521
+                        -Dsonar.login=sqp_63b53b2f942ad4a6382898eb8afad1569bbd6726
                         """
                     }
                 }
