@@ -38,22 +38,19 @@ jobs:
         
     - name: Build Docker Image
       run: |
-        docker-compose -f docker-compose.yml build
+           docker-compose build
     
     - name: Start Docker Containers
       run: |
-        docker-compose -f docker-compose.yml up -d
-        sleep 15
-        docker-compose -f docker-compose.yml ps
+          docker-compose up -d
+          sleep 30
+          docker-compose ps
 
     - name: Run Accounts Test
       run: |
-          docker-compose -f docker-compose.yml exec -T django_backend_r2d bash -c "python manage.py test accounts"
-      continue-on-error: true
-      
-    - name: Show Test Output
-      if: ${{ failure() }}
-      run: |
-        echo "Test Output:"
-        cat ${{ runner.workspace }}/path/to/your/test/logs
+          docker ps
+          docker-compose exec -T django_backend_r2d bash -c "ls -la"
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test accounts" 
+
+  
           
