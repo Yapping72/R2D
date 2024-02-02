@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
      # Set the environment variables using GitHub Secrets
     env:
-      POSTGRES_DB_NAME: ${{ secrets.POSTGRES_DB}}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB}}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
@@ -38,15 +38,19 @@ jobs:
         
     - name: Build Docker Image
       run: |
-        docker-compose -f docker-compose.yml build
+           docker-compose build
     
     - name: Start Docker Containers
       run: |
-        docker-compose -f docker-compose.yml up -d
-        sleep 15
-        docker-compose -f docker-compose.yml ps
+          docker-compose up -d
+          sleep 30
+          docker-compose ps
 
     - name: Run Accounts Test
       run: |
-          docker-compose -f docker-compose.yml exec -T django_backend_r2d bash -c "python manage.py test authentication"
-      
+          docker ps
+          docker-compose exec -T django_backend_r2d bash -c "ls -la"
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test accounts" 
+
+  
+          
