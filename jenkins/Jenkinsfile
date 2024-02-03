@@ -4,6 +4,8 @@ pipeline {
         timeout(time:60, unit: 'MINUTES')
     }
     environment {
+        NVD_API_KEY = credentials('NVD_API_KEY')
+        SONARQUBE_TOKEN = credentials('SonarQube')
         scannerHome = tool 'SonarQube'
     }
     stages {
@@ -23,16 +25,17 @@ pipeline {
 
         stage('OWASP Dependency-Check Vulnerabilities') {
             steps {
-                dependencyCheck additionalArguments: ''' 
+                dependencyCheck additionalArguments: """
                             -o './'
                             -s './'
                             -f 'ALL' 
-                            --prettyPrint''', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
-                
+                            --prettyPrint
+                            --nvdApiKey  ${env.NVD_API_KEY}""", 
+                odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }
         }
-
+        
         stage('Code Quality Check via SonarQube') {
             steps {
                  script {
@@ -47,7 +50,7 @@ pipeline {
                         -Dsonar.projectKey=R2D \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=http://sonarqube:9000 \
-                        -Dsonar.login=sqp_63b53b2f942ad4a6382898eb8afad1569bbd6726
+                        -Dsonar.login=${env.SONARQUBE_TOKEN}
                         """
                     }
                 }
