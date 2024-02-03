@@ -18,7 +18,7 @@ services:
     container_name: django_backend_r2d
     volumes:
       - ./django_backend_r2d:/app # Mount the Django project code
-
+  
   react_frontend_r2d: # React service
     build: 
       context: ./react_frontend_r2d

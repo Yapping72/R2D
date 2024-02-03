@@ -4,7 +4,7 @@ from accounts.models import User
 class UserDao(BaseDao):
     model = User
 
-    def get_by_username(self, username):
+    def find_by_username(self, username):
         """
         Retrieve a user by their username.
 
@@ -16,7 +16,7 @@ class UserDao(BaseDao):
         except self.model.DoesNotExist:
             return None
     
-    def get_users_by_role(self, role):
+    def find_by_role(self, role):
         """
         Retrieve all users with a specific role.
 

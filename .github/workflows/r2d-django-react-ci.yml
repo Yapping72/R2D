@@ -46,10 +46,12 @@ jobs:
           sleep 30
           docker-compose ps
 
+    - name: Run Framework Test
+      run: |
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test framework" 
+
     - name: Run Accounts Test
       run: |
-          docker ps
-          docker-compose exec -T django_backend_r2d bash -c "ls -la"
           docker-compose exec -T django_backend_r2d bash -c "python manage.py test accounts" 
 
   

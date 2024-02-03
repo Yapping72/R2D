@@ -1,8 +1,21 @@
+import inspect
 from django.test import TestCase
+
 from accounts.models import User
 from accounts.daos.UserDAO import UserDao
 
 class UserDaoTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Use inspect to get all methods of the class
+        methods = inspect.getmembers(cls, predicate=inspect.isfunction)
+        # Filter methods to only include those that start with 'test'
+        test_methods = [method for method in methods if method[0].startswith('test')]
+        # Count the test methods
+        test_count = len(test_methods)
+        print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
+
     def setUp(self):
         # Create a test user for testing purposes
         self.test_user = User.objects.create(username="test_user", email="test@example.com")
@@ -34,7 +47,7 @@ class UserDaoTestCase(TestCase):
         new_user = dao.create(**new_user_data)
         self.assertEqual(new_user.username, "new_user")
 
-    def test_get_users_by_role(self):
+    def test_find_by_role(self):
         dao = UserDao()
         # Test creating users with different roles
         admin_user_data = {
@@ -56,12 +69,20 @@ class UserDaoTestCase(TestCase):
         self.assertEqual(normal_user.role, "NORMAL_USER")
 
         # Test retrieving users by role
-        retrieved_admin_users = dao.get_users_by_role("ADMINISTRATOR")
-        retrieved_normal_users = dao.get_users_by_role("NORMAL_USER")
+        retrieved_admin_users = dao.find_by_role(role="ADMINISTRATOR")
+        retrieved_normal_users = dao.find_by_role(role="NORMAL_USER")
 
         # Check if the retrieved users match the created users
         self.assertIn(admin_user, retrieved_admin_users)
         self.assertIn(normal_user, retrieved_normal_users)
+
+        # Test retrieving users by username
+        retrieved_admin_users = dao.find_by_username(username="admin_user")
+        retrieved_normal_users = dao.find_by_username(username="normal_user")
+
+        # Check if the retrieved users match the created users
+        self.assertEqual(admin_user, retrieved_admin_users)
+        self.assertEqual(normal_user, retrieved_normal_users)
 
     def test_update(self):
         dao = UserDao()
