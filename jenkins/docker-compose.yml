@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.8"
 
 services:
   jenkins:
@@ -13,6 +13,10 @@ services:
       - JENKINS_ARGS=--prefix=/jenkins
     volumes:
       - "jenkins_home:/var/jenkins_home"
+    deploy:
+      resources:
+        limits:
+          memory: 3.5G
 
   sonarqube:
     image: sonarqube:latest
