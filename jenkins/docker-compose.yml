@@ -11,12 +11,10 @@ services:
       - "8080:8080"
     environment:
       - JENKINS_ARGS=--prefix=/jenkins
+      - JAVA_OPTS=-Xmx2048m -Xms1024m  # Adjust the JVM settings for Jenkins
     volumes:
       - "jenkins_home:/var/jenkins_home"
-    deploy:
-      resources:
-        limits:
-          memory: 3.5G
+    mem_limit: 3500m  # Set memory limit to 3.5GB
 
   sonarqube:
     image: sonarqube:latest
