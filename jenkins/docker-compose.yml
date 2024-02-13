@@ -15,6 +15,7 @@ services:
     volumes:
       - "jenkins_home:/var/jenkins_home"
     mem_limit: 3500m  # Set memory limit to 3.5GB
+    cpus: 1.5 # Limit to 1.5 Cores
 
   sonarqube:
     image: sonarqube:latest
