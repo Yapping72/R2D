@@ -5,11 +5,12 @@ class BaseResponse(ABC):
     @abstractmethod
     def transform(self):
         """
-        Transforms the Response object into the desired target format. 
+        Services will perform domain logic, and return a BaseResponse Object. This BaseResponse object, 
+        will be sent out by controllers and should be formatted for frotnend to easily interpret.
 
         :return: Transformed response object.
         """
-        raise NotImplementedError
+        raise NotImplementedError("Subclasses of BaseResponse must implement transform().")
 
 class JSONResponse(BaseResponse):
     def __init__(self, data: dict, message: str, status: str, status_code: int):
@@ -22,13 +23,13 @@ class JSONResponse(BaseResponse):
 
     def transform(self) -> Response:
         """
-        Transform the JSONResponse object into a DRF Response object.
+        Transforms service results into a Json Response.
+
         Example JSON Response Format:
         {
             "data": {
-                "user_id": int,
-                "username": str,
-                "email": str
+                domain_key_1: domain_value_1
+                domain_key_2: domain_value_2 
             },
             "message": str,
             "status": str

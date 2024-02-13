@@ -1,11 +1,9 @@
 import inspect
 from django.test import TestCase
-
 from framework.daos.dao_factory import DjangoPostgresDaoFactory
 from accounts.daos.UserDAO import UserDao
 
-
-class DjangpoPostgresDaoFactoryTestCase(TestCase):
+class DjangoPostgresDaoFactoryTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
