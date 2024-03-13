@@ -4,9 +4,7 @@ FROM node:latest
 WORKDIR /app
 
 COPY package*.json ./
-RUN ls -ahl /app
 RUN npm install && npm cache clean --force
-RUN ls -ahl /app
 COPY . .
-
-CMD ["npm", "start"]
+EXPOSE 5173 
+# CMD ["npm", "run", "dev"]
