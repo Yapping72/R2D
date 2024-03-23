@@ -1,0 +1,27 @@
+.typing-animation {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .cursor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1px; /* Adjust cursor width */
+    height: 1.2em; /* Adjust cursor height */
+    background-color: black; /* Adjust cursor color */
+    animation: blink 0.7s infinite; /* Adjust blinking animation duration */
+  }
+  
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
