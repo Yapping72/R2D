@@ -1,8 +1,14 @@
+import MermaidTable from "../../components/common/Mermaid/MermaidTable"
+import { AlertProvider } from '../../components/common/Alerts/AlertContext';
+
 function UploadRequirementsPage(){
     return (
-        <div>
-            <h1>UploadRequirementsPage</h1>
-        </div>
+        <>
+        <AlertProvider>
+            <MermaidTable></MermaidTable>
+        </AlertProvider>
+        </>
+
     )
 }
 

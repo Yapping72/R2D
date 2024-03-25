@@ -13,6 +13,10 @@
   box-shadow: 3;
 }
 
+.drag-drop-container:hover {
+  background-color: hsla(0, 0%, 86%, 1); /* Light gray background */
+}
+
 .form-file-upload {
   height: 100%;
   width: 100%;
@@ -60,4 +64,9 @@
 .supported-file-types {
   color: #555;
   margin-bottom: 10px;
+}
+
+
+.cloud-upload-icon:hover{
+  color: #555;
 }

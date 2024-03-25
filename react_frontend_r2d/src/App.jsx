@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-
 import HomePage from './pages/Home/HomePage.jsx';
 import AnalyzePage from './pages/Analyze/AnalyzePage.jsx';
 import UploadRequirementsPage from './pages/UploadRequirements/UploadRequirementsPage.jsx';
@@ -9,8 +8,6 @@ import Layout from './components/common/Layout/Layout.jsx';
 import VisualizePage from './pages/Visualize/VisualizePage.jsx';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-
   const theme = createTheme({
     palette: {
       mode: 'dark', // Set theme mode to dark
@@ -20,11 +17,6 @@ function App() {
       fontSize: 16, 
     },
   });
-  
-  // Toggle between light and dark themes
-  const toggleDarkMode = () => {
-    setDarkMode(prevMode => !prevMode);
-  };
 
   return (
     <ThemeProvider theme={theme}>
