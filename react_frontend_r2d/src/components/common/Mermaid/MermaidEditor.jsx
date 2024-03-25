@@ -1,7 +1,6 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
-
 const options = {
   selectOnLineNumbers: true,
   roundedSelection: false,
@@ -18,6 +17,7 @@ const MermaidEditor = ({ mermaidCode, onCodeChange }) => {
   };
 
   return (
+    <div style={{width: '100%', height: '100%', overflow:'hidden' }}>
     <MonacoEditor
       height="100%" 
       width="100%"
@@ -27,6 +27,7 @@ const MermaidEditor = ({ mermaidCode, onCodeChange }) => {
       onChange={onCodeChange}
       editorDidMount={editorDidMount}
     />
+    </div>
   );
 };
 

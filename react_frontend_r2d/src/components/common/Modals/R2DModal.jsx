@@ -13,14 +13,14 @@ const style = {
   boxShadow: 24,
 };
 
-const R2DModal = ({children}) => {
+const R2DModal = ({children, title="R2DModal"}) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
     <>
-      <Button onClick={handleOpen}>Upload Files</Button>
+      <Button variant="outlined" onClick={handleOpen}>{title}</Button>
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
         {children}

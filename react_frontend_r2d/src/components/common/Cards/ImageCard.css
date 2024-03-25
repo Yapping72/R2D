@@ -1,14 +1,14 @@
 .custom-card {
     position: relative;
     overflow: hidden;
-    width: 280px; /* Adjust the width of the card */
+    width: 260px; /* Adjust the width of the card */
     height: 420px; /* Adjust the height of the card */
     transition: height 0.3s ease; /* Add smooth transition for height change */
   }
   
   .custom-card.hovered {
     height: 450px; /* Adjust the expanded height of the card on hover */
-    width: 350px;
+    width: 280px;
   }
   
   .title {

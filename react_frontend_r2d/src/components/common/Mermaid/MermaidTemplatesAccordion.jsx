@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Button, ButtonGroup} from "@mui/material";
 import R2DAccordion from "../Accordion/R2DAccordion";
@@ -30,7 +29,7 @@ const mermaidExamples = [
     }
   ];
 
-  const MermaidGraphTemplate = ({ onExampleSelect }) => {
+  const MermaidTemplatesAccordion = ({ onExampleSelect }) => {
     const handleExampleSelect = (content) => {
       if (onExampleSelect) {
         onExampleSelect(content);
@@ -50,4 +49,4 @@ const mermaidExamples = [
     );
   }
   
-  export default MermaidGraphTemplate
+  export default MermaidTemplatesAccordion
