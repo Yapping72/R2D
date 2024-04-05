@@ -9,6 +9,7 @@ const options = {
   automaticLayout: true,
   theme: 'vs',
   fontSize: 19,
+  scrollBeyondLastLine:false,
 };
 
 const MermaidEditor = ({ mermaidCode, onCodeChange }) => {

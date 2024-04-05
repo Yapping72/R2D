@@ -9,6 +9,7 @@ const read_only_options = {
   automaticLayout: true,
   theme: 'vs',
   fontSize: 14,
+  scrollBeyondLastLine:false,
 };
 
 // MonacoEditor maps file extensions to a language, populate this map so that MonacoEditor can prettify content.
@@ -26,7 +27,7 @@ const ReadOnlyEditor = ({ fileExtension, fileContents }) => {
 };
 
   return (
-    <div style={{width: '100%', height: '100%', overflow:'auto'}}>
+    <div style={{width: '100%', height: '100%', overflow:'hidden'}}>
     <MonacoEditor
       height="100%" 
       width="100%"

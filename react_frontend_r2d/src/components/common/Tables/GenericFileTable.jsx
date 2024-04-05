@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Dialog, DialogTitle, DialogActions, DialogContent, Button, Box } from '@mui/material';
-import ReadOnlyEditor from './ReadOnlyEditor';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography} from '@mui/material';
 import FileReaderUtility from '../../../utils/FileReaders/FileReaderUtility';
-
+import FileContentDialog from '../Dialog/FileContentDialog';
+import { useAlert } from '../Alerts/AlertContext';
+import { red } from '@mui/material/colors';
 
 // Compares two items based on the orderBy property in descending order
 function descendingComparator(a, b, orderBy) {
@@ -42,6 +43,7 @@ const GenericFileTable = ({ repository }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [fileContent, setFileContent] = useState('');
   const [fileMetadata, setFileMetadata] = useState('');
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +51,7 @@ const GenericFileTable = ({ repository }) => {
       if (response.success) {
         setData(response.data); 
       } else {
-        alert('Failed to fetch data');
+        showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
       }
     };
   
@@ -86,7 +88,7 @@ const GenericFileTable = ({ repository }) => {
       setFileContent(fileContent)
       await setFileMetadata(response.data)
     } else {
-      alert('Failed to fetch data');
+      showAlert('error', `We're having trouble displaying your file contents. Please try again later.`)
     }
   };
 
@@ -99,8 +101,8 @@ const GenericFileTable = ({ repository }) => {
 
   return (
     <>
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper>
+      <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -109,6 +111,10 @@ const GenericFileTable = ({ repository }) => {
                   key={column}
                   align="center"
                   sortDirection={orderBy === column ? order : false}
+                  sx={{
+                    fontWeight: 'bold',
+                    fontSize: '24px', // Adjust to your needs
+                  }}
                 >
                   <TableSortLabel
                     active={orderBy === column}
@@ -121,14 +127,14 @@ const GenericFileTable = ({ repository }) => {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody >
               {data.length > 0 ? (
                 data
                   .sort(getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     return (
-                      <TableRow 
+                      <TableRow
                       hover 
                       role="checkbox" 
                       tabIndex={-1} 
@@ -158,34 +164,27 @@ const GenericFileTable = ({ repository }) => {
                   <TableCell colSpan={columns.length} />
                 </TableRow>
               )}
+          <TableRow>
+            <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            count={data.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableRow>
         </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
      </Paper>
-     {/* Dialog for displaying file content */}
-     <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="file-content-title">
-      <DialogTitle id="file-content-title">{}</DialogTitle>
-      <DialogContent>
-          <Box sx = {{width:"30vw", height:"50vh"}}>
-          <Typography variant="h6">{fileMetadata.filename}</Typography>
-          <hr></hr>
-          <ReadOnlyEditor fileExtension={fileMetadata.type} fileContents={fileContent}></ReadOnlyEditor>
-          <hr></hr>
-          </Box>
-      </DialogContent>
-      <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
-      </DialogActions>
-     </Dialog>
+     {/* Dialog for displaying file content on click*/}
+     <FileContentDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fileContent={fileContent}
+        fileMetadata={fileMetadata}
+      />
  </>
   );
 };

@@ -1,8 +1,9 @@
 import React from "react";
 import {Button, ButtonGroup} from "@mui/material";
 import R2DAccordion from "../Accordion/R2DAccordion";
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 
-const mermaidExamples = [
+export const mermaidExamples = [
     {
       "name": "Flow Chart",
       "content": "graph TD;\nA[Request] --> B{Controller};\nB --> C[Model];\nC --> D[View];\nD --> E[Response];\nC --> F[Database];\nF --> C;"
@@ -37,7 +38,7 @@ const mermaidExamples = [
     };
   
     return (
-      <R2DAccordion title="Try Our Examples">
+      <R2DAccordion title="Try Our Examples" defaultExpanded = "true" icon={<LightbulbIcon />} >
         <ButtonGroup variant="outlined" aria-label="outlined primary button group" sx={{ overflow: 'auto', maxWidth: "100%"}}>
           {mermaidExamples.map((example, index) => (
             <Button key={index} onClick={() => handleExampleSelect(example.content)} sx={{ margin:0.2, fontSize:12}}>

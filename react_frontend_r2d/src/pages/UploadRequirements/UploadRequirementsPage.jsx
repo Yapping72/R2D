@@ -8,7 +8,6 @@ function UploadRequirementsPage(){
             <MermaidTable></MermaidTable>
         </AlertProvider>
         </>
-
     )
 }
 

@@ -49,9 +49,10 @@ export class MermaidFileRepository extends GenericIndexedDBRepository {
     async handleClearDb(){
         try { 
             const result = await this.clearDB()
+            return { success: true };
         } catch(error) {
             console.error("Failed to clear IndexedDb file store: ", error)
-            return { success: false, data: error.message };
+            return { success: false, error: error.message };
         }
     }
 }
