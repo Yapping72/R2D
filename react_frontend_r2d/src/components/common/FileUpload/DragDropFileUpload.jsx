@@ -1,14 +1,15 @@
 import React from 'react';
 import { Button, Container, Tooltip, Typography } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudUploadIcon from '@mui/icons-material/FileUpload';
 import './DragDropFileUpload.css'
 import { useAlert } from '../Alerts/AlertContext';
 
 /*
 * Component that supports uploading of files via Drag and Drop or Click features.
 * When a file dropped in, validation is performed, if all validation passes, file is stored in IndexedDb.
+* Components that use this DragDropFile component must implement their own onFileUpload callback function
 */
-const DragDropFile = ({ title = "Drag and drop files here", validator, repository }) => {
+const DragDropFile = ({ title = "Drag and drop files here", validator, repository, onFileUpload = () => {} }) => {
   const [dragActive, setDragActive] = React.useState(false);
   const inputRef = React.useRef(null);
   const { showAlert } = useAlert();
@@ -34,7 +35,6 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    alert(`Validating: ${file.name}`);
     processFiles(e.dataTransfer.files);
   };
 
@@ -71,18 +71,19 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
       try {
         const validationResult = await validator.validate(file);
         if (validationResult.result === 'success') {
-          // Success: Store the file into db
-          //console.log("Success:", validationResult);
+          // Success: Store the file into db 
           repository.handleWriteFileAndMetadataToDB(file, validationResult.file_metadata);
-          showAlert('success', `${validationResult.file_metadata.filename} has been uploaded successfully.`)
+          showAlert('success', `Your file ${validationResult.file_metadata.filename} has been uploaded successfully.`)
+          // Returns the file to the callback function
+          onFileUpload(file); 
         } else {
           // Failure: log the message and alert the user
-          showAlert('error', `${validationResult.file_metadata.filename} could not be uploaded. Please check that the file meets uploading requirements.`)
+          showAlert('error', `Your file could not be uploaded. Please check that the file meets uploading requirements.`)
         }
       } catch (error) {
         // Handle FileReader errors
         console.error("Error encountered while uploading file in Visualize Page: ", error);
-        showAlert('error', `We encountered an issue while uploading ${validationResult.file_metadata.filename}. Please try again later.`)
+        showAlert('error', `We encountered an issue while uploading your file. Please try again later.`)
       } finally {
         // Reset the input value
         if (inputRef.current) {
@@ -104,7 +105,7 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
             <Typography variant="h5" className="upload-instructions">
               {title}
             </Typography>
-            <Typography className="supported-file-types">
+            <Typography component="div" className="supported-file-types">
               <ul>
                 <li>Files cannot not be larger than <b>{formatFileSize()}</b></li>
                 <li>Supported file types: <b>{getSupportedFileTypes()}</b></li>

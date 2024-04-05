@@ -12,7 +12,6 @@ import PersonIcon from '@mui/material/Avatar';
 import MenuNavigation from './MenuNavigation';
 import SettingsNavigation from './SettingsNavigation';
 
-
 const pages = ["Upload", "Analyze", "Visualize"];
 const settings = ['My Profile', 'My Actions', 'History', 'Logout'];
 
