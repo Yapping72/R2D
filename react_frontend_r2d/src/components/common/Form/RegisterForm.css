@@ -1,0 +1,24 @@
+.register-form-container {
+    background-color: rgb(14, 14, 14); /* Slightly lighter than the page background */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px 0 rgb(10, 10, 10); /* Subtle shadow for depth */
+    border: 0.1px solid rgb(28, 28, 28); /* Slightly lighter border for subtle definition */
+  }
+  
+/*By default when forms are autofilled the color will be BLUE*/
+/* Targeting Webkit browsers like Chrome and Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgb(14, 14, 14) inset !important;
+}
+
+/* Targeting Mozilla Firefox */
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+input:-moz-autofill:active {
+    box-shadow: 0 0 0 30px rgb(14, 14, 14)  inset !important;
+}
