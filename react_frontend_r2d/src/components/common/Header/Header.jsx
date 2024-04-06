@@ -12,7 +12,7 @@ import PersonIcon from '@mui/material/Avatar';
 import MenuNavigation from './MenuNavigation';
 import SettingsNavigation from './SettingsNavigation';
 
-const pages = ["Upload", "Analyze", "Visualize"];
+const pages = ["Upload", "Analyze", "Visualize", "Home"];
 const settings = ['My Profile', 'My Actions', 'History', 'Logout'];
 
 function Header() {
@@ -37,7 +37,7 @@ function Header() {
 
   return (
     <AppBar position="static" color="transparent" sx={{ mt: 'auto', paddingLeft: '20px', paddingRight: '20px' }}>
-      <Toolbar disableGutters sx={{ backgroundColor: 'background.paper' }}>
+      <Toolbar disableGutters>
         <IconButton
           size="large"
           aria-label="menu"

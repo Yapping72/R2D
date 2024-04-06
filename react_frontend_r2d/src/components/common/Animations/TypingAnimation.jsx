@@ -17,7 +17,7 @@ const TypingAnimation = ({ text, variant = 'h1' }) => {
         clearInterval(typingInterval);
         setShowCursor(false);
       }
-    }, 100); // Adjust typing speed by changing the interval duration
+    }, 80); // Adjust typing speed by changing the interval duration
 
     return () => clearInterval(typingInterval);
   }, [text, restartAnimation]); // Depend on restartAnimation to restart typing

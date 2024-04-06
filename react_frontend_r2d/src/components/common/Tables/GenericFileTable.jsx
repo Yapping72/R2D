@@ -101,7 +101,7 @@ const GenericFileTable = ({ repository }) => {
 
   return (
     <>
-    <Paper>
+    <Paper sx={{overflow:'auto'}}>
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
