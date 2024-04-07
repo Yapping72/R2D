@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Modal, Box, Button } from '@mui/material';
+import { Typography, Modal, Box, Button } from '@mui/material';
 
 // Adjust your style object to center the Box within the modal
 const style = {
@@ -12,15 +12,22 @@ const style = {
   bgcolor: 'background.paper', // Change this to match your theme's color or make it transparent
   boxShadow: 24,
 };
-
-const R2DModal = ({children, title="R2DModal"}) => {
+/**
+ * Button excepts either a title, a icon or both
+ * @param {string} title - Title that will be displayed on the button to open the modal
+ * @param {icon} icon - MUI icon to be displayed on the button 
+ * @returns 
+ */
+const R2DModal = ({children, title="R2DModal", icon=null}) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
     <>
-      <Button variant="outlined" onClick={handleOpen}>{title}</Button>
+      <Button variant="outlined" onClick={handleOpen} startIcon={icon}>
+      {title && <Typography>{title}</Typography>}
+      </Button>
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
         {children}

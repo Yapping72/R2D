@@ -6,40 +6,51 @@ import MermaidEditor from '../../components/common/Mermaid/MermaidEditor';
 import ZoomAndPan from '../../components/ui/Interactions/ZoomAndPan';
 import MermaidTemplatesAccordion from '../../components/common/Mermaid/MermaidTemplatesAccordion';
 import MermaidFileManagementAccordion from '../../components/common/Mermaid/MermaidFileManagementAccordion';
+import { MermaidContextProvider } from '../../components/common/Mermaid/MermaidContextProvider';
 import { AlertProvider } from '../../components/common/Alerts/AlertContext';
 import { mermaidExamples } from '../../components/common/Mermaid/MermaidTemplatesAccordion';
-
+import FileReaderUtility from '../../utils/FileReaders/FileReaderUtility';
 import './VisualizePage.css'
 
 const VisualizePage = () => {
     // Randomly select an example from mermaidExamples when initializing state
-       const [mermaidCode, setMermaidCode] = useState(() => {
+    const [mermaidCode, setMermaidCode] = useState(() => {
         const randomIndex = Math.floor(Math.random() * mermaidExamples.length);
         return mermaidExamples[randomIndex].content;
     });
+
     const [selectedExample, setSelectedExample] = useState('');
     // Selects an example and sets it in the MermaidEditor
     const handleExampleSelect = (content) => {
       setSelectedExample(content); 
       setMermaidCode(selectedExample);
     };
+
     // Renders the diagram whenever there is a change in the editor
     const handleDiagramChange = (code) => {
         setMermaidCode(code);
     };
+    
     // Defines the actions to take when a file is uploaded to the MermaidFileManagementAccordion (DragDropComponent)
-    const handleFileUpload = (fileContents) => {
+    const  handleFileUpload = async (file) => {
       // Callback function that will read the file 
+      const fileContents = await FileReaderUtility.readAsText(file);  
       setMermaidCode(fileContents)
-  };
+    };
+
+    // Defines the actions to take when a file is selected from the mermaid table 
+    const handleFileSelection = (fileContents) => {
+      setMermaidCode(fileContents)
+    };
 
     return (
+      <MermaidContextProvider handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}>
       <Container>
       <AlertProvider>
       <Box>
       <Typography variant='h2'> Mermaid Editor</Typography>
       <hr></hr>
-      <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} ></MermaidFileManagementAccordion>
+      <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
       </Box>
       <hr></hr> 
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden'}}>
@@ -65,6 +76,7 @@ const VisualizePage = () => {
     </Box>
     </AlertProvider>
     </Container>
+    </MermaidContextProvider>
     );
 };
 

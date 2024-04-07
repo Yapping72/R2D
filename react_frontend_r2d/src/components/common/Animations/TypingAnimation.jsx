@@ -29,7 +29,7 @@ const TypingAnimation = ({ text, variant = 'h1' }) => {
 
   return (
     <div className="typing-animation" onMouseEnter={handleMouseEnter}>
-      <Typography variant={variant}>{displayText}</Typography>
+      <Typography variant={variant} component={variant}>{displayText}</Typography>
       {showCursor && <div className="cursor" />}
     </div>
   );

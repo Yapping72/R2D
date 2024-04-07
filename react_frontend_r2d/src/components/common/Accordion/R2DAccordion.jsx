@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const R2DAccordion = ({ title, children, defaultExpanded = false, icon, ...otherProps }) => {
+const R2DAccordion = ({ title, children, defaultExpanded=false, icon = "", ...otherProps }) => {
   const [expanded, setExpanded] = useState(defaultExpanded);
 
-  const handleExpansion = (event, isExpanded) => {
-    setExpanded(isExpanded);
+  const handleExpansion = () => {
+    setExpanded(!expanded);
   };
 
   return (
     <Accordion 
-    expanded={expanded} 
     onChange={handleExpansion} 
+    expanded={expanded}
     {...otherProps}
     >
       <AccordionSummary

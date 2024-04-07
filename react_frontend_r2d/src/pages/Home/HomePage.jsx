@@ -1,6 +1,6 @@
 import {Typography, Container} from "@mui/material";
 import TypingAnimation from "../../components/common/Animations/TypingAnimation";
-import CardsGrid from "../../components/common/Cards/ImageCardsGrid";
+import ImageCardsGrid from "../../components/common/Cards/ImageCardsGrid";
 
 const HomePage = () => {
   const cardDetails = [
@@ -16,15 +16,15 @@ const HomePage = () => {
 
   return (
     <Container>
-      <Typography>
+      <div>
         <TypingAnimation text="Streamline Development" variant="h3"/>
-      </Typography>
+      </div>
       <hr></hr>
       <Typography variant="h6" sx={{textAlign:'justify'}}>
         Discover our innovative platform designed to revolutionize the way you create software diagrams.  R2D helps you effortlessly model your business requirements into software architecture diagrams. Enabling rapid design, change, and solutions.
       </Typography>
       <hr></hr>
-      <CardsGrid cards={cardDetails} />
+      <ImageCardsGrid cards={cardDetails} />
     </Container>
   );
 }
