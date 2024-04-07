@@ -10,7 +10,7 @@ import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
 */
 export class MermaidFileRepository extends GenericIndexedDBRepository {
     constructor() {
-      super("r2d-indexed-db", "mermaid-file-store");
+      super("r2d-mermaid-db", "mermaid-file-store");
     }
 
     async handleFindById(id) {

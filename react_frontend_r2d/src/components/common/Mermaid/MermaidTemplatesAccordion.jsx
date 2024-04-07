@@ -38,7 +38,7 @@ export const mermaidExamples = [
     };
   
     return (
-      <R2DAccordion title="Try Our Examples" defaultExpanded = "true" icon={<LightbulbIcon />} >
+      <R2DAccordion title="Try Our Examples" defaultExpanded icon={<LightbulbIcon />} >
         <ButtonGroup variant="outlined" aria-label="outlined primary button group" sx={{ overflow: 'auto', maxWidth: "100%"}}>
           {mermaidExamples.map((example, index) => (
             <Button key={index} onClick={() => handleExampleSelect(example.content)} sx={{ margin:0.2, fontSize:12}}>

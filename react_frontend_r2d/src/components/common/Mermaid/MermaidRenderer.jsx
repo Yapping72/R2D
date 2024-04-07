@@ -23,11 +23,6 @@ mermaid.initialize({
     
     updateDiagram() {
         const { chart } = this.props;
-        // Check if chart data is valid
-        if (!chart || typeof chart !== 'string' || chart.trim() === '') {
-            // If chart data is invalid, do nothing or show placeholder
-            return;
-        }
 
         // Clear the current content
         if (this.divRef.current) {
@@ -49,8 +44,7 @@ mermaid.initialize({
             this.divRef.current.appendChild(diagramElement);
         }
         
-        // Initialize Mermaid for the new diagram
-        mermaid.init(undefined, diagramElement);
+        mermaid.init(undefined, `#${diagramId}`);
     }
     
     divRef = React.createRef();

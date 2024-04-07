@@ -1,15 +1,16 @@
 import React from 'react';
 import { Button, Container, Tooltip, Typography } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/FileUpload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import './DragDropFileUpload.css'
 import { useAlert } from '../Alerts/AlertContext';
 
 /*
 * Component that supports uploading of files via Drag and Drop or Click features.
 * When a file dropped in, validation is performed, if all validation passes, file is stored in IndexedDb.
-* Components that use this DragDropFile component must implement their own onFileUpload callback function
+* Components that use this DragDropFile component must implement their own handleFileUpload callback function
 */
-const DragDropFile = ({ title = "Drag and drop files here", validator, repository, onFileUpload = () => {} }) => {
+
+const DragDropFile = ({ title = "Drag and drop files here", validator, repository, handleFileUpload = () => {}, IconComponent=FileUploadIcon}) => {
   const [dragActive, setDragActive] = React.useState(false);
   const inputRef = React.useRef(null);
   const { showAlert } = useAlert();
@@ -75,7 +76,7 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
           repository.handleWriteFileAndMetadataToDB(file, validationResult.file_metadata);
           showAlert('success', `Your file ${validationResult.file_metadata.filename} has been uploaded successfully.`)
           // Returns the file to the callback function
-          onFileUpload(file); 
+          handleFileUpload(file); 
         } else {
           // Failure: log the message and alert the user
           showAlert('error', `Your file could not be uploaded. Please check that the file meets uploading requirements.`)
@@ -100,7 +101,7 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
           <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleChange} className="input-file-upload" />
           <label htmlFor="input-file-upload" className={`label-file-upload ${dragActive ? "drag-active" : ""}`}>
             <Button className="upload-button" onClick={() => inputRef.current.click()}>
-              <CloudUploadIcon className="cloud-upload-icon" sx={{ fontSize: "100px", color: "light-blue" }} />
+              <IconComponent className="cloud-upload-icon" sx={{ fontSize: "100px", color: "light-blue" }} />
             </Button>
             <Typography variant="h5" className="upload-instructions">
               {title}
