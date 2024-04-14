@@ -22,7 +22,7 @@ services:
   react_frontend_r2d: # React service
     build: 
       context: ./react_frontend_r2d
-    command: npm run dev -- --host 0.0.0.0
+    command: bash -c "npm install && npm run dev -- --host 0.0.0.0" 
     volumes:
       - ./react_frontend_r2d:/app  # Bind mount the frontend code
       - node_modules:/app/node_modules # This is to cache node_modules

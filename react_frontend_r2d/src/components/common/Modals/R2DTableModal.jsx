@@ -7,7 +7,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '40%', // Adjust the width as per your need
+  width: '80%', // Adjust the width as per your need
   height: '55%', // Adjust the height as per your need
   bgcolor: 'background.paper', // Change this to match your theme's color or make it transparent
   boxShadow: 24,
@@ -19,7 +19,7 @@ const style = {
  * @param {icon} icon - MUI icon to be displayed on the button 
  * @returns 
  */
-const R2DModal = ({children, title="R2DModal", icon=null}) => {
+const R2DTableModal = ({children, title="R2DTableModal", icon=null}) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -38,4 +38,4 @@ const R2DModal = ({children, title="R2DModal", icon=null}) => {
   );
 };
 
-export default R2DModal;
+export default R2DTableModal;

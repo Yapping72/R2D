@@ -2,7 +2,29 @@ import React from 'react';
 import { Dialog, DialogActions, DialogContent, Button, Box, Typography } from '@mui/material';
 import ReadOnlyEditor from '../Tables/ReadOnlyEditor';
 
-const FileContentDialog = ({ open, onClose, fileContent, fileMetadata }) => {
+
+/**
+ * Dialog component to display the content of a Mermaid file and allow selection.
+ * This component expects to receive a `handleFileSelection` function,
+ * typically from the MermaidContext, to handle the selection of file content.
+ * 
+ * @param {Object} props - Props for configuring the dialog.
+ * @param {boolean} props.open - Controls the visibility of the dialog.
+ * @param {Function} props.onClose - Callback to invoke when closing the dialog.
+ * @param {string} props.fileContent - The content of the file to display.
+ * @param {Object} props.fileMetadata - Metadata about the file, including filename and type.
+ * @param {Function} props.handleFileSelection - Callback to invoke when a file is selected
+ */
+
+const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFileSelection}) => {
+  // Triggers the handleFileSelection function and also closes the dialog.
+  const handleSelectAndClose = () => {
+    if(handleFileSelection) {
+      handleFileSelection(fileContent, fileMetadata);
+    }
+    onClose()
+  };
+
   return (
     <Dialog 
       open={open} 
@@ -18,6 +40,7 @@ const FileContentDialog = ({ open, onClose, fileContent, fileMetadata }) => {
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleSelectAndClose}>Select</Button>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>

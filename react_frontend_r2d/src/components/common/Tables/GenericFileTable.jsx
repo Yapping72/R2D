@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography} from '@mui/material';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography} from '@mui/material';
 import FileReaderUtility from '../../../utils/FileReaders/FileReaderUtility';
 import FileContentDialog from '../Dialog/FileContentDialog';
 import { useAlert } from '../Alerts/AlertContext';
-import { red } from '@mui/material/colors';
+
 
 // Compares two items based on the orderBy property in descending order
 function descendingComparator(a, b, orderBy) {
@@ -33,7 +33,7 @@ function getComparator(order, orderBy) {
 * The table retrieves its data from the indexedDb datastore specified by the repository.
 * Expects the table to store a column for File data types
 */
-const GenericFileTable = ({ repository }) => {
+const GenericFileTable = ({ repository, handleFileSelection}) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -44,6 +44,7 @@ const GenericFileTable = ({ repository }) => {
   const [fileContent, setFileContent] = useState('');
   const [fileMetadata, setFileMetadata] = useState('');
   const { showAlert } = useAlert();
+  const [isVisible, setIsVisible] = useState(true); // manages visibility of table
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,13 +55,12 @@ const GenericFileTable = ({ repository }) => {
         showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
       }
     };
-  
     fetchData();
   }, [repository]); 
   
   useEffect(() => {
     if (data.length > 0) {
-      const columnNames = Object.keys(data[0]).filter(key => key !== "content"); // Assuming you want to exclude 'content' from columns
+      const columnNames = Object.keys(data[0]).filter(key => key !== "content");
       setColumns(columnNames);
     }
   }, [data]); 
@@ -100,9 +100,9 @@ const GenericFileTable = ({ repository }) => {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   return (
-    <>
-    <Paper sx={{overflow:'auto'}}>
-      <TableContainer>
+  <>
+  <Paper sx={{ border: '1.5px solid #e0e0e0', borderRadius: '5px', minHeight: data.length >= rowsPerPage ? 'auto' : 'calc(10px * 47.5)' }}>
+    <TableContainer sx={{ maxHeight: '70vh', overflow: 'auto'}}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -113,7 +113,7 @@ const GenericFileTable = ({ repository }) => {
                   sortDirection={orderBy === column ? order : false}
                   sx={{
                     fontWeight: 'bold',
-                    fontSize: '24px', // Adjust to your needs
+                    fontSize: '20px', // Set column name size
                   }}
                 >
                   <TableSortLabel
@@ -121,7 +121,7 @@ const GenericFileTable = ({ repository }) => {
                     direction={orderBy === column ? order : 'asc'}
                     onClick={(event) => handleRequestSort(event, column)}
                   >
-                    {column}
+                    {column.charAt(0).toUpperCase() + column.slice(1)}
                   </TableSortLabel>
                 </TableCell>
               ))}
@@ -141,7 +141,14 @@ const GenericFileTable = ({ repository }) => {
                       key={row.id}
                       onClick={() => handleOpenDialog(row.id)}>
                         {columns.map((column) => {
-                          const value = row[column];
+                          let value = row[column];
+
+                          // Check if the value is a Set or List
+                          if (Array.isArray(value) || value instanceof Set) {
+                            // Convert the set/list to a string delimited by commas
+                            value = Array.from(value).join(', ');
+                          }
+
                           return (
                             <TableCell key={column} align="center">
                               {value}
@@ -165,7 +172,7 @@ const GenericFileTable = ({ repository }) => {
                 </TableRow>
               )}
           <TableRow>
-            <TablePagination
+          <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             count={data.length}
             rowsPerPage={rowsPerPage}
@@ -177,15 +184,17 @@ const GenericFileTable = ({ repository }) => {
         </TableBody>
         </Table>
       </TableContainer>
-     </Paper>
+  
      {/* Dialog for displaying file content on click*/}
      <FileContentDialog
         open={openDialog}
         onClose={handleCloseDialog}
         fileContent={fileContent}
         fileMetadata={fileMetadata}
+        handleFileSelection={handleFileSelection}
       />
- </>
+ </Paper>
+</>
   );
 };
 

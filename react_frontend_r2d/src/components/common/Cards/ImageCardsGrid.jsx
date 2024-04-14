@@ -1,9 +1,8 @@
-// CardsGrid.jsx
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import ImageCard from './ImageCard'; // Import your ImageCard component
 
-const CardsGrid = ({ cards }) => {
+const ImageCardsGrid = ({ cards }) => {
   return (
     <>
     <Grid container spacing={3} justifyContent="center"> {/* justifyContent centers the cards horizontally */}
@@ -21,4 +20,4 @@ const CardsGrid = ({ cards }) => {
   );
 };
 
-export default CardsGrid;
+export default ImageCardsGrid;

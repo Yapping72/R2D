@@ -10,7 +10,7 @@ import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
 */
 export class MermaidFileRepository extends GenericIndexedDBRepository {
     constructor() {
-      super("r2d-indexed-db", "mermaid-file-store");
+      super("r2d-mermaid-db", "mermaid-file-store");
     }
 
     async handleFindById(id) {
@@ -38,7 +38,6 @@ export class MermaidFileRepository extends GenericIndexedDBRepository {
     async handleWriteFileAndMetadataToDB(file, metadata) {
         try {
             const result = await this.writeFileAndMetadataToDB(file, metadata);
-            // console.log("File and metadata successfully written to DB with ID:", result);
             return { success: true, data: result };
         } catch (error) {
             console.error("Error writing file and metadata to DB:", error);
