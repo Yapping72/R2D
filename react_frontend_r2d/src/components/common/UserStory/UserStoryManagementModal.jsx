@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const UserStoryManagementModal = () => {
-    const { _, handleFileUpload } = useUserStoryContext();
+    const { handleFileUpload } = useUserStoryContext();
     /*
     * Adds a record identifier to each requirement record
     */

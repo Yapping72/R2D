@@ -16,6 +16,7 @@ const UserStoryCard = ({
   services_to_use, 
   fileId,
   handleRequirementsEdit,
+  handleRequirementsDelete,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false); // When set to true, dialog appears allowing modification of fields
   const [currentFeature, setCurrentFeature] = useState(feature);
@@ -24,10 +25,11 @@ const UserStoryCard = ({
   const [currentRequirement, setCurrentRequirement] = useState(requirement);
   const [currentServicesToUse, setCurrentServicesToUse] = useState(services_to_use);
 
+  // Displays Edit card dialog when clicked
   const handleEditClick = () => {
     setIsEditMode(true);
   };
-
+  // Closes edit card dialog when clicked
   const handleClose = () => {
     setIsEditMode(false);
   };
@@ -47,6 +49,11 @@ const UserStoryCard = ({
     handleClose();
     saveEditsToDb(fileId,recordId,editedData) // commit changes 
   };
+
+  const handleDeleteClick = (fileId, recordId) => {
+    handleRequirementsDelete(fileId, recordId)
+  }
+
  return (
     <>
       <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow:'auto'}}>
@@ -76,7 +83,8 @@ const UserStoryCard = ({
           )}
         </CardContent>
         <CardActions>
-          <Button size="small" onClick={handleEditClick}>Edit</Button>
+          <Button size="small" onClick={() => handleEditClick()}>Edit</Button>
+          <Button size="small" onClick={()=> handleDeleteClick(fileId, recordId)}>Delete</Button>
         </CardActions>
       </Card>
       <EditUserStoryDialog

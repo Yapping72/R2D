@@ -18,9 +18,8 @@ import AddUserStoryCard from './AddUserStoryCard';
  * @returns {JSX.Element} A responsive grid layout of requirement cards.
  */
 
-const UserStoryCardGrid = ({ featureData, fileId}) => {
-  const { handleRequirementsEdit } = useUserStoryContext();
-  const { handleRequirementsAdd} = useUserStoryContext();
+const UserStoryCardGrid = ({ featureData, fileId }) => {
+  const { handleRequirementsEdit, handleRequirementsAdd, handleRequirementsDelete } = useUserStoryContext();
 
   return (
     <Container>
@@ -29,21 +28,22 @@ const UserStoryCardGrid = ({ featureData, fileId}) => {
           <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
             <UserStoryCard
               feature={item.feature}
-              subFeature={item.sub_feature} 
-              id={item.id} 
+              subFeature={item.sub_feature}
+              id={item.id}
               requirement={item.requirement}
-              recordId = {item.record_identifier}
+              recordId={item.record_identifier}
               services_to_use={Array.isArray(item.services_to_use) ? item.services_to_use : item.services_to_use ? [item.services_to_use] : []}
               fileId={fileId}
               handleRequirementsEdit={handleRequirementsEdit}
+              handleRequirementsDelete={handleRequirementsDelete}
             />
           </Grid>
         ))}
         {fileId && (
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <AddUserStoryCard 
-            fileId={fileId}
-            handleRequirementsAdd={handleRequirementsAdd} />
+            <AddUserStoryCard
+              fileId={fileId}
+              handleRequirementsAdd={handleRequirementsAdd} />
           </Grid>
         )}
       </Grid>

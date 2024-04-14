@@ -21,8 +21,19 @@ export const useUserStoryContext = () => useContext(UserStoryContext);
  * @param {Function} props.handleFileSelection - Function to handle the selection of Requirements files.
  * @param {React.ReactNode} props.children - Child components that will consume the context.
  */
-export const UserStoryContextProvider = ({ children, handleFileUpload, handleFileSelection, handleRequirementsEdit, handleRequirementsAdd, handleRequirementsDelete }) => (
-    <UserStoryContext.Provider value={{ handleFileUpload, handleFileSelection, handleRequirementsAdd, handleRequirementsEdit, handleRequirementsDelete}}>
+export const UserStoryContextProvider = ({ children,
+    handleFileUpload,
+    handleFileSelection,
+    handleRequirementsEdit,
+    handleRequirementsAdd,
+    handleRequirementsDelete }) => (
+    <UserStoryContext.Provider value={{
+        handleFileUpload,
+        handleFileSelection,
+        handleRequirementsAdd,
+        handleRequirementsEdit,
+        handleRequirementsDelete
+    }}>
         {children}
     </UserStoryContext.Provider>
 );

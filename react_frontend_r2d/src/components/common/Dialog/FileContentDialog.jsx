@@ -40,7 +40,7 @@ const FileContentDialog = ({
       case 'text/plain':
         FileDownloadUtility.downloadTxt(fileContent, fileMetadata.filename);
         break;
-      case 'text/plain':
+      case 'text/markdown':
         FileDownloadUtility.downloadMd(fileContent,fileMetadata.filename);
         break;
       default:
