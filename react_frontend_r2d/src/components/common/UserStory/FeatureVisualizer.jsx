@@ -1,4 +1,4 @@
-import RequirementsCardGrid from '../Cards/RequirementsCardGrid'
+import UserStoryCardGrid from '../Cards/UserStoryCardGrid'
 import {Container} from '@mui/material'
 
 /**
@@ -17,11 +17,11 @@ import {Container} from '@mui/material'
  * @returns {ReactElement} The `FeatureVisualizer` component with a `R2DAccordion` and `RequirementsCardGrid`.
  */
 
-const FeatureVisualizer = ({title = "Upload Requirements to Begin", featureData=[], fileId})=> {
+const FeatureVisualizer = ({title = "Upload User Stories to Begin", featureData=[], fileId})=> {
     
     return (
         <Container>  
-        <RequirementsCardGrid featureData={featureData} fileId={fileId}></RequirementsCardGrid>
+        <UserStoryCardGrid featureData={featureData} fileId={fileId}></UserStoryCardGrid>
         </Container>
     )
 }

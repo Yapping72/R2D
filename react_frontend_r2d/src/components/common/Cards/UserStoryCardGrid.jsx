@@ -1,9 +1,9 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import RequirementsCard from './RequirementsCard';
+import UserStoryCard from './UserStoryCard';
 import { Container } from '@mui/material';
-import { useRequirementsContext } from '../Requirements/RequirementsContextProvider';
-import AddRequirementCard from './AddRequirementsCard';
+import { useUserStoryContext } from '../UserStory/UserStoryContextProvider';
+import AddUserStoryCard from './AddUserStoryCard';
 
 /**
  * RequirementsCardGrid renders a grid of RequirementCards.
@@ -18,16 +18,16 @@ import AddRequirementCard from './AddRequirementsCard';
  * @returns {JSX.Element} A responsive grid layout of requirement cards.
  */
 
-const RequirementsCardGrid = ({ featureData, fileId}) => {
-  const { handleRequirementsEdit } = useRequirementsContext();
-  const { handleRequirementsAdd} = useRequirementsContext();
+const UserStoryCardGrid = ({ featureData, fileId}) => {
+  const { handleRequirementsEdit } = useUserStoryContext();
+  const { handleRequirementsAdd} = useUserStoryContext();
 
   return (
     <Container>
       <Grid container spacing={2}>
         {featureData.map((item, index) => (
           <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-            <RequirementsCard
+            <UserStoryCard
               feature={item.feature}
               subFeature={item.sub_feature} 
               id={item.id} 
@@ -41,7 +41,7 @@ const RequirementsCardGrid = ({ featureData, fileId}) => {
         ))}
         {fileId && (
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <AddRequirementCard 
+            <AddUserStoryCard 
             fileId={fileId}
             handleRequirementsAdd={handleRequirementsAdd} />
           </Grid>
@@ -51,4 +51,4 @@ const RequirementsCardGrid = ({ featureData, fileId}) => {
   );
 }
 
-export default RequirementsCardGrid;
+export default UserStoryCardGrid;

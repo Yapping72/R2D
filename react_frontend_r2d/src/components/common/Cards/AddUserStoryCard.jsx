@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Card, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import './AddRequirementsCard.css'
+import './AddUserStoryCard.css'
 
 import { v4 as uuidv4 } from 'uuid';
-import EditRequirementCardDialog from '../Dialog/EditRequirementCardDialog';
+import EditUserStoryDialog from '../Dialog/EditUserStoryDialog';
 
-const AddRequirementCard = ({
+const AddUserStoryCard = ({
   fileId,
   handleRequirementsAdd }) => {
   const [isEditMode, setIsEditMode] = useState(false); // When set to true, dialog appears allowing modification of fields
@@ -48,7 +48,7 @@ const AddRequirementCard = ({
           <AddIcon fontSize="inherit" />
         </IconButton>
       </Card>
-      <EditRequirementCardDialog
+      <EditUserStoryDialog
         open={isEditMode}
         handleClose={handleCloseDialog}
         feature={feature}
@@ -63,4 +63,4 @@ const AddRequirementCard = ({
   );
 };
 
-export default AddRequirementCard;
+export default AddUserStoryCard;

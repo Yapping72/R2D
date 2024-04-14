@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 
 // Creating a context for Requirements-related functionalities.
-const RequirementsContext = createContext();
+const UserStoryContext = createContext();
 
 /**
  * Custom hook to access Requirements context.
@@ -9,7 +9,7 @@ const RequirementsContext = createContext();
  * including uploading and selecting files.
  * @returns {Object} Returns an object containing functions handleFileUpload() and handleFileSelection().
  */
-export const useRequirementsContext = () => useContext(RequirementsContext);
+export const useUserStoryContext = () => useContext(UserStoryContext);
 
 /**
  * Context Provider for Requirements-related functionalities.
@@ -21,8 +21,8 @@ export const useRequirementsContext = () => useContext(RequirementsContext);
  * @param {Function} props.handleFileSelection - Function to handle the selection of Requirements files.
  * @param {React.ReactNode} props.children - Child components that will consume the context.
  */
-export const RequirementsContextProvider = ({ children, handleFileUpload, handleFileSelection, handleRequirementsEdit, handleRequirementsAdd, handleRequirementsDelete }) => (
-    <RequirementsContext.Provider value={{ handleFileUpload, handleFileSelection, handleRequirementsAdd, handleRequirementsEdit, handleRequirementsDelete}}>
+export const UserStoryContextProvider = ({ children, handleFileUpload, handleFileSelection, handleRequirementsEdit, handleRequirementsAdd, handleRequirementsDelete }) => (
+    <UserStoryContext.Provider value={{ handleFileUpload, handleFileSelection, handleRequirementsAdd, handleRequirementsEdit, handleRequirementsDelete}}>
         {children}
-    </RequirementsContext.Provider>
+    </UserStoryContext.Provider>
 );

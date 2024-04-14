@@ -3,16 +3,16 @@ import GenericFileTable from '../Tables/GenericFileTable';
 import R2DTableModal from '../Modals/R2DTableModal'
 import { RequirementsFileRepository } from '../../../utils/Repository/RequirementsFileRepository';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRequirementsContext } from './RequirementsContextProvider';
+import { useUserStoryContext } from './UserStoryContextProvider';
 
 
-const RequirementsTable = () => {
-    const { handleFileSelection, _ } = useRequirementsContext();
+const UserStoryTable = () => {
+    const { handleFileSelection, _ } = useUserStoryContext();
     return(
-        <R2DTableModal title="View Uploaded Requirements" icon={<SearchIcon></SearchIcon>}>
+        <R2DTableModal title="View User Stories" icon={<SearchIcon></SearchIcon>}>
                 <GenericFileTable repository={new RequirementsFileRepository()} handleFileSelection={handleFileSelection}></GenericFileTable>
         </R2DTableModal>
    
     )
 }
-export default RequirementsTable
+export default UserStoryTable
