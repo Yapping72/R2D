@@ -15,6 +15,7 @@
     "@fontsource/roboto": "^5.0.12",
     "@mui/icons-material": "^5.15.13",
     "@mui/material": "^5.15.13",
+    "axios": "^1.6.8",
     "jwt-decode": "^4.0.0",
     "mermaid": "^10.9.0",
     "monaco-editor": "^0.44.0",
