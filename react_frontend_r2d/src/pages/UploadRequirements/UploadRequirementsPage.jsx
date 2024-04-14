@@ -6,13 +6,12 @@ import UserStoryTable from '../../components/common/UserStory/UserStoryTable';
 import FeatureVisualizer from '../../components/common/UserStory/FeatureVisualizer';
 import { UserStoryContextProvider } from '../../components/common/UserStory/UserStoryContextProvider';
 import FileReaderUtility from '../../utils/FileReaders/FileReaderUtility';
-import { RequirementsFileRepository } from '../../utils/Repository/RequirementsFileRepository';
+import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 
 const UploadRequirementsPage = () => {  
     const [featureData, setFeatureData] = useState([]);
     const [fileTitle, setFileTitle] = useState();
     const [fileId, setFileId] = useState();
-    const [accordionTitle, setAccordionTitle] = useState("Upload or load requirements to begin");
 
     /**
      *  When a file is uploaded to table, set featureData to contain fileContents
@@ -25,8 +24,6 @@ const UploadRequirementsPage = () => {
             setFeatureData(jsonFileContents);
             await setFileTitle(fileMetadata.filename);
             await setFileId(fileMetadata.id); 
-            const title = `Requirements for ${fileTitle}-${fileId}`
-            setAccordionTitle(title);
         } catch (error) {
             console.error('Error processing the selected file', error);
         }
@@ -42,8 +39,6 @@ const UploadRequirementsPage = () => {
             setFeatureData(jsonFileContents);
             await setFileTitle(fileMetadata.filename);
             await setFileId(fileMetadata.id);
-            const title = `Requirements for ${fileTitle}-${fileId}`
-            setAccordionTitle(title);
         } catch (error) {
             console.error('Error processing the selected file', error);
         }
@@ -51,7 +46,7 @@ const UploadRequirementsPage = () => {
 
     const handleRequirementsEdit = async (fileId, recordId, editedData) => {
         try {
-            const repository = new RequirementsFileRepository();
+            const repository = new UserStoryFileRepository();
             let result = await repository.updateRecordInFile(fileId=fileId, recordId=recordId, editedData=editedData)
             console.log(result)
         } 
@@ -62,7 +57,7 @@ const UploadRequirementsPage = () => {
 
     const handleRequirementsAdd = async (fileId, newData) => {
         try {
-            const repository = new RequirementsFileRepository();
+            const repository = new UserStoryFileRepository();
             let result = await repository.addRecordToFile(fileId=fileId, newData=newData);
             console.log(result)
         } 
@@ -79,7 +74,7 @@ const UploadRequirementsPage = () => {
         handleRequirementsAdd={handleRequirementsAdd}>
         <AlertProvider>
             <Container> {/* Set maxWidth to false */}
-                <Typography variant='h3'>Requirements Uploader</Typography>
+                <Typography variant='h3'>User Story Uploader</Typography>
                 <hr></hr>
                 <Grid container spacing={0}> {/* Remove spacing */}
                     <Grid item xs={6} style={{ display: 'flex' }}> {/* Use half of the width */}
@@ -90,7 +85,7 @@ const UploadRequirementsPage = () => {
                     </Grid>
                 </Grid>
                 <Box mt={4}>
-                    <FeatureVisualizer title={accordionTitle} featureData={featureData} fileId={fileId} fileName={fileTitle} />
+                    <FeatureVisualizer featureData={featureData} fileId={fileId} fileName={fileTitle} />
                 </Box>
             </Container>
         </AlertProvider>

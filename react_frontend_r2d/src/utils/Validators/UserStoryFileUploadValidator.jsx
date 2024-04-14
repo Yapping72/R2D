@@ -1,7 +1,7 @@
 import FileUploadValidator from "./FileUploadValidator";
 import FileReaderUtility from '../FileReaders/FileReaderUtility'
 
-class RequirementsFileUploadValidator extends FileUploadValidator {
+class UserStoryFileUploadValidator extends FileUploadValidator {
     constructor(validExtensions = ['application/json', 'json'], maxFileSize = 15 * 1024 * 1024, maxLineCount = 1000) {
         super(validExtensions, maxFileSize, maxLineCount);
     }
@@ -99,4 +99,4 @@ class RequirementsFileUploadValidator extends FileUploadValidator {
         }
     }
 }
-export default RequirementsFileUploadValidator
+export default UserStoryFileUploadValidator

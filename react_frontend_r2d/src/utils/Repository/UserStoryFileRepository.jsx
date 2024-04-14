@@ -1,14 +1,14 @@
 import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
 import FileReaderUtility from '../FileReaders/FileReaderUtility';
-import RequirementsFileUploadValidator from '../Validators/RequirementFileUploadValidator';
+import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValidator';
 
 /*
 * Repository to retrieve and write requirements (JSON based)
 */
 
-export class RequirementsFileRepository extends GenericIndexedDBRepository {
+export class UserStoryFileRepository extends GenericIndexedDBRepository {
     constructor() {
-      super("r2d-requirements-db", "requirements-file-store");
+      super("r2d-user-story-db", "user-story-file-store");
     }
     
     // Retrieves data stored in IndexedDB by id
@@ -18,7 +18,7 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
             // console.log("File and Metadata retrieved:", result);
             return { success: true, data: result};
         } catch(error) {
-            console.error("Error retrieving requirements file from DB: ", error);
+            console.error("Error retrieving user story file from DB: ", error);
             return { success: false, error: error.message };
         }
     }
@@ -29,7 +29,7 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
             // console.log("All files retrieved", result);
             return { success: true, data: result};
         } catch(error) {
-            console.error("Error retrieving all requirements files from DB: ", error);
+            console.error("Error retrieving all user story files from DB: ", error);
             return { success: false, error: error.message };
         }
     }
@@ -39,7 +39,7 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
             const result = await this.writeFileAndMetadataToDB(file, metadata);
             return { success: true, data: result };
         } catch (error) {
-            console.error("Error writing requirements file and metadata to DB:", error);
+            console.error("Error writing to user story file and metadata to DB:", error);
             return { success: false, error: error.message };
         }
     }
@@ -56,7 +56,7 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
     
     // Takes in an updated file and updates the record in db
     async commitRecordToDb(id, updatedFile) {
-        const validator = new RequirementsFileUploadValidator();
+        const validator = new UserStoryFileUploadValidator();
         try {
             const validationResult = await validator.validate(updatedFile);
             if (validationResult.result === 'success') { 
