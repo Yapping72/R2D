@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { AlertProvider } from '../../components/common/Alerts/AlertContext';
 import {Box, Typography, Container, Grid} from "@mui/material";
-import RequirementsFileManagementModal from '../../components/common/Requirements/RequirementsFileManagementModal';
-import RequirementsTable from '../../components/common/Requirements/RequirementsTable';
-import FeatureVisualizer from '../../components/common/Requirements/FeatureVisualizer';
-import { RequirementsContextProvider } from '../../components/common/Requirements/RequirementsContextProvider';
+import UserStoryManagementModal from '../../components/common/UserStory/UserStoryManagementModal';
+import UserStoryTable from '../../components/common/UserStory/UserStoryTable';
+import FeatureVisualizer from '../../components/common/UserStory/FeatureVisualizer';
+import { UserStoryContextProvider } from '../../components/common/UserStory/UserStoryContextProvider';
 import FileReaderUtility from '../../utils/FileReaders/FileReaderUtility';
 import { RequirementsFileRepository } from '../../utils/Repository/RequirementsFileRepository';
 
@@ -60,20 +60,33 @@ const UploadRequirementsPage = () => {
         }
     };
 
+    const handleRequirementsAdd = async (fileId, newData) => {
+        try {
+            const repository = new RequirementsFileRepository();
+            let result = await repository.addRecordToFile(fileId=fileId, newData=newData);
+            console.log(result)
+        } 
+        catch (error) {
+            console.error("Error encountered while trying to save changes to requirements:", error);
+        }
+    }
+
     return (
-        <RequirementsContextProvider handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection} handleRequirementsEdit={handleRequirementsEdit}>
+        <UserStoryContextProvider 
+        handleFileUpload={handleFileUpload} 
+        handleFileSelection={handleFileSelection} 
+        handleRequirementsEdit={handleRequirementsEdit}
+        handleRequirementsAdd={handleRequirementsAdd}>
         <AlertProvider>
             <Container> {/* Set maxWidth to false */}
-                 <Box>
-                    <Typography variant='h3'>Requirements Uploader</Typography>
-                    <hr></hr>
-                </Box>
+                <Typography variant='h3'>Requirements Uploader</Typography>
+                <hr></hr>
                 <Grid container spacing={0}> {/* Remove spacing */}
                     <Grid item xs={6} style={{ display: 'flex' }}> {/* Use half of the width */}
-                        <RequirementsFileManagementModal style={{ flexGrow: 1 }} /> {/* Allow it to grow */}
+                        <UserStoryManagementModal style={{ flexGrow: 1 }} /> {/* Allow it to grow */}
                     </Grid>
                     <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}> {/* Align to the end */}
-                        <RequirementsTable style={{ flexGrow: 1 }} /> {/* Allow it to grow */}
+                        <UserStoryTable style={{ flexGrow: 1 }} /> {/* Allow it to grow */}
                     </Grid>
                 </Grid>
                 <Box mt={4}>
@@ -81,7 +94,7 @@ const UploadRequirementsPage = () => {
                 </Box>
             </Container>
         </AlertProvider>
-    </RequirementsContextProvider>
+    </UserStoryContextProvider>
     )
 }
 

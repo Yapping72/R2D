@@ -5,9 +5,9 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import EditRequirementCardDialog from '../Dialog/EditRequirementCardDialog';
+import EditUserStoryDialog from '../Dialog/EditUserStoryDialog';
 
-const RequirementsCard = ({ 
+const UserStoryCard = ({ 
   feature, 
   subFeature, 
   id, 
@@ -37,10 +37,10 @@ const RequirementsCard = ({
       handleRequirementsEdit(fileId, recordId, editedData);
   }
 
-  // Current implementation of handleSave only displays the changes on the RequirementsCard
+  // Updates the card information displayed and commits the changes to database
   const handleSave = (editedData) => {
     setCurrentFeature(editedData.feature);
-    setCurrentSubFeature(editedData.subFeature);
+    setCurrentSubFeature(editedData.sub_feature);
     setCurrentId(editedData.id);
     setCurrentRequirement(editedData.requirement);
     setCurrentServicesToUse(editedData.services_to_use);
@@ -79,7 +79,7 @@ const RequirementsCard = ({
           <Button size="small" onClick={handleEditClick}>Edit</Button>
         </CardActions>
       </Card>
-      <EditRequirementCardDialog
+      <EditUserStoryDialog
         open={isEditMode}
         handleClose={handleClose}
         feature={currentFeature}
@@ -94,4 +94,4 @@ const RequirementsCard = ({
   );
 };
 
-export default RequirementsCard;
+export default UserStoryCard;

@@ -13,7 +13,7 @@ import {Typography} from '@mui/material';
 /**
  * Dialog that enables editing of requirement cards used on Upload page
  */
-const EditRequirementCardDialog = ({ open, handleClose, feature, subFeature, id, requirement, services_to_use, handleSave, recordId }) => {
+const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requirement, services_to_use, handleSave, recordId }) => {
   const [editedFeature, setEditedFeature] = useState(feature);
   const [editedSubFeature, setEditedSubFeature] = useState(subFeature);
   const [editedId, setEditedId] = useState(id);
@@ -23,11 +23,11 @@ const EditRequirementCardDialog = ({ open, handleClose, feature, subFeature, id,
   const onSave = () => {
     handleSave({
       feature: editedFeature,
-      subFeature: editedSubFeature,
+      sub_feature: editedSubFeature,
       id: editedId,
       requirement: editedRequirement,
       services_to_use: editedServicesToUse,
-      recordId:recordId,
+      record_identifier:recordId,
     });
     handleClose();
   };
@@ -132,4 +132,4 @@ const EditRequirementCardDialog = ({ open, handleClose, feature, subFeature, id,
   );
 };
 
-export default EditRequirementCardDialog;
+export default EditUserStoryDialog;

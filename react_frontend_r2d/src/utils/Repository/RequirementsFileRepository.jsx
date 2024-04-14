@@ -58,8 +58,6 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
     async commitRecordToDb(id, updatedFile) {
         const validator = new RequirementsFileUploadValidator();
         try {
-            console.log("In commitRecordToDb")
-            console.log(updatedFile)
             const validationResult = await validator.validate(updatedFile);
             if (validationResult.result === 'success') { 
                 // Success: Store the file into db, append the generated id to fileMetadata
@@ -118,12 +116,49 @@ export class RequirementsFileRepository extends GenericIndexedDBRepository {
                 lastModified: new Date().getTime() 
             });
             
-            console.log(updatedBlobAsFile)
 
             // Use handleUpdateFileById to write the updated file back to the database
             const updateResponse = await this.commitRecordToDb(fileId, updatedBlobAsFile); 
 
-            console.log(updateResponse)
+            if (!updateResponse.success) {
+                throw new Error(updateResponse.error);
+            }
+            
+            return { success: true, message: 'Record updated successfully.' };
+        } 
+        catch (error) {
+            console.error('Error updating record in file:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async addRecordToFile(fileId, newData) {
+        try {
+            const fileResponse = await this.findById(fileId);
+            if (!fileResponse) {
+                throw new Error('File not found.');
+            }
+            
+            // Retrieve file contents and add newData to the file
+            const fileContent = await FileReaderUtility.readAsText(fileResponse.content); 
+            const jsonContent = JSON.parse(fileContent);
+            jsonContent.push(newData)
+
+            // Convert the JSON content back into a Blob
+            const updatedBlob = new Blob([JSON.stringify(jsonContent, null, 2)], {
+                type: 'application/json'
+            });
+
+
+            // Convert the Blob into a File Object properly
+            const updatedBlobAsFile = new File([updatedBlob], fileResponse.filename || "default-filename.json", {
+                type: 'application/json', 
+                lastModified: new Date().getTime() 
+            });
+            
+
+            // Use handleUpdateFileById to write the updated file back to the database
+            const updateResponse = await this.commitRecordToDb(fileId, updatedBlobAsFile); 
             if (!updateResponse.success) {
                 throw new Error(updateResponse.error);
             }

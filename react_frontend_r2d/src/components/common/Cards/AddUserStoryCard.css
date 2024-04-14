@@ -1,0 +1,21 @@
+/* styles.css */
+.add-requirement-card {
+    border-style: dashed;
+    border-width: 2px;
+    border-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 420px;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Smooth transition for transform effects */
+}
+
+.add-requirement-card:hover {
+    animation: wiggle 0.3s ease-in-out;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
