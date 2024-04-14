@@ -8,7 +8,7 @@ export class GenericIndexedDBRepository {
         this.dbName = dbName; // Name of the IndexedDB database
         this.storeName = storeName; // Name of the object store within the database
     }
- 
+   
     /**
      * Opens a connection to the IndexedDB database. If the database or object store does not exist, they are created.
      */
@@ -41,20 +41,6 @@ export class GenericIndexedDBRepository {
     }
 
     /**
-     * Writes data to the database.
-     * @param {*} data The data to be written to the database.
-     */
-    async writeToDb(data) {
-        const store = await this.initTransactionAndStore("readwrite");
-
-        return new Promise((resolve, reject) => {
-            const request = store.add(data);
-            request.onerror = (event) => reject(event.target.error);
-            request.onsuccess = () => resolve(request.result);
-        });
-    }
-
-    /**
      * Finds a record by its ID.
      * @param {number} id The ID of the record to find.
      */
@@ -67,10 +53,15 @@ export class GenericIndexedDBRepository {
             request.onsuccess = () => resolve(request.result);
         });
     }
-
-    /**
-     * Reads all files stored in the database.
-     */
+    /** 
+    * Retrieves all records from the specified object store within the database.
+    * This method initializes a transaction in "readonly" mode to ensure data integrity and prevent modifications during the read process.
+    * It accesses the object store and performs a getAll operation, which fetches every record stored.
+    * This operation is typically used for loading an entire dataset into memory when you need to display a list, perform batch operations, or when starting the application and populating initial data.
+    * 
+    * @returns {Promise<Array>} A promise that resolves with an array of all records in the object store if the operation is successful. 
+    * The promise rejects with an error if the operation fails, providing an error message detailing the cause of the failure.
+    */
     async readAllFiles() {
         const store = await this.initTransactionAndStore("readonly");
 
@@ -88,18 +79,34 @@ export class GenericIndexedDBRepository {
      */
     async writeFileAndMetadataToDB(file, metadata) {
         const store = await this.initTransactionAndStore("readwrite");
-
+    
         return new Promise((resolve, reject) => {
             // Combine metadata with the file content
             const fileRecord = { ...metadata, content: file };
             const request = store.add(fileRecord);
+    
             request.onerror = event => reject(event.target.error);
-            request.onsuccess = () => resolve(request.result);
+    
+            request.onsuccess = (event) => {
+                // Get the generated id from the event
+                const id = event.target.result;
+                
+                // Add the id to your metadata
+                const updatedMetadata = { ...metadata, id };
+                resolve(updatedMetadata);
+            };
         });
     }
 
     /**
-     * Clears all data from the database.
+     * Clears all data from the database's specified object store.
+     * This method initializes a transaction with "readwrite" permissions,
+     * accesses the designated object store, and performs a clear operation.
+     * This effectively removes all records within the store, resetting it to an empty state.
+     * This operation is useful for situations where you need to purge all existing data,
+     * such as resetting the application state or preparing the database for new data after significant schema changes.
+     * @returns {Promise<boolean>} A promise that resolves with true if the operation is successful,
+     * or rejects with an error if the operation fails.
      */
     async clearDB() {
         const store = await this.initTransactionAndStore("readwrite");
@@ -108,6 +115,32 @@ export class GenericIndexedDBRepository {
             const request = store.clear();
             request.onerror = (event) => reject(event.target.error);
             request.onsuccess = () => resolve(true);
+        });
+    }
+    /**
+     * Updates a record by its ID.
+     * @param {number} id The ID of the record to update.
+     * @param {Object} updatedFile The updated record data.
+     * @param {Object} updatedFileMetadata Metadata of the updatedfile
+     * @returns {Promise<Object>} A promise that resolves with the updated record data or rejects with an error.
+     */
+    async updateFileAndMetadataToDB(id, updatedFile, updatedFileMetadata) {
+        const store = await this.initTransactionAndStore("readwrite");
+
+        return new Promise((resolve, reject) => {
+            const fileRecord = { ...updatedFileMetadata, content: updatedFile, id: id };
+            console.log("In updateFileAndMetadataToDB")
+            console.log(fileRecord)
+            const request = store.put(fileRecord);
+
+            request.onerror = (event) => {
+                console.error("Error updating record by ID:", event.target.error);
+                reject(event.target.error);
+            };
+    
+            request.onsuccess = () => {
+                resolve({ ...updatedFile, id });
+            };
         });
     }
 }

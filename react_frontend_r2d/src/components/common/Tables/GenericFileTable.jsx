@@ -44,6 +44,7 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
   const [fileContent, setFileContent] = useState('');
   const [fileMetadata, setFileMetadata] = useState('');
   const { showAlert } = useAlert();
+  const [isVisible, setIsVisible] = useState(true); // manages visibility of table
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +60,7 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
   
   useEffect(() => {
     if (data.length > 0) {
-      const columnNames = Object.keys(data[0]).filter(key => key !== "content"); // Assuming you want to exclude 'content' from columns
+      const columnNames = Object.keys(data[0]).filter(key => key !== "content");
       setColumns(columnNames);
     }
   }, [data]); 
@@ -96,24 +97,12 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
       setFileContent('');
   };
 
-  const handleRefresh = async () => {
-    try {
-      const response = await repository.handleReadAllFiles();
-      if (response.success) {
-        setData(response.data); 
-      } else {
-        showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
-      }
-    } catch (error) {
-      showAlert('error', `An error occurred while refreshing. Please try again.`);
-    }
-  };
-
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   return (
-    <Paper>
-    <TableContainer sx={{ maxHeight: '70vh', overflow: 'auto' }}>
+  <>
+  <Paper sx={{ border: '1.5px solid #e0e0e0', borderRadius: '5px', minHeight: data.length >= rowsPerPage ? 'auto' : 'calc(10px * 47.5)' }}>
+    <TableContainer sx={{ maxHeight: '70vh', overflow: 'auto'}}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -124,7 +113,7 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
                   sortDirection={orderBy === column ? order : false}
                   sx={{
                     fontWeight: 'bold',
-                    fontSize: '20px', // Adjust to your needs
+                    fontSize: '20px', // Set column name size
                   }}
                 >
                   <TableSortLabel
@@ -152,7 +141,14 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
                       key={row.id}
                       onClick={() => handleOpenDialog(row.id)}>
                         {columns.map((column) => {
-                          const value = row[column];
+                          let value = row[column];
+
+                          // Check if the value is a Set or List
+                          if (Array.isArray(value) || value instanceof Set) {
+                            // Convert the set/list to a string delimited by commas
+                            value = Array.from(value).join(', ');
+                          }
+
                           return (
                             <TableCell key={column} align="center">
                               {value}
@@ -198,6 +194,7 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
         handleFileSelection={handleFileSelection}
       />
  </Paper>
+</>
   );
 };
 

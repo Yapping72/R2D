@@ -30,6 +30,11 @@ export const mermaidExamples = [
     }
   ];
 
+  /**
+   * Contains the list of predefined examples
+   * Allows user to choose and load their examples
+   * A default diagram is loaded whenever the visualize page is rendered
+   */
   const MermaidTemplatesAccordion = ({ onExampleSelect }) => {
     const handleExampleSelect = (content) => {
       if (onExampleSelect) {

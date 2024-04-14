@@ -17,6 +17,14 @@ import ReadOnlyEditor from '../Tables/ReadOnlyEditor';
  */
 
 const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFileSelection}) => {
+  // Triggers the handleFileSelection function and also closes the dialog.
+  const handleSelectAndClose = () => {
+    if(handleFileSelection) {
+      handleFileSelection(fileContent, fileMetadata);
+    }
+    onClose()
+  };
+
   return (
     <Dialog 
       open={open} 
@@ -32,9 +40,7 @@ const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFil
         </Box>
       </DialogContent>
       <DialogActions>
-        {handleFileSelection && (
-            <Button onClick={() => handleFileSelection(fileContent)}>Select</Button>
-          )}
+        <Button onClick={handleSelectAndClose}>Select</Button>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>

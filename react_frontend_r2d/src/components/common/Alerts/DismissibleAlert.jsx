@@ -22,7 +22,7 @@ export function DismissibleAlert({ severity, message }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             setVisible(false);
-        }, 8000); // In milliseconds
+        }, 5000); // In milliseconds
 
         return () => clearTimeout(timer);
     }, []);
@@ -33,7 +33,7 @@ export function DismissibleAlert({ severity, message }) {
 
     return (
     <Alert variant="filled" severity={severity} onClose={handleClose}> 
-    {message}
+        {message}
     </Alert>
     );
 }

@@ -4,13 +4,37 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import './DragDropFileUpload.css'
 import { useAlert } from '../Alerts/AlertContext';
 
-/*
-* Component that supports uploading of files via Drag and Drop or Click features.
-* When a file dropped in, validation is performed, if all validation passes, file is stored in IndexedDb.
-* Components that use this DragDropFile component must implement their own handleFileUpload callback function
-*/
+/**
+ * A drag-and-drop file upload component. It supports uploading files by either dragging them into
+ * the drop zone or clicking to select files. The component validates files against provided criteria
+ * and stores valid files using the provided repository.
+ * 
+ * Props:
+ * - title: Display text for the upload area. Default is "Drag and drop files here".
+ * - validator: An object that provides file validation methods.
+ * - repository: An object for storing valid files, expected to have a method for writing files and their metadata to a database.
+ * - handleFileUpload: A callback function that is invoked after a file passes validation and is stored.
+ * - IconComponent: A React component to be used as the upload icon. Default is FileUploadIcon from MUI.
+ * - handleFilePreProcessing: Optional function that will be invoked to do preprocessing actions e.g., adding record identifiers to requirements 
+ * 
+ * The `validator` prop must provide:
+ *   - getValidExtensions(): Returns an array of supported file extensions.
+ *   - getMaxFileSize(): Returns the maximum file size in bytes.
+ *   - validate(file): Returns a promise that resolves with a validation result object.
+ *   - getMaxLineCount(): Returns the maximum number of lines allowed in a file.
+ * 
+ * The `repository` prop must provide:
+ *   - handleWriteFileAndMetadataToDB(file, metadata): Stores the file and its metadata.
+ */
 
-const DragDropFile = ({ title = "Drag and drop files here", validator, repository, handleFileUpload = () => {}, IconComponent=FileUploadIcon}) => {
+const DragDropFile = ({ 
+  title = "Drag and drop files here", 
+  validator, 
+  repository, 
+  handleFileUpload = () => {}, 
+  handleFilePreProcessing = (file) => {return file},
+  IconComponent=FileUploadIcon}) => {
+
   const [dragActive, setDragActive] = React.useState(false);
   const inputRef = React.useRef(null);
   const { showAlert } = useAlert();
@@ -72,11 +96,13 @@ const DragDropFile = ({ title = "Drag and drop files here", validator, repositor
       try {
         const validationResult = await validator.validate(file);
         if (validationResult.result === 'success') {
-          // Success: Store the file into db 
-          repository.handleWriteFileAndMetadataToDB(file, validationResult.file_metadata);
+          // Success: Store the file into db, append the generated id to filemetadata
+          let processed_file = await handleFilePreProcessing(file); // Optionally perform any preprocessing as required
+          const result = await repository.handleWriteFileAndMetadataToDB(processed_file, validationResult.file_metadata);
+          validationResult.file_metadata.id = result.data.id
           showAlert('success', `Your file ${validationResult.file_metadata.filename} has been uploaded successfully.`)
           // Returns the file to the callback function
-          handleFileUpload(file); 
+          handleFileUpload(processed_file, validationResult.file_metadata); 
         } else {
           // Failure: log the message and alert the user
           showAlert('error', `Your file could not be uploaded. Please check that the file meets uploading requirements.`)

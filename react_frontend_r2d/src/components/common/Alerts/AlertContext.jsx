@@ -29,7 +29,7 @@ export const AlertProvider = ({ children }) => {
     setAlert({ severity, message });
     setTimeout(() => {
       setAlert(null);
-    }, 8000); // Duration in ms to display alert 
+    }, 5000); // Duration in ms to display alert 
   };
 
   return (

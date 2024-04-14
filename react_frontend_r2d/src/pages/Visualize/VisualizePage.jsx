@@ -32,7 +32,7 @@ const VisualizePage = () => {
     };
     
     // Defines the actions to take when a file is uploaded to the MermaidFileManagementAccordion (DragDropComponent)
-    const  handleFileUpload = async (file) => {
+    const  handleFileUpload = async (file, file_metadata) => {
       // Callback function that will read the file 
       const fileContents = await FileReaderUtility.readAsText(file);  
       setMermaidCode(fileContents)

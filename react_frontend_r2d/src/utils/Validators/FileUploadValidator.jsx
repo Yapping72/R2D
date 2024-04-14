@@ -1,9 +1,10 @@
 /**
  * FileUploadValidator class.
- * This utility class provides static methods for validating files based on their extensions,
+ * This generic utility class provides static methods for validating files based on their extensions,
  * size, and line count. By default it supports .json, .mermaid, and .txt files, enforces a maximum file size of 15 MB,
  * and restricts files to a maximum of 1000 lines. Validation results are returned in a structured format,
  * indicating success or failure along with relevant metadata or error messages.
+ * Inheriting classes can augment the validate function by invoking the base functions here and any other validation it requires
  */
 
 class FileUploadValidator {
@@ -12,7 +13,7 @@ class FileUploadValidator {
         this.maxFileSize = maxFileSize;
         this.maxLineCount = maxLineCount;
     }
-    
+
     getValidExtensions() {
         return this.validExtensions.map(ext => `.${ext}`).join(", ");
     }
@@ -32,10 +33,10 @@ class FileUploadValidator {
      */
     getFileMetadata(file) {
         return {
-            filename: file.name,
-            type: file.type,
-            size: file.size,
-            lines: null,
+            "filename": file.name,
+            "type": file.type,
+            "size": `${file.size} bytes`,
+            "lines": null,
         };
     }
 
@@ -46,6 +47,8 @@ class FileUploadValidator {
     */
     validateFileExtension(file) {
         const extension = file.name.split('.').pop().toLowerCase();
+        console.log(extension)
+        console.log(this.validExtensions)
         return this.validExtensions.includes(extension);
     }
 
@@ -65,7 +68,7 @@ class FileUploadValidator {
      */
     async validateLineCount(file) {
         const reader = new FileReader();
-
+        
         return new Promise((resolve) => {
             reader.onload = (e) => {
                 const text = e.target.result;
@@ -83,23 +86,38 @@ class FileUploadValidator {
      * @returns {Promise<Object>} - A promise that resolves with an object indicating validation success or failure, along with relevant data.
      */
     async validate(file) {
-        if (!this.validateFileExtension(file)) {
-            return { result: 'fail', message: 'Invalid file extension' };
+        console.log("File to validate:", file);
+        if (!file) {
+            console.error("No file provided for validation");
+            return { result: 'fail', message: `An error occurred during file validation: No file was provided}` };
         }
 
-        if (!this.validateFileSize(file)) {
-            return { result: 'fail', message: 'File size exceeds limit' };
+        try {
+            if (!this.validateFileExtension(file)) {
+                console.error("File validation failed: Invalid file extension");
+                return { result: 'fail', message: 'Invalid file extension' };
+            }
+
+            if (!this.validateFileSize(file)) {
+                console.error("File validation failed: File size exceeds limit");
+                return { result: 'fail', message: 'File size exceeds limit' };
+            }
+
+            const lineCount = await this.validateLineCount(file);
+            if (lineCount === false) {
+                console.error("File validation failed: File has too many lines");
+                return { result: 'fail', message: 'File has too many lines' };
+            }
+
+            const fileMetadata = this.getFileMetadata(file);
+            fileMetadata.lines = lineCount; 
+            return { result: 'success', file_metadata: fileMetadata };
         }
-
-        const lineCount = await this.validateLineCount(file);
-        if (lineCount === false) {
-            return { result: 'fail', message: 'File has too many lines' };
+        catch (error) {
+            console.error('Error validating file:', error);
+            // Return a structured error message to indicate a failure in the validation process
+            return { result: 'fail', message: `An error occurred during file validation: ${error.message}` };
         }
-
-        const fileMetadata = this.getFileMetadata(file);
-        fileMetadata.lines = lineCount; 
-
-        return { result: 'success', file_metadata: fileMetadata };
     }
 }
 

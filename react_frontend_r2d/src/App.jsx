@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+
 // Add pages here
 import Layout from './components/common/Layout/Layout.jsx';
 import HomePage from './pages/Home/HomePage.jsx';
