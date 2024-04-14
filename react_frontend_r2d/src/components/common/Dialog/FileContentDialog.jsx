@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogActions, DialogContent, Button, Box, Typography } from '@mui/material';
 import ReadOnlyEditor from '../Tables/ReadOnlyEditor';
-
+import FileDownloadUtility from '../../../utils/FileHandling/FileDownloaderUtility';
 
 /**
  * Dialog component to display the content of a Mermaid file and allow selection.
@@ -16,7 +16,13 @@ import ReadOnlyEditor from '../Tables/ReadOnlyEditor';
  * @param {Function} props.handleFileSelection - Callback to invoke when a file is selected
  */
 
-const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFileSelection}) => {
+const FileContentDialog = ({ 
+  open, 
+  onClose, 
+  fileContent, 
+  fileMetadata, 
+  handleFileSelection}) => {
+  
   // Triggers the handleFileSelection function and also closes the dialog.
   const handleSelectAndClose = () => {
     if(handleFileSelection) {
@@ -25,6 +31,23 @@ const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFil
     onClose()
   };
 
+  const handleDownload = (fileContent, fileMetadata) => {
+    console.log(fileMetadata)
+    switch (fileMetadata.type) {
+      case 'application/json':
+        FileDownloadUtility.downloadJson(fileContent, fileMetadata.filename);
+        break;
+      case 'text/plain':
+        FileDownloadUtility.downloadTxt(fileContent, fileMetadata.filename);
+        break;
+      case 'text/plain':
+        FileDownloadUtility.downloadMd(fileContent,fileMetadata.filename);
+        break;
+      default:
+        console.error('Unsupported file type');
+    }
+  }
+
   return (
     <Dialog 
       open={open} 
@@ -32,7 +55,7 @@ const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFil
       aria-labelledby="file-content-title"
     >
       <DialogContent>
-        <Box sx={{width:"30vw", height:"45vh", overflow:"hidden"}}>
+        <Box sx={{width:"40vw", height:"60vh", overflow:"hidden"}}>
           <Typography variant="h6" sx={{textAlign:"center"}}>{fileMetadata.filename}</Typography>
           <hr></hr>
           <ReadOnlyEditor fileExtension={fileMetadata.type} fileContents={fileContent}></ReadOnlyEditor>
@@ -40,6 +63,7 @@ const FileContentDialog = ({ open, onClose, fileContent, fileMetadata, handleFil
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button onClick={() => handleDownload(fileContent, fileMetadata)}>Download</Button>
         <Button onClick={handleSelectAndClose}>Select</Button>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>

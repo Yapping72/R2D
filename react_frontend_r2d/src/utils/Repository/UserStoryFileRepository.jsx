@@ -1,5 +1,5 @@
 import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
-import FileReaderUtility from '../FileReaders/FileReaderUtility';
+import FileReaderUtility from '../FileHandling/FileReaderUtility';
 import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValidator';
 
 /*

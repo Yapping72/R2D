@@ -19,9 +19,9 @@ const AccountPortalPage = () => {
                 {isLoginForm ? <TypingAnimation text = "Start Designing" variant='h4'></TypingAnimation> : <TypingAnimation text = "Create your R2D Account" variant='h4'></TypingAnimation> }
             </Typography>
             <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
-                <LockOutlined color="action" />
-                <Switch checked={isLoginForm} onChange={handleToggle} />
                 <AppRegistrationIcon color="action" />
+                <Switch checked={isLoginForm} onChange={handleToggle} />
+                <LockOutlined color="action" />
             </Stack>
             {/* Form Container with reduced margin */}
             <Box sx={{ width: '100%', mt: -8, transition: 'transform 0.3s' }}>

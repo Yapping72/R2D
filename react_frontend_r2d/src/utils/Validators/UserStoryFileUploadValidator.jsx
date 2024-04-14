@@ -1,5 +1,5 @@
 import FileUploadValidator from "./FileUploadValidator";
-import FileReaderUtility from '../FileReaders/FileReaderUtility'
+import FileReaderUtility from '../FileHandling/FileReaderUtility'
 
 class UserStoryFileUploadValidator extends FileUploadValidator {
     constructor(validExtensions = ['application/json', 'json'], maxFileSize = 15 * 1024 * 1024, maxLineCount = 1000) {

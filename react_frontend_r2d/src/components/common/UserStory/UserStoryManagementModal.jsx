@@ -4,7 +4,7 @@ import UserStoryFileUploadValidator from '../../../utils/Validators/UserStoryFil
 import { UserStoryFileRepository } from "../../../utils/Repository/UserStoryFileRepository";
 import R2DModal from '../Modals/R2DModal';
 import { useUserStoryContext } from './UserStoryContextProvider';
-import FileReaderUtility from '../../../utils/FileReaders/FileReaderUtility';
+import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
 import ClearIndexedDbButton from '../../ui/Button/ClearIndexedDbButton';
 import { v4 as uuidv4 } from 'uuid';
 
