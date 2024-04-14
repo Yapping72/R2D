@@ -32,9 +32,27 @@ class FileUploadValidator {
      * @returns An object containing initial metadata (lines set to null, size, filename, and file type).
      */
     getFileMetadata(file) {
+        // Function to determine the file type based on the extension if the MIME type is not available
+        const inferFileType = (filename) => {
+            const extension = filename.split('.').pop().toLowerCase();
+            switch(extension) {
+                case 'md':
+                    return 'text/markdown';
+                case 'txt':
+                    return 'text/plain';
+                case 'json':
+                    return 'application/json';
+                default:
+                    return 'unknown';  // You can expand this switch case for other file types
+            }
+        };
+    
+        // Determine the file type, preferring the MIME type if available
+        const fileType = file.type || inferFileType(file.name);
+    
         return {
             "filename": file.name,
-            "type": file.type,
+            "type": fileType,
             "size": `${file.size} bytes`,
             "lines": null,
         };

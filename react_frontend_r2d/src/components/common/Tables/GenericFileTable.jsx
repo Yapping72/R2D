@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography} from '@mui/material';
-import FileReaderUtility from '../../../utils/FileReaders/FileReaderUtility';
+import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
 import FileContentDialog from '../Dialog/FileContentDialog';
 import { useAlert } from '../Alerts/AlertContext';
 

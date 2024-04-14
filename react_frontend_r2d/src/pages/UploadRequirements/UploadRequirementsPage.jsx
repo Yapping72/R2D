@@ -5,7 +5,7 @@ import UserStoryManagementModal from '../../components/common/UserStory/UserStor
 import UserStoryTable from '../../components/common/UserStory/UserStoryTable';
 import FeatureVisualizer from '../../components/common/UserStory/FeatureVisualizer';
 import { UserStoryContextProvider } from '../../components/common/UserStory/UserStoryContextProvider';
-import FileReaderUtility from '../../utils/FileReaders/FileReaderUtility';
+import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 
 const UploadRequirementsPage = () => {  

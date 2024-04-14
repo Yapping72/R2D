@@ -9,7 +9,7 @@ import MermaidFileManagementAccordion from '../../components/common/Mermaid/Merm
 import { MermaidContextProvider } from '../../components/common/Mermaid/MermaidContextProvider';
 import { AlertProvider } from '../../components/common/Alerts/AlertContext';
 import { mermaidExamples } from '../../components/common/Mermaid/MermaidTemplatesAccordion';
-import FileReaderUtility from '../../utils/FileReaders/FileReaderUtility';
+import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import './VisualizePage.css'
 
 const VisualizePage = () => {
