@@ -129,8 +129,6 @@ export class GenericIndexedDBRepository {
 
         return new Promise((resolve, reject) => {
             const fileRecord = { ...updatedFileMetadata, content: updatedFile, id: id };
-            console.log("In updateFileAndMetadataToDB")
-            console.log(fileRecord)
             const request = store.put(fileRecord);
 
             request.onerror = (event) => {

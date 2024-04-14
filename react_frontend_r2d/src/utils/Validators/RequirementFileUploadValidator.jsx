@@ -10,8 +10,6 @@ class RequirementsFileUploadValidator extends FileUploadValidator {
     async validateJsonKeysAndGetMetadata(file) {
         const contentAsString = await FileReaderUtility.readAsText(file);
         const contentAsJson = JSON.parse(contentAsString);
-    
-        console.log(contentAsString)
 
         // Ensure word limits
         const maxWordsFeature = 15; // Example limit for 'feature'

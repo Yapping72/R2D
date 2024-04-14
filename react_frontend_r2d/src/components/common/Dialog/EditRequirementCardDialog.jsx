@@ -23,11 +23,11 @@ const EditRequirementCardDialog = ({ open, handleClose, feature, subFeature, id,
   const onSave = () => {
     handleSave({
       feature: editedFeature,
-      subFeature: editedSubFeature,
+      sub_feature: editedSubFeature,
       id: editedId,
       requirement: editedRequirement,
       services_to_use: editedServicesToUse,
-      recordId:recordId,
+      record_identifier:recordId,
     });
     handleClose();
   };

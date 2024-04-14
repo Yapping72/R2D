@@ -47,8 +47,6 @@ class FileUploadValidator {
     */
     validateFileExtension(file) {
         const extension = file.name.split('.').pop().toLowerCase();
-        console.log(extension)
-        console.log(this.validExtensions)
         return this.validExtensions.includes(extension);
     }
 
@@ -86,7 +84,6 @@ class FileUploadValidator {
      * @returns {Promise<Object>} - A promise that resolves with an object indicating validation success or failure, along with relevant data.
      */
     async validate(file) {
-        console.log("File to validate:", file);
         if (!file) {
             console.error("No file provided for validation");
             return { result: 'fail', message: `An error occurred during file validation: No file was provided}` };

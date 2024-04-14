@@ -60,8 +60,23 @@ const UploadRequirementsPage = () => {
         }
     };
 
+    const handleRequirementsAdd = async (fileId, newData) => {
+        try {
+            const repository = new RequirementsFileRepository();
+            let result = await repository.addRecordToFile(fileId=fileId, newData=newData);
+            console.log(result)
+        } 
+        catch (error) {
+            console.error("Error encountered while trying to save changes to requirements:", error);
+        }
+    }
+
     return (
-        <RequirementsContextProvider handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection} handleRequirementsEdit={handleRequirementsEdit}>
+        <RequirementsContextProvider 
+        handleFileUpload={handleFileUpload} 
+        handleFileSelection={handleFileSelection} 
+        handleRequirementsEdit={handleRequirementsEdit}
+        handleRequirementsAdd={handleRequirementsAdd}>
         <AlertProvider>
             <Container> {/* Set maxWidth to false */}
                  <Box>

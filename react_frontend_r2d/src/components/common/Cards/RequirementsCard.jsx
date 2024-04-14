@@ -37,10 +37,10 @@ const RequirementsCard = ({
       handleRequirementsEdit(fileId, recordId, editedData);
   }
 
-  // Current implementation of handleSave only displays the changes on the RequirementsCard
+  // Updates the card information displayed and commits the changes to database
   const handleSave = (editedData) => {
     setCurrentFeature(editedData.feature);
-    setCurrentSubFeature(editedData.subFeature);
+    setCurrentSubFeature(editedData.sub_feature);
     setCurrentId(editedData.id);
     setCurrentRequirement(editedData.requirement);
     setCurrentServicesToUse(editedData.services_to_use);
