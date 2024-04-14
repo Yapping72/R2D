@@ -2,6 +2,7 @@ import React from 'react';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import {Container, Box} from "@mui/material";
+import { AlertProvider } from '../Alerts/AlertContext.jsx';
 const Layout = ({ children }) => {
   return (
     <Box sx={{
@@ -15,7 +16,9 @@ const Layout = ({ children }) => {
         p: 1, // padding inside the container
         width: '95%', // full width of the parent
       }}>
+      <AlertProvider>
         {children}
+      </AlertProvider>
       </Container>
       <Footer />
     </Box>

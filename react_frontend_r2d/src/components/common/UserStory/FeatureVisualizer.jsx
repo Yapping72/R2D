@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import UserStoryCardGrid from '../Cards/UserStoryCardGrid'
 import {Container} from '@mui/material'
 
@@ -18,7 +19,6 @@ import {Container} from '@mui/material'
  */
 
 const FeatureVisualizer = ({featureData=[], fileId})=> {
-    
     return (
         <Container>  
         <UserStoryCardGrid featureData={featureData} fileId={fileId}></UserStoryCardGrid>

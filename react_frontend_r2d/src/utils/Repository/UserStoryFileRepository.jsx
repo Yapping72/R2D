@@ -170,5 +170,58 @@ export class UserStoryFileRepository extends GenericIndexedDBRepository {
             return { success: false, error: error.message };
         }
     }
+
+    async deleteRecordInFile(fileId, recordId) {
+        try {
+            const fileResponse = await this.findById(fileId);
+            if (!fileResponse) {
+                throw new Error('File not found.');
+            }
+            
+            // Parse the file content and find the record to update
+            const fileContent = await FileReaderUtility.readAsText(fileResponse.content); 
+            const jsonContent = JSON.parse(fileContent);
+            let recordDeleted = false;
+            
+            // Filter record to delete out
+            const updatedJsonContent = jsonContent.filter(record => {
+                if (record.record_identifier === recordId) {
+                    recordDeleted = true;
+                    return false; // Exclude the record with matching recordId
+                }
+                return true; // Include all other records with different recordId
+            });
+    
+            // If the record with the provided identifier was not found, throw an error
+            if (!recordDeleted) {
+                throw new Error('Record to delete not found.');
+            }
+
+            // Convert the updated JSON content back into a Blob
+            const updatedBlob = new Blob([JSON.stringify(updatedJsonContent, null, 2)], {
+                type: 'application/json'
+            });
+
+
+            // Convert the Blob into a File Object properly
+            const updatedBlobAsFile = new File([updatedBlob], fileResponse.filename || "default-filename.json", {
+                type: 'application/json', 
+                lastModified: new Date().getTime() 
+            });
+            
+            // Use handleUpdateFileById to write the updated file back to the database
+            const updateResponse = await this.commitRecordToDb(fileId, updatedBlobAsFile); 
+
+            if (!updateResponse.success) {
+                throw new Error(updateResponse.error);
+            }
+            
+            return { success: true, message: 'Record deleted successfully.' };
+        } 
+        catch (error) {
+            console.error('Error deleting record in file:', error);
+            return { success: false, error: error.message };
+        }
+    }
 }
   
