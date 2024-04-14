@@ -17,7 +17,7 @@ import {Container} from '@mui/material'
  * @returns {ReactElement} The `FeatureVisualizer` component with a `R2DAccordion` and `RequirementsCardGrid`.
  */
 
-const FeatureVisualizer = ({title = "Upload User Stories to Begin", featureData=[], fileId})=> {
+const FeatureVisualizer = ({featureData=[], fileId})=> {
     
     return (
         <Container>  
