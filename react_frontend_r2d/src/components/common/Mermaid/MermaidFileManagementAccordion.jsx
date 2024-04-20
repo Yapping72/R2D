@@ -20,8 +20,8 @@ const MermaidFileManagementAccordion = () => {
              ></DragDropFileUpload>
              <p></p>
              <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-             <MermaidTable handleFileSelection={handleFileSelection}></MermaidTable>
-             <ClearIndexedDbButton repository={new MermaidFileRepository()}></ClearIndexedDbButton>
+                <MermaidTable handleFileSelection={handleFileSelection}></MermaidTable>
+                <ClearIndexedDbButton repository={new MermaidFileRepository()}></ClearIndexedDbButton>
              </Box>
         </R2DAccordion>
     )

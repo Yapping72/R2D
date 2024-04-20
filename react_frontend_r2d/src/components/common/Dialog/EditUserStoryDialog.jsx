@@ -12,14 +12,28 @@ import {Typography} from '@mui/material';
 
 /**
  * Dialog that enables editing of requirement cards used on Upload page
+ * Note that keys have to match the one in json file
  */
-const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requirement, services_to_use, handleSave, recordId }) => {
+const EditUserStoryDialog = ({ 
+  open, 
+  handleClose, 
+  feature, 
+  subFeature, 
+  id, 
+  requirement, 
+  services_to_use, 
+  acceptance_criteria,
+  additional_information,
+  handleSave, 
+  recordId }) => {
   const [editedFeature, setEditedFeature] = useState(feature);
   const [editedSubFeature, setEditedSubFeature] = useState(subFeature);
   const [editedId, setEditedId] = useState(id);
   const [editedRequirement, setEditedRequirement] = useState(requirement);
   const [editedServicesToUse, setEditedServicesToUse] = useState(services_to_use || []);
-  
+  const [editedAcceptanceCriteria, setEditedAcceptanceCriteria] = useState(acceptance_criteria);
+  const [editedAdditionalInformation, setEditedAdditionalInformation] = useState(additional_information);
+
   const onSave = () => {
     handleSave({
       feature: editedFeature,
@@ -28,6 +42,8 @@ const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requi
       requirement: editedRequirement,
       services_to_use: editedServicesToUse,
       record_identifier:recordId,
+      acceptance_criteria:editedAcceptanceCriteria,
+      additional_information:editedAdditionalInformation,
     });
     handleClose();
   };
@@ -62,6 +78,7 @@ const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requi
           InputLabelProps={{
               style: { fontSize: '1.5rem' }, 
           }}
+          required
         />
         <TextField
           margin="dense"
@@ -74,6 +91,7 @@ const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requi
           InputLabelProps={{
               style: { fontSize: '1.5rem' }, 
           }}
+          required
         />
         <TextField
           margin="dense"
@@ -100,6 +118,7 @@ const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requi
           InputLabelProps={{
               style: { fontSize: '1.5rem' }, 
           }}
+          required
         />
         <div>
         <br></br>
@@ -123,6 +142,34 @@ const EditUserStoryDialog = ({ open, handleClose, feature, subFeature, id, requi
             <AddCircleOutlineIcon />
           </IconButton>
         </div>
+        <TextField
+          margin="dense"
+          label="Acceptance Criteria"
+          type="text"
+          fullWidth
+          variant="standard"
+          multiline
+          rows={3}
+          value={editedAcceptanceCriteria}
+          onChange={(e) => setEditedAcceptanceCriteria(e.target.value)}
+          InputLabelProps={{
+              style: { fontSize: '1.5rem' }, 
+          }}
+        />
+        <TextField
+          margin="dense"
+          label="Additional information"
+          type="text"
+          fullWidth
+          variant="standard"
+          multiline
+          rows={3}
+          value={editedAdditionalInformation}
+          onChange={(e) => setEditedAdditionalInformation(e.target.value)}
+          InputLabelProps={{
+              style: { fontSize: '1.5rem' }, 
+          }}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

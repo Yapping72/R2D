@@ -7,14 +7,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: hsla(0, 0%, 96%, 1); /* Light gray background */
-  border: 4px dashed black;
-  border-radius: 8px;
-  box-shadow: 3;
+  background-color: hsl(0, 0%, 0%); /* Full black */
+  border: 1.5px dashed #90caf9; /* Light baby blue */
+  border-radius: 1px;
+  box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
 }
 
 .drag-drop-container:hover {
-  background-color: hsla(0, 0%, 86%, 1); /* Light gray background */
+  background-color: hsl(0, 0%, 7%); /* Slightly lighter black */
+  border: 3px solid #90caf9; /* Light baby blue */
 }
 
 .form-file-upload {
@@ -37,36 +38,29 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: #fff; 
 }
 
 .label-file-upload.drag-active {
-  background-color: hsla(0, 0%, 90%, 1); /* Slightly darker gray when active */
+  background-color: hsl(249, 71%, 22%); /* Slightly darker gray when active */
 }
 
 .upload-button {
   min-width: 0;
   padding: 10px;
-  background-color: #333;
   border-radius: 50%;
   color: white;
   margin-bottom: 10px;
 }
 
-.upload-button:hover {
-  background-color: #444;
-}
-
 .upload-instructions {
-  color: #555;
+  color: #fff;
   margin-bottom: 10px;
 }
 
 .supported-file-types {
-  color: #555;
+  color: #fff;
   margin-bottom: 10px;
 }
 
 
-.cloud-upload-icon:hover{
-  color: #555;
-}

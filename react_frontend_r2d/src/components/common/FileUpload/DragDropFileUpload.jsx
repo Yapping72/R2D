@@ -16,6 +16,7 @@ import { useAlert } from '../Alerts/AlertContext';
  * - handleFileUpload: A callback function that is invoked after a file passes validation and is stored.
  * - IconComponent: A React component to be used as the upload icon. Default is FileUploadIcon from MUI.
  * - handleFilePreProcessing: Optional function that will be invoked to do preprocessing actions e.g., adding record identifiers to requirements 
+ * - additionalValidationInfo: Optional array of strings or objects containing additional validation rules.
  * 
  * The `validator` prop must provide:
  *   - getValidExtensions(): Returns an array of supported file extensions.
@@ -28,12 +29,14 @@ import { useAlert } from '../Alerts/AlertContext';
  */
 
 const DragDropFile = ({ 
-  title = "Drag and drop files here", 
+  title = "Drop and files here or click to browse and upload.", 
   validator, 
   repository, 
   handleFileUpload = () => {}, 
   handleFilePreProcessing = (file) => {return file},
-  IconComponent=FileUploadIcon}) => {
+  IconComponent=FileUploadIcon,
+  additionalValidationInfo = []}
+  ) => {
 
   const [dragActive, setDragActive] = React.useState(false);
   const inputRef = React.useRef(null);
@@ -119,6 +122,19 @@ const DragDropFile = ({
       }
     });
   };
+  const renderValidationInfo = () => {
+    // Get the base validation information
+    const baseInfo = [
+      `Files cannot be larger than ${formatFileSize()}`,
+      `Supported file types: ${getSupportedFileTypes()}`, 
+      `Files must not contain more than ${getSupportedMaxLines()} lines`
+    ];
+
+    // Combine base info with any additional info provided via props
+    return [...baseInfo, ...additionalValidationInfo].map((info, index) => (
+      <li key={index}>{info}</li>
+    ));
+  };
 
   return (
     <Container className="drag-drop-container">
@@ -133,11 +149,7 @@ const DragDropFile = ({
               {title}
             </Typography>
             <Typography component="div" className="supported-file-types">
-              <ul>
-                <li>Files cannot not be larger than <b>{formatFileSize()}</b></li>
-                <li>Supported file types: <b>{getSupportedFileTypes()}</b></li>
-                <li>Files must not contain more than <b>{getSupportedMaxLines()} lines</b></li>
-              </ul>
+              <ul>{renderValidationInfo()}</ul>
             </Typography>
           </label>
         </form>

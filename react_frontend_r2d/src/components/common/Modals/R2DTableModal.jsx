@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Modal, Box, Button } from '@mui/material';
 
-// Adjust your style object to center the Box within the modal
 const style = {
   position: 'absolute',
   top: '50%',
@@ -15,7 +14,7 @@ const style = {
 
 /**
  * Button excepts either a title, a icon or both
- * @param {string} title - Title that will be displayed on the button to open the modal
+ * @param {string} title - Title that will be displayed on the button to open the modal, Modal displayed takes up 80% viewport width
  * @param {icon} icon - MUI icon to be displayed on the button 
  * @returns 
  */
@@ -26,10 +25,17 @@ const R2DTableModal = ({children, title="R2DTableModal", icon=null}) => {
 
   return (
     <>
-      <Button variant="outlined" onClick={handleOpen} startIcon={icon}>
-      {title && <Typography>{title}</Typography>}
+      <Button 
+      variant="outlined" 
+      onClick={handleOpen} 
+      startIcon={icon}>
+      {title && <Typography variant='p'>{title}</Typography>}
       </Button>
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal 
+      open={open} 
+      onClose={handleClose} 
+      aria-labelledby="modal-modal-title" 
+      aria-describedby="modal-modal-description">
         <Box sx={style}>
         {children}
         </Box>

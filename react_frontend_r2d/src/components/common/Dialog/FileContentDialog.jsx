@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogActions, DialogContent, Button, Box, Typography } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, Button, Box, Typography, Divider } from '@mui/material';
 import ReadOnlyEditor from '../Tables/ReadOnlyEditor';
 import FileDownloadUtility from '../../../utils/FileHandling/FileDownloaderUtility';
 
@@ -53,13 +53,19 @@ const FileContentDialog = ({
       open={open} 
       onClose={onClose} 
       aria-labelledby="file-content-title"
+      
+      PaperProps={{
+        sx:{
+          backgroundColor: "black", // Ensures the background color is black
+          color: "#FFFFFF", // Optional: setting text color to white for better contrast\
+          }
+      }}
     >
       <DialogContent>
         <Box sx={{width:"40vw", height:"60vh", overflow:"hidden"}}>
           <Typography variant="h6" sx={{textAlign:"center"}}>{fileMetadata.filename}</Typography>
-          <hr></hr>
+          <Divider sx={{my:1}}></Divider>
           <ReadOnlyEditor fileExtension={fileMetadata.type} fileContents={fileContent}></ReadOnlyEditor>
-          <hr></hr>
         </Box>
       </DialogContent>
       <DialogActions>

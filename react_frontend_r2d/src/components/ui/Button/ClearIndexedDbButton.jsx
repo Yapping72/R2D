@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAlert } from '../../common/Alerts/AlertContext';
 import R2DConfirmationDialog from '../../common/Dialog/R2DConfirmationDialog';
-
+import {Typography} from '@mui/material'
 /**
  * ClearIndexedDbButton renders a button that, when clicked, prompts the user with a confirmation dialog
  * before proceeding to clear the IndexedDB.
@@ -40,12 +40,17 @@ const ClearIndexedDbButton = ({ repository }) => {
                 variant="outlined"
                 startIcon={<DeleteIcon />}
                 onClick={handleOpenConfirmDialog}>
-                Remove Uploaded Files
+                <Typography variant='p'>Delete all locally stored files</Typography>
             </Button>
             <R2DConfirmationDialog
                 open={openConfirmDialog}
-                title="Confirm Deletion"
-                content="Are you sure you want to remove all uploaded files?"
+                title={<Typography variant="h6">Confirm Deletion</Typography>}
+                content={
+                    <Typography>
+                        Are you sure you want to permanently delete all locally stored data? <br />
+                        <strong>This action cannot be undone.</strong>
+                    </Typography>
+                }
                 onConfirm={handleClearDatabase}
                 onCancel={handleCloseConfirmDialog}
             />

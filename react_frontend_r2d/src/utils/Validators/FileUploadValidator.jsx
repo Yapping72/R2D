@@ -8,7 +8,7 @@
  */
 
 class FileUploadValidator {
-    constructor(validExtensions = ['json', 'mermaid', 'txt'], maxFileSize = 15 * 1024 * 1024, maxLineCount = 1000) {
+    constructor(validExtensions = [''], maxFileSize = 15 * 1024 * 1024, maxLineCount = 1000) {
         this.validExtensions = validExtensions;
         this.maxFileSize = maxFileSize;
         this.maxLineCount = maxLineCount;
@@ -59,12 +59,21 @@ class FileUploadValidator {
     }
 
     /**
-     * Validates the file extension.
+     * Validates the file extension. 
+     * As part of OWASP, multiple extensions are not allowed. 
      * @param {File} file - The file to validate.
      * @returns {boolean} - True if the file extension is valid, false otherwise.
     */
     validateFileExtension(file) {
-        const extension = file.name.split('.').pop().toLowerCase();
+        const parts = file.name.split('.'); // Split the filename by dot to check for multiple extensions
+        const extension = parts.pop().toLowerCase(); // Get the last extension
+    
+        if (parts.length > 1) {
+            // If there are more than one dot, it means there are multiple extensions
+            return false;
+        }
+    
+        // Check if the last (or only) extension is in the list of allowed extensions
         return this.validExtensions.includes(extension);
     }
 
