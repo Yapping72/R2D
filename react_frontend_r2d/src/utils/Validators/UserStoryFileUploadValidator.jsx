@@ -12,8 +12,8 @@ class UserStoryFileUploadValidator extends FileUploadValidator {
         const contentAsJson = JSON.parse(contentAsString);
 
         // Ensure word limits
-        const maxWordsFeature = 15; // Example limit for 'feature'
-        const maxWordsSubFeature = 15; // Example limit for 'sub_feature'
+        const maxWordsFeature = 15; // 'feature'
+        const maxWordsSubFeature = 15; // 'sub_feature'
         const maxWordsRequirement = 300; // Example limit for 'requirement'
 
         // Perform validation and counting in a single iteration

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
 import { DismissibleAlert } from './DismissibleAlert';
 
 // Create a Context for the alert system to be accessible throughout the component hierarchy
@@ -17,24 +17,36 @@ export const useAlert = () => {
  */
 export const AlertProvider = ({ children }) => {
   const [alert, setAlert] = useState(null);
-
-
-/**
- * Renders a DismissibleAlert component
- * @param {string} severity -  Accepts one of 'error', 'warning', 'info', or 'success' 
- * @param {string} message - The message text to display inside the alert.
- * @returns Displays the DismissibleAlert
- */
+  const alertRef = useRef(null);  // Create a ref for the alert component
+  /**
+   * Renders a DismissibleAlert component
+   * @param {string} severity -  Accepts one of 'error', 'warning', 'info', or 'success' 
+   * @param {string} message - The message text to display inside the alert.
+   * @returns Displays the DismissibleAlert
+   */
   const showAlert = (severity, message) => {
     setAlert({ severity, message });
     setTimeout(() => {
       setAlert(null);
     }, 5000); // Duration in ms to display alert 
   };
+  // Use effect to scroll to the alert when it is displayed
+  useEffect(() => {
+    if (alert && alertRef.current) {
+      alertRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }, [alert]); // Dependency on alert, runs when it changes
+
+  const onClose = () => {
+    setAlert(null);
+  }
 
   return (
     <AlertContext.Provider value={{ showAlert }}>
-      {alert && <DismissibleAlert severity={alert.severity} message={alert.message} />}
+      {alert && <DismissibleAlert severity={alert.severity} message={alert.message} onClose={onClose} ref={alertRef} />}
       {children}
     </AlertContext.Provider>
   );

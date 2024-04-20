@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 /**
  * ConfirmationDialog presents a modal dialog to the user with options to confirm or cancel an action.
@@ -27,10 +27,10 @@ const R2DConfirmationDialog = ({ open, title, content, onConfirm, onCancel }) =>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="primary">
-          No
+          <Typography variant='p'> No</Typography>
         </Button>
         <Button onClick={onConfirm} color="primary" autoFocus>
-          Yes
+        <Typography variant='p'> Yes</Typography>
         </Button>
       </DialogActions>
     </Dialog>

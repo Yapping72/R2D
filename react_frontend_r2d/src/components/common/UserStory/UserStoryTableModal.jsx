@@ -3,16 +3,14 @@ import GenericFileTable from '../Tables/GenericFileTable';
 import { UserStoryFileRepository } from '../../../utils/Repository/UserStoryFileRepository';
 import SearchIcon from '@mui/icons-material/Search';
 import { useUserStoryContext } from './UserStoryContextProvider';
-import {Box, Divider} from '@mui/material'
-import ClearIndexedDbButton from '../../ui/Button/ClearIndexedDbButton'
-const UserStoryTable = () => {
+import R2DTableModal from '../Modals/R2DTableModal';
+
+const UserStoryTableModal = () => {
     const { handleFileSelection, _ } = useUserStoryContext();
     return(
-        <Box>
+        <R2DTableModal title="View Uploaded Files" icon={<SearchIcon></SearchIcon>} sx={{width:"100vw"}}>
         <GenericFileTable repository={new UserStoryFileRepository()} handleFileSelection={handleFileSelection}></GenericFileTable>
-        <Divider sx={{my:1}}></Divider>
-        <ClearIndexedDbButton repository={new UserStoryFileRepository()}></ClearIndexedDbButton>
-        </Box>
+        </R2DTableModal>
     )
 }
-export default UserStoryTable
+export default UserStoryTableModal

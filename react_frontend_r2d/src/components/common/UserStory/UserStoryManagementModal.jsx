@@ -2,10 +2,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DragDropFile from "../FileUpload/DragDropFileUpload";
 import UserStoryFileUploadValidator from '../../../utils/Validators/UserStoryFileUploadValidator';
 import { UserStoryFileRepository } from "../../../utils/Repository/UserStoryFileRepository";
-import R2DModal from '../Modals/R2DModal';
 import { useUserStoryContext } from './UserStoryContextProvider';
 import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
-import ClearIndexedDbButton from '../../ui/Button/ClearIndexedDbButton';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -37,16 +35,13 @@ const UserStoryManagementModal = () => {
     };
 
     return (
-        <R2DModal title="Upload User Stories" icon={<CloudUploadIcon></CloudUploadIcon>}>
-            <DragDropFile
-                validator={new UserStoryFileUploadValidator(['json'])}
-                repository={new UserStoryFileRepository()}
-                IconComponent={CloudUploadIcon}
-                handleFileUpload={handleFileUpload}
-                handleFilePreProcessing={handleFilePreProcessing}>
-            </DragDropFile>
-            <ClearIndexedDbButton repository={new UserStoryFileRepository()}></ClearIndexedDbButton>
-        </R2DModal>
+        <DragDropFile
+            validator={new UserStoryFileUploadValidator(['json'])}
+            repository={new UserStoryFileRepository()}
+            handleFileUpload={handleFileUpload}
+            handleFilePreProcessing={handleFilePreProcessing}
+            additionalValidationInfo={["Files should contain `feature`, `sub_feature`, and `requirement` as keys"]}>
+        </DragDropFile>
     );
 }
 

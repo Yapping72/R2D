@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormGroup, FormControlLabel, Switch, Box, Typography, Stack } from '@mui/material';
+import { Switch, Box, Typography, Stack } from '@mui/material';
 import LoginForm from '../../components/common/Form/LoginForm';
 import RegisterForm from '../../components/common/Form/RegisterForm';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';

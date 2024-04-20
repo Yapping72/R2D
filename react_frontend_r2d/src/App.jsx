@@ -20,7 +20,7 @@ function App() {
       },
     },
     typography: {
-      fontFamily: 'Roboto, sans-serif', 
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', 
       fontSize: 16, 
     },
   });

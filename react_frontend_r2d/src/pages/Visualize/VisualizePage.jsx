@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Box, Typography, Container } from "@mui/material";
-
+import { Grid, Box, Typography, Container, Divider} from "@mui/material";
 import MermaidRenderer from '../../components/common/Mermaid/MermaidRenderer';
 import MermaidEditor from '../../components/common/Mermaid/MermaidEditor';
 import ZoomAndPan from '../../components/ui/Interactions/ZoomAndPan';
@@ -48,11 +47,11 @@ const VisualizePage = () => {
       <Container>
       <AlertProvider>
       <Box>
-      <Typography variant='h2'> Mermaid Editor</Typography>
-      <hr></hr>
+      <Typography variant='h2'> Mermaid Visualizer</Typography>
+      <Divider sx={{ my: 2 }}></Divider>
       <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
       </Box>
-      <hr></hr> 
+      <Divider sx={{ my: 2 }}></Divider> 
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden'}}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={5} lg={5}> {/* Adjusted for 40% width at large screens */}
@@ -60,9 +59,8 @@ const VisualizePage = () => {
         <MermaidEditor mermaidCode={mermaidCode} onCodeChange={handleDiagramChange} />
         </Box>
         <Box>
-        <hr></hr>
+        <Divider sx={{ my: 2 }}></Divider>
         <MermaidTemplatesAccordion onExampleSelect={handleExampleSelect}></MermaidTemplatesAccordion>
-        <hr></hr>
         </Box>
         </Grid>
         <Grid item xs={12} md={7} lg={7}> {/* Adjusted for 60% width at large screens */}

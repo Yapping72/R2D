@@ -124,7 +124,7 @@ export class UserStoryFileRepository extends GenericIndexedDBRepository {
                 throw new Error(updateResponse.error);
             }
             
-            return { success: true, message: 'Record updated successfully.' };
+            return { success: true, message: 'Record updated successfully.'};
         } 
         catch (error) {
             console.error('Error updating record in file:', error);
@@ -220,6 +220,24 @@ export class UserStoryFileRepository extends GenericIndexedDBRepository {
         } 
         catch (error) {
             console.error('Error deleting record in file:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async getFeaturesFromFile(fileId) {
+        try {
+            const fileResponse = await this.findById(fileId);
+            if (!fileResponse) {
+                throw new Error('File not found.');
+            }
+            
+            // Retrieve file contents and add newData to the file
+            const fileContent = await FileReaderUtility.readAsText(fileResponse.content); 
+            const jsonContent = JSON.parse(fileContent);
+            return {success: true, message:"features successfully retrieved", data:jsonContent}
+        } 
+        catch (error){
+            console.error('Error retrieving records from file:', error);
             return { success: false, error: error.message };
         }
     }

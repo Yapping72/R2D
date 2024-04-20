@@ -6,10 +6,8 @@ const RegisterForm = () => {
     const handleRegister = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
         // Here you would typically validate that the passwords match
         // before doing anything with the data
-
         console.log({
           username: data.get('username'),
           email: data.get('email'),
