@@ -16,24 +16,11 @@ import Alert from '@mui/material/Alert';
  * by AlertContext can be used to display the alert with a specified severity and message.
  */
 
-export function DismissibleAlert({ severity, message }) {
-    const [visible, setVisible] = useState(true);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setVisible(false);
-        }, 5000); // In milliseconds
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    const handleClose = () => {
-        setVisible(false);
-    };
-
+const DismissibleAlert = React.forwardRef(({ severity, message, onClose }, ref) => {
     return (
-    <Alert variant="filled" severity={severity} onClose={handleClose}> 
-        {message}
-    </Alert>
+        <Alert variant="filled" severity={severity} onClose={onClose} ref={ref}>
+            {message}
+        </Alert>
     );
-}
+});
+export { DismissibleAlert }; 
