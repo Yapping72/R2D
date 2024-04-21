@@ -3,6 +3,8 @@ import { Typography, Button, Container, Divider, Box, Paper } from '@mui/materia
 import { v4 as uuidv4 } from 'uuid';
 import UserStoryAccordion from './UserStoryAccordion';
 import UserStoryTableModal from './UserStoryTableModal';
+import UserStoryJobHandler from '../../../utils/JobHandling/UserStoryJobHandler';
+
 /**
  * `FeatureVisualizer` renders a list of `UserStoryCardGrid` components, each corresponding to a set of user stories or requirements.
  * Each `UserStoryCardGrid` is associated with a specific file's data and is displayed under a heading that shows the file's identifier.
@@ -19,13 +21,15 @@ import UserStoryTableModal from './UserStoryTableModal';
  * 
  * @returns {ReactElement} The `FeatureVisualizer` component that renders multiple `UserStoryCardGrid` components, each under a file identifier heading.
  */
+
 const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile}) => {
 
     const handleSubmitUserStoryForProcessing = () => {
         // Validate and sanitize 
         // Merge and extract contents as Job Parameters
         // Send to Job Queue
-        
+        const userStoryJobHandler = new UserStoryJobHandler(filesData);
+        userStoryJobHandler.populateJobParameters(filesData);
         console.log(filesData)
     }
 
