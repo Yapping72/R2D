@@ -44,17 +44,19 @@ const UserStoryCard = ({
             <Typography variant="body2">
               {requirement || 'Requirement'}
             </Typography>
+            <Divider sx={{ my: 2 }} />
             {servicesToUse && servicesToUse.length > 0 && (
               <Typography variant='body2'>
-                <Divider sx={{ my: 2 }} />
                 <strong>Services to Use:</strong>
-                <ol style={{ margin: 0 }}>
-                  {servicesToUse.map((service, index) => (
-                    <li key={index}>{service}</li>
-                  ))}
-                </ol>
               </Typography>
             )}
+            <ol style={{ margin: 0 }}>
+              {servicesToUse.map((service, index) => (
+                <li key={index}>
+                <Typography variant='body2'>{service}</Typography>
+                </li>
+              ))}
+            </ol>
           </>
         );
       case 2:
@@ -64,14 +66,14 @@ const UserStoryCard = ({
               <strong>Acceptance Criteria:</strong>
               <br></br>
               {acceptanceCriteria || 'Not specified'}
-              <Divider sx={{ my: 2 }} />
             </Typography>
+            <Divider sx={{ my: 2 }} />
             <Typography variant="body2" component="div">
               <strong>Additional Information:</strong>
               <br></br>
               {additionalInformation || 'Not specified'}
-              <Divider sx={{ my: 2 }} />
             </Typography>
+            <Divider sx={{ my: 2 }} />
           </>
         );
       default:
@@ -81,15 +83,15 @@ const UserStoryCard = ({
 
   return (
     <>
-      <Card variant="outlined" 
-      sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-        <CardContent sx={{ flex: '1 0 auto'}}>
+      <Card variant="outlined"
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+        <CardContent sx={{ flex: '1 0 auto' }}>
           {pageContent(currentPage)}
         </CardContent>
         <CardActions>
           <Button size="small" onClick={handleEditClick}>Edit</Button>
           <Button size="small" onClick={handleDeleteClick}>Delete</Button>
-          <Pagination count={2} page={currentPage} onChange={handleChangePage } color="primary" />
+          <Pagination count={2} page={currentPage} onChange={handleChangePage} color="primary" />
         </CardActions>
       </Card>
       <EditUserStoryDialog

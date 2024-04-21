@@ -7,7 +7,7 @@ import { UserStoryContextProvider } from '../../components/common/UserStory/User
 import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
-import UserStoryTableModal from '../../components/common/UserStory/UserStoryTableModal';
+
 
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization

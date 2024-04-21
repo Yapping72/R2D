@@ -27,10 +27,10 @@ const R2DConfirmationDialog = ({ open, title, content, onConfirm, onCancel }) =>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="primary">
-          <Typography variant='p'> No</Typography>
+          <Typography variant='button'> No</Typography>
         </Button>
         <Button onClick={onConfirm} color="primary" autoFocus>
-        <Typography variant='p'> Yes</Typography>
+        <Typography variant='button'> Yes</Typography>
         </Button>
       </DialogActions>
     </Dialog>
