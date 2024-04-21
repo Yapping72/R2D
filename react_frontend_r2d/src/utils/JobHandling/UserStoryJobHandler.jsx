@@ -3,12 +3,12 @@ import UserStoryJobValidator from "../Validators/UserStoryJobValidator";
 import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
 
 /**
- * Concrete class for GenericJobHandlerUtility
+ * UserStoryJobHandler, instantiates the validators, sanitizers and repository classes
+ * 
  */
 class UserStoryJobHandler extends GenericJobHandler {
     constructor(data) {
         super(new UserStoryJobValidator(data),new UserStoryJobSanitizer(data),  null); // Pass an instance of UserStoryJobValidator
-        this.data = data; // Set the data property after calling super
     }
 }
 

@@ -170,8 +170,14 @@ class UserStoryJobValidator extends GenericJobValidator {
         return array.map(item => this.validateAndTrim(item, maxWords));
     }
 
+    /**
+     * Validates the user stories and ensures each of the fields provided meets their size constraints
+     * @param {*} data 
+     * @returns returns a jobParameter dictonary that should be passed for sanitization
+     */
     validate(data) {
         this.parseAndValidateLength(data);
+        // Add more validation as required
         return this.jobParameters;
     }
 }

@@ -58,13 +58,10 @@ class GenericJobHandler {
             validatedData = this.validator.validate(data);
             console.debug("Data passed validation");
             console.debug(validatedData);
-            this.job.job_parameters = validatedData;
-            console.debug(this.job);
         } catch (error) {
             console.error("Failed to validate input data", error);
             throw new Error("Failed to validate data", error);
         }
-
         try {
             sanitizedData = this.sanitizer.getSanitizedData(validatedData);
             console.debug("Data successfully sanitized");
