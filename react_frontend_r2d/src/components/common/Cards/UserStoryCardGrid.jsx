@@ -35,6 +35,7 @@ const UserStoryCardGrid = ({ featureData, fileId}) => {
       <Grid container spacing={2}>
         {featureData.map((item, index) => (
           <Grow
+            key={item.record_identifier}
             in={true}
             style={{ transformOrigin: '0 0 0' }}
             {...{ timeout: (index + 1) * 500 }} // Stagger the animation
