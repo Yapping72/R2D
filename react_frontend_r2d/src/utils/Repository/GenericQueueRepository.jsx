@@ -48,4 +48,25 @@ export class GenericQueueRepository {
             request.onsuccess = () => resolve(request.result);
         });
     }
+
+    /**
+     * Adds Job to Queue Store
+     * @param {Object} job job parameter information 
+     */
+        async addJobToQueue(job) {
+            const store = await this.initTransactionAndStore("readwrite");
+        
+            return new Promise((resolve, reject) => {
+                // Combine metadata with the file content
+                const request = store.add(job);
+        
+                request.onerror = event => reject(event.target.error);
+        
+                request.onsuccess = (event) => {
+                    // Return the id of the added job record
+                    const id = event.target.result;
+                    resolve(id);  // Use resolve to return the ID correctly
+                };
+            });
+        }
 }

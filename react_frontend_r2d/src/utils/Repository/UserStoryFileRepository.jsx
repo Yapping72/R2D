@@ -8,7 +8,7 @@ import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValid
 
 export class UserStoryFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-user-story-db", "user-story-file-store");
+      super("r2d-file-store", "user-story-file-store"); // Must match what is stored in GenericFileRepository
     }
     
     // Retrieves data stored in IndexedDB by id
