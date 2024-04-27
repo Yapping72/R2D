@@ -3,7 +3,7 @@
  * initialize transactions, and perform CRUD operations on the specified object store within the database.
  */
 
-export class GenericIndexedDBRepository {
+export class GenericFileRepository {
     constructor(dbName, storeName) {
         this.dbName = dbName; // Name of the IndexedDB database
         this.storeName = storeName; // Name of the object store within the database

@@ -9,45 +9,9 @@ class UserStoryJobValidator extends GenericJobValidator {
         this.subFeatures = new Set(); // Stores all sub_features encountered
         this.tokenCount = 0;
         this.jobParameters = {};
+        this.validatedParameters = {};
+        this.featureMapping = {};
     }
-
-    /**
-    * Counts the words present in acceptance_criteria, additional_information, requirement,
-    * and services_to_use (if available).
-    * These fields will be sent for LLM analysis and thus serve as an estimation.
-    * @param {object} feature - The feature object containing the fields to count.
-    * Returns number of tokens in acceptance_criteria, additional_information, requirement,
-    * and services_to_use (if available). 
-    */
-    countTokens(feature) {
-        let totalWordCount = 0; // Initialize total word count
-        // Count words in fields like acceptance_criteria, additional_information, and requirement
-        const fieldsToCount = ['acceptance_criteria', 'additional_information', 'requirement'];
-        fieldsToCount.forEach(field => {
-            const fieldValue = feature[field];
-            if (fieldValue) {
-                const wordCount = fieldValue.split(/\s+/).length;
-                console.log(`Word count in ${field}: ${wordCount}`);
-                totalWordCount += wordCount; // Add word count to total
-            } else {
-                console.log(`${field} is missing in the feature.`);
-            }
-        });
-
-        // Count words in services_to_use if available
-        const servicesToUse = feature['services_to_use'];
-        if (servicesToUse && Array.isArray(servicesToUse)) {
-            const servicesToUseWordCount = servicesToUse.reduce((total, service) => {
-                return total + service.split(/\s+/).length;
-            }, 0);
-            console.log(`Word count in services_to_use: ${servicesToUseWordCount}`);
-            totalWordCount += servicesToUseWordCount; // Add word count to total
-        } else {
-            console.log(`No services to use provided`);
-        }
-        return totalWordCount; // Return the total word count
-    }
-
     /**
      * Parses the provided data and constructs job parameters in the form of a nested dictionary structure.
      * Each feature is mapped to its respective sub-features, and each sub-feature contains a collection
@@ -58,55 +22,11 @@ class UserStoryJobValidator extends GenericJobValidator {
      *                       information about features, sub-features, and user story records.
      * @returns {void}
      * 
-     * @example
-     * // Input data structure
-     * const data = [
-     *   {
-     *     feature: 'Archival and Disposal',
-     *     sub_feature: 'Database Archival',
-     *     id: 'Apollo-21',
-     *     requirement: 'As a system administrator, I want to archive historical data from the database, so that I can optimize database performance and reduce storage costs.',
-     *     services_to_use: ['Amazon S3', 'AWS Glue'],
-     *     acceptance_criteria: 'Archived data should be stored in a secure and durable storage solution such as Amazon S3. Archival process should be automated and configurable.',
-     *     additional_information: 'Consider data retention policies and regulatory requirements when defining archival criteria.'
-     *   },
-     * ];
-     * 
-     * // Converted job parameters structure
-     * const job_parameters = {
-     *   "Archival and Disposal": {
-     *     "Database Archival": {
-     *       "Apollo-21": {
-     *         "id": "Apollo-21",
-     *         "requirement": "As a system administrator, I want to archive historical data from the database, so that I can optimize database performance and reduce storage costs.",
-     *         "services_to_use": ["Amazon S3", "AWS Glue"],
-     *         "acceptance_criteria": "Archived data should be stored in a secure and durable storage solution such as Amazon S3. Archival process should be automated and configurable.",
-     *         "additional_information": "Consider data retention policies and regulatory requirements when defining archival criteria."
-     *       }
-     *     }
-     *   },
-     *  
-     * };
-     */
-    parseAndValidateLength(data) {
-        data.forEach(item => {
-            // Merge features into the feature set
-            item.fileMetadata.features.forEach(feature => {
-                const validatedFeature = this.validateAndTrim(feature, MAX_USER_STORY_FEATURE_LENGTH);
-                if (validatedFeature.length > 0) {
-                    this.features.add(validatedFeature); 
-                }
-            });
+     **/
 
-            // Merge sub-features into the sub_feature set
-            item.fileMetadata['sub features'].forEach(subFeature => {
-                const validatedSubFeature = this.validateAndTrim(subFeature, MAX_USER_STORY_SUB_FEATURE_LENGTH);
-                if (validatedSubFeature.length > 0) {
-                    this.subFeatures.add(validatedSubFeature);
-                }
-            });
-        
-            // Retrieve feature data
+    parseAndValidateLength(data) {
+        data.forEach(item => {    
+            // Add each feature information to a job_parameters dictionary
             item.featureData.forEach(feature => {
                 // Check if feature.feature is empty
                 if (!feature.feature || feature.feature.trim() === '') {
@@ -114,15 +34,24 @@ class UserStoryJobValidator extends GenericJobValidator {
                     return; // Skip this record
                 }
 
+                // Validate the existing feature name ensuring its not too long 
                 const featureName = this.validateAndTrim(feature.feature, MAX_USER_STORY_FEATURE_LENGTH);
+                if (featureName.length > 0) {
+                    this.features.add(featureName);  // Add to features set
+                }
 
                 // Initialize the feature object if it doesn't exist or is not an object
                 if (!this.jobParameters[featureName] || typeof this.jobParameters[featureName] !== 'object') {
                     this.jobParameters[featureName] = {};
                 }
 
-                // Initialize the subFeature object if it doesn't exist or is not an object
+                // Validate the existing sub feature name ensuring its not too long 
                 const subFeatureName = this.validateAndTrim(feature.sub_feature, MAX_USER_STORY_SUB_FEATURE_LENGTH) || `Sub Feature`;
+                if (subFeatureName.length > 0) {
+                    this.subFeatures.add(subFeatureName); // Add to Sub features set
+                }
+
+                // Initialize the subFeature object if it doesn't exist or is not an object
                 if (!this.jobParameters[featureName][subFeatureName] || typeof this.jobParameters[featureName][subFeatureName] !== 'object') {
                     this.jobParameters[featureName][subFeatureName] = {};
                 }
@@ -138,10 +67,12 @@ class UserStoryJobValidator extends GenericJobValidator {
                 };
             })  
         });
-        this.jobParameters["features"] = this.features;
-        this.jobParameters["sub_features"] = this.subFeatures;
-        console.debug("Parsed Data: ", this.jobParameters);
-        return this.jobParameters;
+        
+        this.validatedParameters["features"] = this.features;
+        this.validatedParameters["sub_features"] = this.subFeatures;
+        this.validatedParameters["job_parameters"]=this.jobParameters;
+        console.debug("Validated Data: ", this.validatedParameters);
+        return this.validatedParameters;
     }
 
     /**
@@ -178,7 +109,7 @@ class UserStoryJobValidator extends GenericJobValidator {
     validate(data) {
         this.parseAndValidateLength(data);
         // Add more validation as required
-        return this.jobParameters;
+        return this.validatedParameters;
     }
 }
 

@@ -32,7 +32,7 @@ const UserStoryAccordion = ({ fileData, index, handleRemove }) => {
                                     {fileData.fileMetadata.filename}
                                 </Typography>
                             </Grid>
-                            <Tooltip title="Features" placement="left" arrow>
+                            <Tooltip title="Features" placement="left-start" arrow>
                                 <Grid item>
                                     {Array.from(fileData.fileMetadata.features).map((feature, index) => (
                                         <Chip
@@ -42,7 +42,7 @@ const UserStoryAccordion = ({ fileData, index, handleRemove }) => {
                                     ))}
                                 </Grid>
                             </Tooltip>
-                            <Tooltip title="Sub Features" placement="left" arrow>
+                            <Tooltip title="Sub Features" placement="left-end" arrow>
                                 <Grid item>
                                     {Array.from(fileData.fileMetadata['sub features']).map((sub_feature, index) => (
                                         <Chip
@@ -58,7 +58,8 @@ const UserStoryAccordion = ({ fileData, index, handleRemove }) => {
                         <Tooltip title="File Id" arrow>
                             <Badge
                                 badgeContent={fileData.fileMetadata.id}
-                                color='primary'
+                                color='success'
+                                variant='outlined'
                                 sx={{ mr: 2 }} // Adds right margin
                             />
                         </Tooltip>

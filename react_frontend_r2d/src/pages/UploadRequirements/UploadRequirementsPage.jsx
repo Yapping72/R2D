@@ -59,7 +59,7 @@ const UploadRequirementsPage = () => {
         }
     };
 
-      /**
+    /**
      * Handles the selection of files, updating the state with the selected file's data.
      * This allows the FeatureVisualizer to display the selected file's user stories.
      * @param {string} fileContents - The contents of the selected file.

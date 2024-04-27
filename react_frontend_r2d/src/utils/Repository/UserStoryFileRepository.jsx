@@ -1,4 +1,4 @@
-import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
+import {GenericFileRepository} from './GenericFileRepository'
 import FileReaderUtility from '../FileHandling/FileReaderUtility';
 import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValidator';
 
@@ -6,7 +6,7 @@ import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValid
 * Repository to retrieve and write requirements (JSON based)
 */
 
-export class UserStoryFileRepository extends GenericIndexedDBRepository {
+export class UserStoryFileRepository extends GenericFileRepository {
     constructor() {
       super("r2d-user-story-db", "user-story-file-store");
     }

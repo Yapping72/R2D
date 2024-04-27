@@ -1,4 +1,4 @@
-import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
+import {GenericFileRepository} from './GenericFileRepository'
 
 /*
 * Wrapper class for GenericIndexedDBRepository
@@ -8,7 +8,7 @@ import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
             size: file.size,
             lines: null, }
 */
-export class MermaidFileRepository extends GenericIndexedDBRepository {
+export class MermaidFileRepository extends GenericFileRepository {
     constructor() {
       super("r2d-mermaid-db", "mermaid-file-store");
     }
