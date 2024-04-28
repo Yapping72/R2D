@@ -6,10 +6,12 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '80%', // Adjust the width as per your need
-  height: '55%', // Adjust the height as per your need
-  bgcolor: 'background.paper', // Change this to match your theme's color or make it transparent
+  border: '1px solid',
+  bgcolor: 'transparent', 
   boxShadow: 24,
+  maxHeight: '85vh',
+  maxWidth: '95vw',
+  overflow: 'auto'
 };
 
 /**
