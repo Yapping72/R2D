@@ -4,7 +4,7 @@
  */
 
 export class GenericFileRepository {
-    constructor(dbName = "r2d-file-store", storeName) {
+    constructor(dbName = "r2d-file-db", storeName) {
         this.dbName = dbName; // Name of the IndexedDB database (r2d-file-store) is the default repository to store files to
         this.storeName = storeName; // Name of the object store within the database
         this.dbVersion = 2; // Update this version whenever a new store is added or schema changes

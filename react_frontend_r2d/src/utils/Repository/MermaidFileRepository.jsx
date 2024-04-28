@@ -10,7 +10,7 @@ import {GenericFileRepository} from './GenericFileRepository'
 */
 export class MermaidFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-file-store", "mermaid-file-store"); // Must match what is stored in GenericFileRepository
+      super("r2d-file-db", "mermaid-file-store"); // Must match what is stored in GenericFileRepository
     }
 
     async handleFindById(id) {

@@ -1,24 +1,26 @@
 export class GenericQueueRepository {
-    constructor(dbName, storeName) {
+    constructor(dbName = "r2d-job-db", storeName) {
         this.dbName = dbName; // Name of the IndexedDB database
         this.storeName = storeName; // Name of the object store within the database
+        this.dbVersion = 1; // Update this version whenever a new store is added or schema changes
     }
-   
+
     /**
-     * Opens a connection to the IndexedDB database. If the database or object store does not exist, they are created.
-     */
+    * Opens a connection to the IndexedDB database. 
+    * If the database or object store does not exist, they are created.
+    * When onboarding new stores to the database they must be added here
+    */
     async openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, 1);
+            const request = indexedDB.open(this.dbName, this.dbVersion);
 
             request.onupgradeneeded = (event) => {
-                // Create the object store if it does not exist
                 const db = event.target.result;
-                if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+                // Create all required object stores here 
+                if (!db.objectStoreNames.contains("user-story-job-queue-store")) {
+                    db.createObjectStore("user-story-job-queue-store", { keyPath: "job_id" });
                 }
             };
-
             request.onerror = (event) => reject(event.target.error);
             request.onsuccess = (event) => resolve(event.target.result);
         });
@@ -52,21 +54,20 @@ export class GenericQueueRepository {
     /**
      * Adds Job to Queue Store
      * @param {Object} job job parameter information 
+     * Returns the job id added to queue.
      */
-        async addJobToQueue(job) {
-            const store = await this.initTransactionAndStore("readwrite");
-        
-            return new Promise((resolve, reject) => {
-                // Combine metadata with the file content
-                const request = store.add(job);
-        
-                request.onerror = event => reject(event.target.error);
-        
-                request.onsuccess = (event) => {
-                    // Return the id of the added job record
-                    const id = event.target.result;
-                    resolve(id);  // Use resolve to return the ID correctly
-                };
-            });
-        }
+    async addJobToQueue(job) {
+        const store = await this.initTransactionAndStore("readwrite");
+
+        return new Promise((resolve, reject) => {
+            // Combine metadata with the file content
+            const request = store.add(job);
+            request.onerror = event => reject(event.target.error);
+            request.onsuccess = (event) => {
+                // Return the id of the added job record
+                const id = event.target.result;
+                resolve(id);  // Use resolve to return the ID correctly
+            };
+        });
+    }
 }
