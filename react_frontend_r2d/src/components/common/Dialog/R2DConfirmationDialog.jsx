@@ -22,14 +22,14 @@ const R2DConfirmationDialog = ({ open, title, content, onConfirm, onCancel }) =>
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {content}
+        {content}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel} color="primary">
+        <Button onClick={onCancel} color="primary" variant='outlined'>
           <Typography variant='button'> No</Typography>
         </Button>
-        <Button onClick={onConfirm} color="primary" autoFocus>
+        <Button onClick={onConfirm} color="primary" variant='outlined' autoFocus>
         <Typography variant='button'> Yes</Typography>
         </Button>
       </DialogActions>

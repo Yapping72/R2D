@@ -7,7 +7,7 @@ import { UserStoryContextProvider } from '../../components/common/UserStory/User
 import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
-
+import UserStoryJobHandler from '../../utils/JobHandling/UserStoryJobHandler';
 
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization
@@ -73,8 +73,6 @@ const UploadRequirementsPage = () => {
                 { featureData: jsonFileContents, fileId: fileMetadata.id, fileMetadata: fileMetadata}
             ]);
             setValue(1);
-            console.log("filedata")
-            console.log(filesData)
         } catch (error) {
             console.error('Error processing the selected file', error);
             showAlert("error", "Error processing the selected file");
@@ -170,6 +168,17 @@ const UploadRequirementsPage = () => {
         }
     }
 
+    const handleUserStorySubmit = async (result) => {
+        if (result.success) {
+            showAlert("success", "Job successfully added to queue.");
+            // Redirect to analysis page (TBC)
+        } 
+        else {
+            showAlert("error",  `Failed to add job to queue.`);
+        }
+
+    }
+
     return (
         <UserStoryContextProvider
             handleFileUpload={handleFileUpload}
@@ -195,7 +204,7 @@ const UploadRequirementsPage = () => {
                 )}
                 {value === 1 && (
                     <Box>
-                        <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile}/>
+                        <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile} handleUserStorySubmit={handleUserStorySubmit}/>
                     </Box>
                 )}
             </Container>

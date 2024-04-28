@@ -1,14 +1,15 @@
 import GenericJobHandler from "./GenericJobHandler";
 import UserStoryJobValidator from "../Validators/UserStoryJobValidator";
 import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
+import { UserStoryJobQueueRepository } from "../Repository/UserStoryJobQueueRepository";
 
 /**
- * UserStoryJobHandler, instantiates the validators, sanitizers and repository classes
- * 
+ * Class responsible for creating jobs and adding / removing them from job queue
  */
 class UserStoryJobHandler extends GenericJobHandler {
     constructor(data) {
-        super(new UserStoryJobValidator(data),new UserStoryJobSanitizer(data),  null); // Pass an instance of UserStoryJobValidator
+        super(new UserStoryJobValidator(data), new UserStoryJobSanitizer(data)); 
+        this.repository = new UserStoryJobQueueRepository();
     }
 
     /**
@@ -16,31 +17,47 @@ class UserStoryJobHandler extends GenericJobHandler {
     * @param {object} data - The data to populate the job parameters.
     * @throws {Error} Throws an error if data sanitization or validation fails.
     */
-     populateJobParameters(data) {
-        let validatedData;
-        let sanitizedData;
+    populateJobParameters(data) {
+        try {
+            let validatedData = this.validator.validate(data);
+            let sanitizedData = this.sanitizer.getSanitizedData(validatedData);
+            this.setJob({
+                ...this.job,
+                parameters: sanitizedData,
+                token_count: sanitizedData.token_count,
+                last_updated_timestamp: new Date().toISOString() // Assume validation ensures timestamp is correct
+            });
+            console.debug("User Story Job Data prepared:", this.job);
+        } catch (error) {
+            console.error("Error preparing job data:", error);
+            throw new Error("Error preparing job data", error);
+        }
+    }
+    /**
+     * Adds a job to a queue 
+     * @param {object} job expects a job dictionary with the following keys - created_timestamp, job_id, job_status, last_updated_timestamp, parameters, token_count, user_id
+     * @param {object} job_status Valid Job Status = ["DRAFT", "QUEUED", "SUBMITTED", "ERROR_FAILED_TO_SUBMIT", "PROCESSING", "COMPLETED"];
+     * @Returns either a {sucess:bool, data: ?}
+     * 
+     * */
+    async addJobToQueue() {
+        try {
+            this.updateJobStatus("QUEUED"); // Update status before adding to queue
+            this.updateJobDetails(`User Story Analysis ${new Date().toISOString()}`);
+            const result = await this.repository.handleAddJobToQueue(this.job);
+            return result;
+        } catch (error) {
+            console.error("Failed to add job to queue:", error);
+            throw new Error("Failed to add job to queue", error);
+        }
+    }
 
-        try {
-            // Retrieve validated job parameters
-            validatedData = this.validator.validate(data);
-            console.debug("User story job data validated");
-            console.debug(validatedData);
-        } catch (error) {
-            console.error("Failed to validate user story job data", error);
-            throw new Error("Failed to validate user story job data", error);
-        }
-        try {
-            // Retrieve the sanitized job parameters
-            sanitizedData = this.sanitizer.getSanitizedData(validatedData); // Returns features, 
-            console.debug("User story job data sanitized");
-            // Assign values to job dictionary
-            this.job.token_count = sanitizedData.token_count;
-            this.job.parameters = sanitizedData;
-            console.debug("User Story Job Data: ", this.job);
-        } catch (error) {
-            console.error("Failed to sanitize user story job data", error);
-            throw new Error("Failed to sanitize user story job data", error);
-        }
+    /**
+     * 
+     * @param {*} job_details 
+     */
+    removeJobFromQueue(job_id) {
+        console.debug("Removing job from queue: ", job_id)
     }
 }
 
