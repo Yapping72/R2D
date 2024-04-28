@@ -67,9 +67,8 @@ export class GenericFileRepository {
     * @returns {Promise<Array>} A promise that resolves with an array of all records in the object store if the operation is successful. 
     * The promise rejects with an error if the operation fails, providing an error message detailing the cause of the failure.
     */
-    async readAllFiles() {
+    async readAll() {
         const store = await this.initTransactionAndStore("readonly");
-
         return new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onerror = (event) => reject(event.target.error);

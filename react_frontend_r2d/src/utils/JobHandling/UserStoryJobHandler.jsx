@@ -1,4 +1,4 @@
-import GenericJobHandler from "./GenericJobHandler";
+import GenericJobHandler, { JobStatus } from "./GenericJobHandler";
 import UserStoryJobValidator from "../Validators/UserStoryJobValidator";
 import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
 import { UserStoryJobQueueRepository } from "../Repository/UserStoryJobQueueRepository";
@@ -24,7 +24,7 @@ class UserStoryJobHandler extends GenericJobHandler {
             this.setJob({
                 ...this.job,
                 parameters: sanitizedData,
-                token_count: sanitizedData.token_count,
+                tokens: sanitizedData.tokens,
                 last_updated_timestamp: new Date().toISOString() // Assume validation ensures timestamp is correct
             });
             console.debug("User Story Job Data prepared:", this.job);
@@ -35,15 +35,15 @@ class UserStoryJobHandler extends GenericJobHandler {
     }
     /**
      * Adds a job to a queue 
-     * @param {object} job expects a job dictionary with the following keys - created_timestamp, job_id, job_status, last_updated_timestamp, parameters, token_count, user_id
+     * @param {object} job expects a job dictionary with the following keys - created_timestamp, job_id, job_status, last_updated_timestamp, parameters, tokens, user_id
      * @param {object} job_status Valid Job Status = ["DRAFT", "QUEUED", "SUBMITTED", "ERROR_FAILED_TO_SUBMIT", "PROCESSING", "COMPLETED"];
      * @Returns either a {sucess:bool, data: ?}
      * 
      * */
     async addJobToQueue() {
         try {
-            this.updateJobStatus("QUEUED"); // Update status before adding to queue
-            this.updateJobDetails(`User Story Analysis ${new Date().toISOString()}`);
+            this.updateJobStatus(JobStatus.QUEUED); // Update status before adding to queue
+            this.updateJobDetails(`Pending Submission`);
             const result = await this.repository.handleAddJobToQueue(this.job);
             return result;
         } catch (error) {

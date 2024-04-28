@@ -23,9 +23,9 @@ export class UserStoryFileRepository extends GenericFileRepository {
         }
     }
     // Retrieves all requirements file uploaded
-    async handleReadAllFiles() {
+    async handleReadAll() {
         try{
-            const result = await this.readAllFiles();
+            const result = await this.readAll();
             // console.log("All files retrieved", result);
             return { success: true, data: result};
         } catch(error) {

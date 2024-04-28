@@ -2,6 +2,18 @@ import { v4 as uuidv4 } from 'uuid';
 import GenericJobSanitizer from '../Sanitizers/GenericJobSanitizer';
 import GenericJobValidator from '../Validators/GenericJobValidator';
 
+
+export const JobStatus = {
+    DRAFT: "Draft",
+    QUEUED: "Queued",
+    SUBMITTED: "Submitted",
+    ERROR_FAILED_TO_SUBMIT: "Error Failed to Submit",
+    PROCESSING: "Processing",
+    ERROR_FAILED_TO_PROCESS: "Error Failed to Process",
+    COMPLETED: "Completed"
+};
+
+
 class GenericJobHandler {
     /**
      * @param {object} jobParameterValidator - Object responsible for parsing and validating job parameters.
@@ -11,13 +23,12 @@ class GenericJobHandler {
         this.validator = jobParameterValidator; // Parse and validate inputs
         this.sanitizer = jobParameterSanitizer; // Sanitize validated inputs
 
-        this.validJobStatus = ["DRAFT", "QUEUED", "SUBMITTED", "ERROR_FAILED_TO_SUBMIT", "PROCESSING", "COMPLETED"];
         this.job = {
             job_id: uuidv4(),
-            user_id: "immutable-user-uuid", // Retrieved from JWT or other auth mechanism
-            job_status: "DRAFT",
+            user_id: "1234567", // Retrieved from JWT or other auth mechanism
+            job_status: JobStatus.DRAFT, 
             job_details: "Initial Job Creation",
-            token_count: 0,
+            tokens: 0,
             parameters: {}, // Fields used for backend processing
             created_timestamp: new Date().toISOString(),
             last_updated_timestamp: new Date().toISOString(),
@@ -42,7 +53,8 @@ class GenericJobHandler {
      * Valid Job Status = ["DRAFT", "QUEUED", "SUBMITTED", "ERROR_FAILED_TO_SUBMIT", "PROCESSING", "COMPLETED"];
      */
     updateJobStatus(jobStatus) {
-        if (!this.validJobStatus.includes(jobStatus)) {
+        // Check if the provided jobStatus is a valid enum value
+        if (!Object.values(JobStatus).includes(jobStatus)) {
             throw new Error("Invalid job status");
         } else {
             this.job.job_status = jobStatus;
@@ -85,7 +97,7 @@ class GenericJobHandler {
      * @param {job} job 
      */
     setJob(job) {
-        const requiredFields = ['job_id', 'user_id', 'job_status', 'job_details', 'token_count', 'parameters', 'created_timestamp', 'last_updated_timestamp'];
+        const requiredFields = ['job_id', 'user_id', 'job_status', 'job_details', 'tokens', 'parameters', 'created_timestamp', 'last_updated_timestamp'];
         for (let field of requiredFields) {
             if (job[field] === undefined) {
                 throw new Error(`Invalid job format: Missing ${field}`);

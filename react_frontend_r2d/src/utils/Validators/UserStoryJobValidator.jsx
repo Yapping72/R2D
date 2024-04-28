@@ -7,7 +7,7 @@ class UserStoryJobValidator extends GenericJobValidator {
         super(); // Call the constructor of the parent class
         this.features = new Set(); // Stores all features encountered
         this.subFeatures = new Set(); // Stores all sub_features encountered
-        this.tokenCount = 0;
+        this.tokens = 0;
         this.jobParameters = {};
         this.validatedParameters = {};
         this.featureMapping = {};

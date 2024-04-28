@@ -18,4 +18,39 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
       return { success: false, error: error.message };
     }
   }
+
+  // Writes the actual file and fileMeta to IndexedDb
+  async handleReadAll() {
+    try {
+      const result = await this.readAll();
+      console.debug(result);
+      return { success: true, data: result };
+    } catch (error) {
+      console.error("Error adding user story job to queue:", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async handleFindById(jobId) {
+    try{
+        const result = await this.findById(jobId)
+        // console.log("File and Metadata retrieved:", result);
+        return { success: true, data: result};
+    } catch(error) {
+        console.error("Error retrieving mermaid file from DB: ", error);
+        return { success: false, error: error.message };
+    }
+}
+
+
+  // Deletes all records from DB
+  async handleClearDb() {
+    try {
+      const result = await this.clearDB()
+      return { success: true };
+    } catch (error) {
+      console.error("Failed to clear IndexedDb file store: ", error)
+      return { success: false, error: error.message };
+    }
+  }
 }

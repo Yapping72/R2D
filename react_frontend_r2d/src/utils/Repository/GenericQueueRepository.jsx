@@ -58,7 +58,6 @@ export class GenericQueueRepository {
      */
     async addJobToQueue(job) {
         const store = await this.initTransactionAndStore("readwrite");
-
         return new Promise((resolve, reject) => {
             // Combine metadata with the file content
             const request = store.add(job);
@@ -68,6 +67,23 @@ export class GenericQueueRepository {
                 const id = event.target.result;
                 resolve(id);  // Use resolve to return the ID correctly
             };
+        });
+    }
+    async clearDB() {
+        const store = await this.initTransactionAndStore("readwrite");
+        return new Promise((resolve, reject) => {
+            const request = store.clear();
+            request.onerror = (event) => reject(event.target.error);
+            request.onsuccess = () => resolve(true);
+        });
+    }
+
+    async readAll() {
+        const store = await this.initTransactionAndStore("readonly");
+        return new Promise((resolve, reject) => {
+            const request = store.getAll();
+            request.onerror = (event) => reject(event.target.error);
+            request.onsuccess = () => resolve(request.result);
         });
     }
 }

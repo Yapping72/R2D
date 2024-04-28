@@ -123,7 +123,7 @@ class UserStoryJobSanitizer extends GenericJobSanitizer {
             ...this.sanitizedData["job_parameters"],
             ...this.sanitizedJobParams
         };
-        this.sanitizedData["token_count"] = this.tokenCount;
+        this.sanitizedData["tokens"] = this.tokenCount;
         return this.sanitizedData;
     }
 

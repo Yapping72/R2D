@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Chip, Tooltip, Container } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Chip, Tooltip, Box, Divider } from '@mui/material';
 import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
 import FileContentDialog from '../Dialog/FileContentDialog';
 import { useAlert } from '../Alerts/AlertContext';
-
+import FolderOffOutlinedIcon from '@mui/icons-material/FolderOffOutlined';
 
 // Compares two items based on the orderBy property in descending order
 function descendingComparator(a, b, orderBy) {
@@ -33,7 +33,7 @@ function getComparator(order, orderBy) {
 * The table retrieves its data from the indexedDb datastore specified by the repository.
 * Expects the table to store a column for File data types
 **/
-const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => {
+const GenericFileTable = ({ repository, handleFileSelection }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -47,7 +47,7 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await repository.handleReadAllFiles();
+      const response = await repository.handleReadAll();
       if (response.success) {
         setData(response.data);
       } else {
@@ -102,7 +102,7 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
     let truncatedLabel = "";
     let currentLength = 0;
     let wordCount = 0;
-  
+
     for (let word of words) {
       // Check the length with the next word added
       if (currentLength + word.length + (truncatedLabel ? 1 : 0) > maxCharLimit) {
@@ -115,46 +115,41 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
       currentLength += word.length + (truncatedLabel ? 1 : 0); // Update the current length including space
       wordCount++;
     }
-  
-    // If the final string is shorter than the original and more words exist, add ellipsis
-    if (currentLength < label.length) {
+
+    // Add an ellipsis if the resulting string is shorter than the original label
+    if (label.length > truncatedLabel.length) {
       truncatedLabel += '...';
     }
     return truncatedLabel;
   };
 
-  
-  const renderArrayContentAsChips = (value, chipColor="secondary") => {
-    const numberOfChipsToShow = 3; // Number of chips to display
+  const renderArrayContentAsChips = (value, chipColor = "secondary") => {
+    const numberOfChipsToShow = 2; // Number of chips to display
     if (value.length > numberOfChipsToShow) {
       const visibleChips = value.slice(0, numberOfChipsToShow);
       const moreCount = value.length - numberOfChipsToShow;
       return (
-
         <TableCell>
           {visibleChips.map((item, index) => (
             <Tooltip title={value.join(', ')}>
-            <Chip key={index} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
+              <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
             </Tooltip>
           ))}
           <Tooltip title={value.splice(numberOfChipsToShow).join(', ')}>
-            <Chip label={`+${moreCount} more`} style={{ margin: '2px'}} variant='outlined' />
-            </Tooltip>
+            <Chip label={`+${moreCount} more`} style={{ margin: '2px' }} variant='outlined' />
+          </Tooltip>
         </TableCell>
-  
       );
     }
 
     return (
-
       <TableCell>
-        <Tooltip title={value.join(', ')}>
         {value.map((item, index) => (
-          <Chip key={index} color={chipColor} label={truncateLabel(item)}  style={{ margin: '2px' }} variant='outlined' />
+          <Tooltip title={value.join(', ')}>
+            <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
+          </Tooltip>
         ))}
-        </Tooltip>
       </TableCell>
-
     );
   }
 
@@ -164,7 +159,7 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
         border: '1px solid #90caf9',
       }}>
         <TableContainer sx={{ maxHeight: '100%' }}>
-        <Table stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 {columns.map((column) => (
@@ -175,7 +170,7 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
                     sx={{
                       fontWeight: 'bold',
                       fontSize: '18px', // Set column name size
-                      backgroundColor:'black',
+                      backgroundColor: 'black',
                     }}
                   >
                     <TableSortLabel
@@ -210,7 +205,7 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
                             const chipColor = (column === "features") ? "primary" : "secondary";
                             return (
                               renderArrayContentAsChips(value, chipColor)
-                            ); 
+                            );
                           }
                           return (
                             <TableCell key={column} align="left">
@@ -225,7 +220,16 @@ const GenericFileTable = ({ repository, handleFileSelection, actions = [] }) => 
                 // Render a row with a cell that spans all columns if data is empty
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center">
-                    <Typography>Table is Empty</Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={2}
+                    >
+                      <FolderOffOutlinedIcon fontSize="large" />
+                      <Typography>No files found, upload your files to get started ! </Typography>
+                    </Box>
                   </TableCell>
                 </TableRow>
               )}
