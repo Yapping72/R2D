@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardActions, Button, Typography, Divider, Pagination } from '@mui/material';
+import { Card, CardContent, CardActions, Button, Typography, Divider, Pagination, Chip } from '@mui/material';
 import EditUserStoryDialog from '../Dialog/EditUserStoryDialog';
 
+/**
+ * Displays a card for a user story with functionality to edit and delete the story.
+ * @param {string} feature - Name of the feature the user story belongs to.
+ * @param {string} subFeature - Name of the sub-feature the user story belongs to.
+ * @param {string} requirement - Description of the user story requirement.
+ * @param {string} recordId - Unique identifier for the user story.
+ * @param {array} servicesToUse - List of services to use in this user story.
+ * @param {string} fileId - Identifier for the file associated with the user story. To be refactored to identificationId
+ * @param {string} additionalInformation - Additional information about the user story.
+ * @param {string} acceptanceCriteria - Acceptance criteria for the user story.
+ * @param {function} handleRequirementsEdit - Function to handle editing user story details.
+ * @param {function} handleRequirementsDelete - Function to handle deleting the user story.
+ * @returns {component} Paginated User story card that displays the information above. 
+ */
 const UserStoryCard = ({
   feature,
   subFeature,
@@ -20,10 +34,12 @@ const UserStoryCard = ({
 
   const handleEditClick = () => setIsEditMode(true);
   const handleClose = () => setIsEditMode(false);
-  const saveEditsToDb = (editedData) => {
+
+  const saveEdits = (editedData) => {
     handleRequirementsEdit(fileId, recordId, editedData);
     setIsEditMode(false);
   };
+
   const handleDeleteClick = () => handleRequirementsDelete(fileId, recordId);
   const handleChangePage = (event, value) => setCurrentPage(value);
 
@@ -104,7 +120,7 @@ const UserStoryCard = ({
         services_to_use={servicesToUse}
         acceptance_criteria={acceptanceCriteria}
         additional_information={additionalInformation}
-        handleSave={saveEditsToDb}
+        handleSave={saveEdits}
         recordId={recordId}
       />
     </>

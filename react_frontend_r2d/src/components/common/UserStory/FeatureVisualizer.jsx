@@ -31,7 +31,8 @@ const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStor
         // Merge and extract contents as Job Parameters
         const userStoryJobHandler = new UserStoryJobHandler();
         const job = userStoryJobHandler.populateJobParameters(filesData);
-        const result = await userStoryJobHandler.addJobToQueue(job, JobStatus.QUEUED, "Pending Submission");
+        console.debug("File Data: ", filesData);
+        const result = await userStoryJobHandler.addJobToQueue(job, JobStatus.QUEUED, `Pending Submission`);
         handleUserStorySubmit(result); // Pass result back to caller
         setOpenConfirmDialog(false);
     }

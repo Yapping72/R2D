@@ -20,6 +20,7 @@ class UserStoryJobHandler extends GenericJobHandler {
     * @returns {object} job - job object
     */
     populateJobParameters(data) {
+        console.debug("Attempting to populate job parameters using: ", data);
         try {
             let validatedData = this.validator.validate(data);
             let sanitizedData = this.sanitizer.getSanitizedData(validatedData);
@@ -27,7 +28,7 @@ class UserStoryJobHandler extends GenericJobHandler {
                 ...this.job,
                 parameters: sanitizedData,
                 tokens: sanitizedData.tokens,
-                last_updated_timestamp: new Date().toISOString() // Assume validation ensures timestamp is correct
+                last_updated_timestamp: new Date().toISOString() // Validation ensures timestamp is correct
             }
             this.setJob(job);
             console.debug("User Story Job Data prepared:", this.job);
@@ -146,6 +147,143 @@ class UserStoryJobHandler extends GenericJobHandler {
             console.error("Failed to abort job:", error);
             throw new Error("Failed to abort job", error);
         }
+    }
+
+    async updateUserStoryInJob(jobIdentifier, feature, subFeature, recordId, editedData) {
+        try {
+            const newData = {
+                acceptance_criteria: editedData.acceptance_criteria,
+                additional_information: editedData.additional_information,
+                id: editedData.id,
+                requirement: editedData.requirement,
+                services_to_use: editedData.services_to_use,
+            }
+
+            // Retrieve existing job parameters to find the record
+            const data = await this.retrieveJobFromQueue(jobIdentifier);
+
+            // Safely navigate and update the nested structure
+            let parameters = data.data.parameters.job_parameters;
+
+            // Remove the old entry if it exists
+            if (parameters[feature] && parameters[feature][subFeature] && parameters[feature][subFeature][recordId]) {
+                delete parameters[feature][subFeature][recordId];
+            }
+
+            // Handle potential absence of any level in the path
+            if (!parameters[editedData.feature]) {
+                parameters[editedData.feature] = {};
+            }
+            if (!parameters[editedData.feature][editedData.sub_feature]) {
+                parameters[editedData.feature][editedData.sub_feature] = {};
+            }
+
+            parameters[editedData.feature][editedData.sub_feature][editedData.id] = newData;
+
+            // Update modified fields before committing to DB
+            data.data.last_updated_timestamp = new Date().toISOString();
+            const tokens = this.recountTokens(data.data.parameters.job_parameters);
+            data.data.tokens = tokens;
+            data.data.parameters.tokens = tokens;
+            const updatedFeaturesAndSubFeatures = this.extractAllFeaturesAndSubFeatures(data.data.parameters.job_parameters);
+            data.data.parameters.features = updatedFeaturesAndSubFeatures.features;
+            data.data.parameters.sub_features = updatedFeaturesAndSubFeatures.subFeatures;
+            // Propagate changes to database
+            const result = await this.repository.handleUpdateRecordById(data.data); 
+            return result;
+        } catch (error) {
+            console.error("Failed to update user story in job:", error);
+            throw new Error("Failed to update user story in job: ", error);
+        }
+    }
+
+    async deleteUserStoryInJob(jobIdentifier, feature, subFeature, recordId) {
+        try {
+            // Retrieve existing job parameters to find the record
+            const data = await this.retrieveJobFromQueue(jobIdentifier);
+
+            // Safely navigate and update the nested structure
+            let parameters = data.data.parameters.job_parameters;
+
+            // Remove the old entry if it exists
+            if (parameters[feature] && parameters[feature][subFeature] && parameters[feature][subFeature][recordId]) {
+                delete parameters[feature][subFeature][recordId];
+            }
+
+            // Update modified fields before committing to DB
+            data.data.last_updated_timestamp = new Date().toISOString();
+            const tokens = this.recountTokens(data.data.parameters.job_parameters);
+            data.data.tokens = tokens;
+            data.data.parameters.tokens = tokens;
+            const updatedFeaturesAndSubFeatures = this.extractAllFeaturesAndSubFeatures(data.data.parameters.job_parameters);
+            data.data.parameters.features = updatedFeaturesAndSubFeatures.features; // DEBUG THIS NOT WROKING
+            data.data.parameters.sub_features = updatedFeaturesAndSubFeatures.subFeatures;
+            console.log(updatedFeaturesAndSubFeatures);
+            console.log(data)
+            const result = await this.repository.handleUpdateRecordById(data.data); // Propagate changes to database
+            return result;
+        } catch (error) {
+            console.error("Failed to add job to queue:", error);
+            throw new Error("Failed to add job to queue", error);
+        }
+    }
+
+    recountTokens(jsonData) {
+        let tokenCount = 0;
+    
+        // Helper function to count words in a string
+        function countWords(str) {
+            return str.split(/\s+/).length;
+        }
+    
+        // Recursive function to explore each object or array
+        function explore(node) {
+            if (typeof node === 'object' && node !== null) {
+                for (const key in node) {
+                    if (node.hasOwnProperty(key)) {
+                        const value = node[key];
+                        // Check if the current key is one of the fields we're interested in
+                        if (['requirement', 'acceptance_criteria', 'additional_information'].includes(key) && typeof value === 'string') {
+                            tokenCount += countWords(value);
+                        } else if (key === 'services_to_use' && Array.isArray(value)) {
+                            // Count each entry in the services_to_use array as a word
+                            tokenCount += value.length;
+                        }
+    
+                        // Recursively explore objects and arrays
+                        explore(value);
+                    }
+                }
+            }
+        }
+        // Start the recursive exploration
+        explore(jsonData);
+        return tokenCount;
+    }
+
+    getFeatures(jsonData) {
+        return Object.keys(jsonData);
+    }
+    
+    extractAllFeaturesAndSubFeatures(jsonData) {
+        let features = new Set();
+        let subFeatures = new Set();
+    
+        // Iterate over the JSON data to collect features and sub-features
+        Object.keys(jsonData).forEach(feature => {
+            if (feature === "tokens") {
+                return;
+            }
+
+            features.add(feature); // Add feature to the set
+    
+            // Iterate through each sub-feature and add to the subFeatures set
+            Object.keys(jsonData[feature]).forEach(subFeature => {
+                subFeatures.add(subFeature); // Add sub-feature to the set
+            });
+        });
+    
+        return { features: Array.from(features), subFeatures: Array.from(subFeatures) };
     }
 }
 

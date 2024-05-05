@@ -41,7 +41,7 @@ class GenericJobHandler {
      * @param {number} count - The number of tokens to add to the token count.
      */
     updateTokenCount(count) {
-        this.job.token_count = count;
+        this.job.tokens = count;
     }
 
     updateLastUpdateTime() {

@@ -102,10 +102,10 @@ export class GenericQueueRepository {
         });
     }
 
-    /**<ClearDB>
-       * Clears all records from the object store.
-       * @returns {Promise} A Promise that resolves with true if the operation was successful.
-       */
+    /**
+    * Clears all records from the object store.
+    * @returns {Promise} A Promise that resolves with true if the operation was successful.
+    */
     async clearDB() {
         const store = await this.initTransactionAndStore("readwrite");
         return new Promise((resolve, reject) => {
@@ -121,7 +121,7 @@ export class GenericQueueRepository {
      * @param {string} validNewStatus The new status to be set for the job. This field should be validated before passing
      * @returns {Promise} A Promise that resolves with the new updated record
      */
-    async updateJobStatusAndDetailsById(id, validNewStatus="NO STATUS PROVIDED", validJobDetails="NO JOB DETAILS PROVIDED") {
+    async updateJobStatusAndDetailsById(id, validNewStatus = "NO STATUS PROVIDED", validJobDetails = "NO JOB DETAILS PROVIDED") {
         const store = await this.initTransactionAndStore("readwrite");
 
         return new Promise((resolve, reject) => {
@@ -142,7 +142,7 @@ export class GenericQueueRepository {
                 }
 
                 // Update the job status 
-                const updatedData = { ...data, job_status: validNewStatus, job_details: validJobDetails,last_updated_timestamp: new Date().toISOString() };
+                const updatedData = { ...data, job_status: validNewStatus, job_details: validJobDetails, last_updated_timestamp: new Date().toISOString() };
 
                 // Update the job in the store
                 const updateRequest = store.put(updatedData);
@@ -154,6 +154,35 @@ export class GenericQueueRepository {
                     console.debug(`Job status for ${id} updated successfully to ${validNewStatus}.`);
                     resolve(id);  // Return the job ID after a successful update
                 };
+            };
+        });
+    }
+
+    /**
+     * Updates or replaces a record in the IndexedDB store by its keyPath.
+     * @param {object} newData - The new data object to replace the existing record, must include the keyPath property ('job_id').
+     * @returns {Promise} - A Promise that resolves with the updated record, or rejects with an error.
+     */
+    async updateRecordById(newData) {
+        const store = await this.initTransactionAndStore("readwrite");
+        console.log(newData);
+        return new Promise((resolve, reject) => {
+            // Ensure that newData contains the key as part of the object, compliant with keyPath setup
+            if (!newData.job_id) {
+                reject(new Error("New data object must contain 'job_id' as keyPath."));
+                return;
+            }
+
+            const request = store.put(newData); // Only pass the newData, no explicit key
+
+            request.onerror = (event) => {
+                console.error("Failed to update the record:", event.target.error);
+                reject(event.target.error);
+            };
+
+            request.onsuccess = () => {
+                console.log(`Record with job_id ${newData.job_id} updated successfully.`);
+                resolve(newData);  // Return the updated data
             };
         });
     }

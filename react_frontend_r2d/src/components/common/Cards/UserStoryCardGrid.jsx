@@ -16,12 +16,11 @@ import { v4 as uuidv4 } from 'uuid';
  * @param {Array} props.featureData Array of objects, each containing details about a feature,
  *                                  expected keys: feature, sub_feature, id, requirement.
  *                                  'services_to_use' is an optional key and should be an array if provided.
- * @param {bool} props.retriggerAnimation State that re-triggers Grow animation
  * @param {string} props.fileId Identifier for the file associated with these requirements, used for edit operations.
  * @returns {JSX.Element} A responsive grid layout of requirement cards.
  */
 
-const UserStoryCardGrid = ({ featureData, fileId}) => {
+const UserStoryCardGrid = ({featureData, fileId}) => {
   const { handleRequirementsEdit, handleRequirementsAdd, handleRequirementsDelete } = useUserStoryContext();
   const [finishedRendering, setFinishedRendering] = useState(false);
 

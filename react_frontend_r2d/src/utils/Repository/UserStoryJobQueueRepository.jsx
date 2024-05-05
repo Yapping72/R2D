@@ -40,7 +40,7 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
   }
   /**
    * Wrapper to retrieve a job by its ID
-   * @param {number} jobId The ID of the job to retrieve
+   * @param {string} jobId The ID of the job to retrieve
    * @returns {Object} An object containing the success status and data or error message
    */
   async handleFindById(jobId) {
@@ -54,7 +54,7 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
   }
   /** 
    * Deletes a job by its ID
-   * @param {number} jobId The ID of the job to delete
+   * @param {string} jobId The ID of the job to delete
    * @returns {Object} An object containing the success status and data or error message
    */
   async handleDeleteById(jobId) {
@@ -66,10 +66,30 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
       return { success: false, error: error.message };
     }
   }
-  
+  /**
+   * Updates job status and job details of a particular job
+   * @param {string} jobId 
+   * @param {string} jobStatus 
+   * @param {string} jobDetails 
+   * @returns 
+   */
   async handleUpdateJobStatusAndDetailsById(jobId, jobStatus, jobDetails) {
     try {
       const result = await this.updateJobStatusAndDetailsById(jobId, jobStatus, jobDetails)
+      return {success: true, data: result};
+    } catch (error) {
+      console.error(`Error failed to delete ${jobId} from DB: `, error);
+      return { success: false, error: error.message };
+    }
+  }
+  /**
+   * The parameters must contain a key called job_id
+   * @param {*} parameters 
+   * @returns 
+   */
+  async handleUpdateRecordById(parameters) {
+    try {
+      const result = await this.updateRecordById(parameters)
       return {success: true, data: result};
     } catch (error) {
       console.error(`Error failed to delete ${jobId} from DB: `, error);

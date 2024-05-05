@@ -1,5 +1,4 @@
 // UserStoryJobValidator.js
-import { TempleHinduSharp } from "@mui/icons-material";
 import GenericJobValidator from "./GenericJobValidator";
 import { MAX_USER_STORY_FEATURE_LENGTH, MAX_USER_STORY_SUB_FEATURE_LENGTH, MAX_USER_STORY_REQUIREMENT_LENGTH, MAX_USER_STORY_ACCEPTANCE_CRITERIA_LENGTH, MAX_USER_STORY_ADDITIONAL_INFORMATION_LENGTH, MAX_SERVICE_TO_USE_ENTRY_LENGTH, MAX_SERVICES_TO_USE, MAX_USER_STORY_ID_LENGTH} from "./ValidationConstants";
 
@@ -11,12 +10,11 @@ class UserStoryJobValidator extends GenericJobValidator {
         this.tokens = 0;
         this.jobParameters = {};
         this.validatedParameters = {};
-        this.featureMapping = {};
     }
     /**
      * Parses the provided data and constructs job parameters in the form of a nested dictionary structure.
      * Each feature is mapped to its respective sub-features, and each sub-feature contains a collection
-     * of user story records.
+     * of user story records. Performs validation on featureData.
      * 
      * Also performs size validation and ensures all jobParameters loaded meets size constraints.
      * @param {Array} data - An array of objects representing the data to be parsed. Each object should contain
@@ -24,7 +22,6 @@ class UserStoryJobValidator extends GenericJobValidator {
      * @returns {void}
      * 
      **/
-
     parseAndValidateLength(data) {
         data.forEach(item => {    
             // Add each feature information to a job_parameters dictionary

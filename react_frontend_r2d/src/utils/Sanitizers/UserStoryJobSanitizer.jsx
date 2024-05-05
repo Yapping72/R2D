@@ -127,7 +127,7 @@ class UserStoryJobSanitizer extends GenericJobSanitizer {
 
     getSanitizedData(data) {
         console.debug(this.sanitizeFeatures(data.features));
-        console.debug(this.sanitizeFeatures(data.sub_features));
+        console.debug(this.sanitizeSubFeatures(data.sub_features));
         console.debug(this.sanitizeJobParameters(data.job_parameters));
         return this.sanitizedData;
     }

@@ -188,7 +188,7 @@ const UploadRequirementsPage = () => {
             <Container>
                 <Typography variant='h3'>User Story Uploader</Typography>
                 <Box >
-                    <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
+                    <Tabs value={value} onChange={handleTabChange} aria-label="Upload requirements tabs">
                         <Tab label="Upload & Select User Stories" />
                         <Tab label="Feature Visualizer" />
                     </Tabs>

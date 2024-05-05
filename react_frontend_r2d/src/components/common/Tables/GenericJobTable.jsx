@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, IconButton, Chip, CircularProgress, Tooltip } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, IconButton, Chip, CircularProgress, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useAlert } from '../Alerts/AlertContext';
 
@@ -32,58 +32,9 @@ function getComparator(order, orderBy) {
 * Expects the table to store a column for File data types
 **/
 
-const GenericJobTable = ({ repository, buttonGroup = null }) => {
-    const [order, setOrder] = useState('desc');
-    const [orderBy, setOrderBy] = useState('');
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [data, setData] = useState([]);
-    const [columns, setColumns] = useState([]);
-    const { showAlert } = useAlert();
-    const [showJobIds, setShowJobIds] = useState(false); // State to track visibility of job IDs
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await repository.handleReadAll();
-            if (response.success) {
-                setData(response.data);
-            } else {
-                showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
-            }
-        };
-        fetchData();
-    }, [repository]);
-
-    useEffect(() => {
-        if (data.length > 0) {
-            const columnNames = Object.keys(data[0]).filter(key => key !== "content"); // Excludes content type
-            setColumns(columnNames);
-        }
-    }, [data]);
-
-    const handleRequestSort = (_, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleChangePage = (_, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    // When visibility icon is clicked job ids are shown
-    const toggleShowJobIds = () => {
-        setShowJobIds(!showJobIds);
-    };
-
     // Render status as chips.
     // Add an indefinite spinner for processing status
-    const renderStatus = (status) => {
+   export const renderStatus = (status) => {
         switch (status) {
             case "Draft":
                 return (
@@ -144,12 +95,60 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
             default:
                 return null;
         }
+};
+
+const GenericJobTable = ({ repository, buttonGroup = null }) => {
+    const [order, setOrder] = useState('desc');
+    const [orderBy, setOrderBy] = useState('');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [data, setData] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const { showAlert } = useAlert();
+    const [showJobIds, setShowJobIds] = useState(false); // State to track visibility of job IDs
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await repository.handleReadAll();
+            if (response.success) {
+                setData(response.data);
+            } else {
+                showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
+            }
+        };
+        fetchData();
+    }, [repository]);
+
+    useEffect(() => {
+        if (data.length > 0) {
+            const columnNames = Object.keys(data[0]).filter(key => key !== "content"); // Excludes content type
+            setColumns(columnNames);
+        }
+    }, [data]);
+
+    const handleRequestSort = (_, property) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
     };
+
+    const handleChangePage = (_, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    // When visibility icon is clicked job ids are shown
+    const toggleShowJobIds = () => {
+        setShowJobIds(!showJobIds);
+    };
+
     return (
         <>
-            <Paper elevation={0} sx={{
-                border: '1px solid #90caf9',
-            }}>
+            <Paper elevation={0}>
                 <TableContainer sx={{ maxHeight: '100%' }}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
