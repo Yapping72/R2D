@@ -32,7 +32,7 @@ const ZoomAndPan = ({ children }) => {
               <ResetIcon />
             </IconButton>
           </div>
-          <TransformComponent wrapperStyle={{ width: '100%', height:'90%'}}>
+          <TransformComponent wrapperStyle={{ width: '100%', height:'100%'}}>
             {children}
           </TransformComponent>
         </>

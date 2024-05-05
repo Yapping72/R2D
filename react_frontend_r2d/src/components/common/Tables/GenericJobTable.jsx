@@ -26,7 +26,6 @@ function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-
 /*
 * Displays a Table with pagination and sorting by columns.
 * The table retrieves its data from the indexedDb datastore specified by the repository.
@@ -34,15 +33,13 @@ function getComparator(order, orderBy) {
 **/
 
 const GenericJobTable = ({ repository, buttonGroup = null }) => {
-    const [order, setOrder] = useState('asc');
+    const [order, setOrder] = useState('desc');
     const [orderBy, setOrderBy] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [data, setData] = useState([]);
     const [columns, setColumns] = useState([]);
-    const [openDialog, setOpenDialog] = useState(false);
     const { showAlert } = useAlert();
-
     const [showJobIds, setShowJobIds] = useState(false); // State to track visibility of job IDs
 
     useEffect(() => {
@@ -79,18 +76,6 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
         setPage(0);
     };
 
-    const handleOpenDialog = async (id) => {
-        // This logic should be for search icon button
-        setOpenDialog(true);
-        const response = await repository.handleFindById(id);
-        console.debug(response);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-
-    };
-
     // When visibility icon is clicked job ids are shown
     const toggleShowJobIds = () => {
         setShowJobIds(!showJobIds);
@@ -122,20 +107,20 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                 return (
                     <Tooltip title="Errors were occurred while submitting your request. 
                     Verify that your job parameters are valid, and resubmit again.">
-                        <Chip label={status} color='error'/>
+                        <Chip label="Submission Error" color='error' />
                     </Tooltip>
                 );
             case "Error Failed to Process":
                 return (
                     <Tooltip title="Errors were encountered while processing your request.
                     Verify that your job parameters are valid, and resubmit again.">
-                        <Chip label={status} color='error'/>
+                        <Chip label="Processing Error" color='error' />
                     </Tooltip>
                 );
             case "Completed":
                 return (
                     <Tooltip title="Your request has been completed successfully.">
-                        <Chip label={status} color='success'/>
+                        <Chip label={status} color='success' />
                     </Tooltip>
                 );
             case "Processing":
@@ -143,9 +128,16 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                     <Tooltip title="Your request is currently being processed. Please wait while we generate your diagrams.">
                         <Chip
                             label="Processing"
-                            icon={<CircularProgress size={18} color="inherit" />}
                             color='primary'
-                            variant='outlined'
+                        />
+                    </Tooltip>
+                );
+            case "Job Aborted":
+                return (
+                    <Tooltip title="Your job has been successfully aborted.">
+                        <Chip
+                            label="Job Aborted"
+                            color='warning'
                         />
                     </Tooltip>
                 );
@@ -184,7 +176,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                         <TableCell
                                             key={column}
                                             align="left"
-                                            sortDirection={orderBy === column ? order : true}
+                                            sortDirection={orderBy === column ? order : 'asc'}
                                             sx={{
                                                 fontWeight: 'bold',
                                                 fontSize: '17px', // Set column name size size
@@ -227,7 +219,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                                 role="checkbox"
                                                 tabIndex={-1}
                                                 key={row.job_id}
-                                                onClick={() => handleOpenDialog(row.job_id)}>
+                                            >
                                                 {columns.map((column) => {
                                                     // Table body contents
                                                     let value = row[column];
@@ -244,13 +236,12 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                                                 {timePart.trim()} {/* Display time */}
                                                             </TableCell>);
                                                     }
-                                                    
+
                                                     if (column == "job_status") {
                                                         return (
                                                             <TableCell>
-                                                            {renderStatus(value)}
+                                                                {renderStatus(value)}
                                                             </TableCell>
-                                                            
                                                         )
                                                     }
 
@@ -267,7 +258,12 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                                 {buttonGroup && (
                                                     <TableCell align="left">
                                                         {/* Pass the job status for the current row as a prop */}
-                                                        {React.cloneElement(buttonGroup, { jobStatus: row.job_status })}
+                                                        {React.cloneElement(buttonGroup,
+                                                            {
+                                                                key: `actions-${row.job_id}`,
+                                                                jobStatus: row.job_status,
+                                                                jobId: row.job_id
+                                                            })}
                                                     </TableCell>
                                                 )}
                                             </TableRow>
@@ -275,9 +271,9 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                     })
                             ) : (
                                 // Render a row with a cell that spans all columns if data is empty
-                                <TableRow>
+                                <TableRow key="no-jobs-row">
                                     <TableCell colSpan={columns.length} align="center">
-                                        <Typography>Table is Empty</Typography>
+                                        <Typography>No jobs found</Typography>
                                     </TableCell>
                                 </TableRow>
                             )}

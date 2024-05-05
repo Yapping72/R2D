@@ -7,7 +7,6 @@ import { UserStoryContextProvider } from '../../components/common/UserStory/User
 import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
-import UserStoryJobHandler from '../../utils/JobHandling/UserStoryJobHandler';
 
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization

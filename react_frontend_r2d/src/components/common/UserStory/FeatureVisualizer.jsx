@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import {Button, Container, Divider} from '@mui/material';
+import { Stack, Button, Container, Divider } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import UserStoryAccordion from './UserStoryAccordion';
 import UserStoryTableModal from './UserStoryTableModal';
 import UserStoryJobHandler from '../../../utils/JobHandling/UserStoryJobHandler';
 import R2DConfirmationDialog from '../Dialog/R2DConfirmationDialog';
 import InformationPaperCard from '../Cards/InformationPaperCard';
+import { JobStatus } from '../../../utils/JobHandling/GenericJobHandler';
 
 /**
  * `FeatureVisualizer` renders a list of `UserStoryCardGrid` components, each corresponding to a set of user stories or requirements.
@@ -24,14 +25,13 @@ import InformationPaperCard from '../Cards/InformationPaperCard';
  * @returns {ReactElement} The `FeatureVisualizer` component that renders multiple `UserStoryCardGrid` components, each under a file identifier heading.
  */
 
-const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStorySubmit}) => {
-
+const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStorySubmit }) => {
     const handleSubmitUserStoryForProcessing = async () => {
         // Validate and sanitize 
         // Merge and extract contents as Job Parameters
-        const userStoryJobHandler = new UserStoryJobHandler(filesData);
-        userStoryJobHandler.populateJobParameters(filesData);
-        const result = await userStoryJobHandler.addJobToQueue();
+        const userStoryJobHandler = new UserStoryJobHandler();
+        const job = userStoryJobHandler.populateJobParameters(filesData);
+        const result = await userStoryJobHandler.addJobToQueue(job, JobStatus.QUEUED, "Pending Submission");
         handleUserStorySubmit(result); // Pass result back to caller
         setOpenConfirmDialog(false);
     }
@@ -54,13 +54,15 @@ const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStor
 
     return (
         <Container>
-            <InformationPaperCard
-                title="Select User Stories For Analysis" 
-                description=" You may select one or more uploaded files containing user stories for analysis.
-                User stories queued for analysis should be descriptive and comprehensive to ensure the proposed design meets your requirements."
-            >
-            <UserStoryTableModal></UserStoryTableModal>
-            </InformationPaperCard>
+            {!filesData.length && (
+                <InformationPaperCard
+                    title="Select User Stories For Analysis"
+                    description="You may select one or more uploaded files containing user stories for analysis.
+                    User stories queued for analysis should be descriptive and comprehensive to ensure the proposed design meets your requirements."
+                >
+                    <UserStoryTableModal></UserStoryTableModal>
+                </InformationPaperCard>
+            )}
             {filesData.map((fileData, index) => (
                 <React.Fragment key={uuidv4()}>
                     <UserStoryAccordion fileData={fileData} index={index} handleRemove={handleRemove} />
@@ -68,13 +70,16 @@ const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStor
                 </React.Fragment>
             ))}
             {filesData.length > 0 && (
-                <Button variant="outlined" onClick={handleOpenConfirmDialog}>
-                    Submit for Processing
-                </Button>
+                <Stack direction="row" justifyContent="space-between" spacing={2}>
+                    <Button variant="outlined" onClick={handleOpenConfirmDialog}>
+                        Submit for Processing
+                    </Button>
+                    <UserStoryTableModal></UserStoryTableModal> {/* Assuming this can be triggered or is a button */}
+                </Stack>
             )}
             <R2DConfirmationDialog
                 open={openConfirmDialog}
-                title="Confirm Submission"  
+                title="Confirm Submission"
                 content="The user stories you have selected are ready to be added to your job queue. You will have the opportunity to review and submit them for processing on the next page."
                 onConfirm={handleSubmitUserStoryForProcessing}
                 onCancel={handleCloseConfirmDialog}

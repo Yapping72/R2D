@@ -53,7 +53,6 @@ const FileContentDialog = ({
       open={open} 
       onClose={onClose} 
       aria-labelledby="file-content-title"
-      
       PaperProps={{
         sx:{
           backgroundColor: "black", // Ensures the background color is black
@@ -62,7 +61,7 @@ const FileContentDialog = ({
       }}
     >
       <DialogContent>
-        <Box sx={{width:"40vw", height:"60vh", overflow:"hidden"}}>
+        <Box sx={{width:"40vw", height:"60vh", maxWidth:"80vw", maxHeight:"100vh", overflow:"hidden"}}>
           <Typography variant="h6" sx={{textAlign:"center"}}>{fileMetadata.filename}</Typography>
           <Divider sx={{my:1}}></Divider>
           <ReadOnlyEditor fileExtension={fileMetadata.type} fileContents={fileContent}></ReadOnlyEditor>

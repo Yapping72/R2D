@@ -1,4 +1,5 @@
 // UserStoryJobValidator.js
+import { TempleHinduSharp } from "@mui/icons-material";
 import GenericJobValidator from "./GenericJobValidator";
 import { MAX_USER_STORY_FEATURE_LENGTH, MAX_USER_STORY_SUB_FEATURE_LENGTH, MAX_USER_STORY_REQUIREMENT_LENGTH, MAX_USER_STORY_ACCEPTANCE_CRITERIA_LENGTH, MAX_USER_STORY_ADDITIONAL_INFORMATION_LENGTH, MAX_SERVICE_TO_USE_ENTRY_LENGTH, MAX_SERVICES_TO_USE, MAX_USER_STORY_ID_LENGTH} from "./ValidationConstants";
 
@@ -67,11 +68,9 @@ class UserStoryJobValidator extends GenericJobValidator {
                 };
             })  
         });
-        
         this.validatedParameters["features"] = this.features;
         this.validatedParameters["sub_features"] = this.subFeatures;
         this.validatedParameters["job_parameters"]=this.jobParameters;
-        console.debug("Validated Data: ", this.validatedParameters);
         return this.validatedParameters;
     }
 
@@ -108,7 +107,7 @@ class UserStoryJobValidator extends GenericJobValidator {
      */
     validate(data) {
         this.parseAndValidateLength(data);
-        // Add more validation as required
+        console.debug("Validated parameters, ", this.validatedParameters);
         return this.validatedParameters;
     }
 }

@@ -49,7 +49,7 @@ export class UserStoryFileRepository extends GenericFileRepository {
             const result = await this.clearDB()
             return { success: true };
         } catch(error) {
-            console.error("Failed to clear IndexedDb file store: ", error)
+            console.error(`Failed to delete all records from ${this.dbName}-${this.storeName}: `, error)
             return { success: false, error: error.message };
         }
     }

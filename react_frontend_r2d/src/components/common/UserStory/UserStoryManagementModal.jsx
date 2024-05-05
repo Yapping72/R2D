@@ -1,4 +1,3 @@
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DragDropFile from "../FileUpload/DragDropFileUpload";
 import UserStoryFileUploadValidator from '../../../utils/Validators/UserStoryFileUploadValidator';
 import { UserStoryFileRepository } from "../../../utils/Repository/UserStoryFileRepository";

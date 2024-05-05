@@ -162,7 +162,9 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {columns.map((column) => (
+                {columns.map((column) =>  {
+                if (column === "type") {return null};
+                return (
                   <TableCell
                     key={column}
                     align="left"
@@ -181,7 +183,8 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
                       {column.charAt(0).toUpperCase() + column.slice(1)}
                     </TableSortLabel>
                   </TableCell>
-                ))}
+                );
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -207,6 +210,11 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
                               renderArrayContentAsChips(value, chipColor)
                             );
                           }
+
+                          if (column === "type") {
+                             return null;
+                          }
+
                           return (
                             <TableCell key={column} align="left">
                               {value}

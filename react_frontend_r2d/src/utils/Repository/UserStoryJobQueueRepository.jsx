@@ -7,7 +7,12 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
   constructor() {
     super("r2d-job-db", "user-story-job-queue-store");
   }
-  // Writes the actual file and fileMeta to IndexedDb
+
+   /** 
+   * Adds a job to the user-story-job-queue-store 
+   * @param {Object} job The job object to be added to the queue
+   * @returns {Object} An object containing the success status and data or error message
+   */
   async handleAddJobToQueue(job) {
     try {
       const result = await this.addJobToQueue(job);
@@ -19,7 +24,10 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
     }
   }
 
-  // Writes the actual file and fileMeta to IndexedDb
+/** 
+   * Reads all records from the user-story-job-queue-store
+   * @returns {Object} An object containing the success status and data or error message
+   */
   async handleReadAll() {
     try {
       const result = await this.readAll();
@@ -30,26 +38,55 @@ export class UserStoryJobQueueRepository extends GenericQueueRepository {
       return { success: false, error: error.message };
     }
   }
-
+  /**
+   * Wrapper to retrieve a job by its ID
+   * @param {number} jobId The ID of the job to retrieve
+   * @returns {Object} An object containing the success status and data or error message
+   */
   async handleFindById(jobId) {
-    try{
-        const result = await this.findById(jobId)
-        // console.log("File and Metadata retrieved:", result);
-        return { success: true, data: result};
-    } catch(error) {
-        console.error("Error retrieving mermaid file from DB: ", error);
-        return { success: false, error: error.message };
+    try {
+      const result = await this.findById(jobId);
+      return { success: true, data: result };
+    } catch (error) {
+      console.error("Error retrieving mermaid file from DB: ", error);
+      return { success: false, error: error.message };
     }
-}
+  }
+  /** 
+   * Deletes a job by its ID
+   * @param {number} jobId The ID of the job to delete
+   * @returns {Object} An object containing the success status and data or error message
+   */
+  async handleDeleteById(jobId) {
+    try {
+      const result = await this.deleteById(jobId);
+      return {success: true, data: result};
+    } catch (error) {
+      console.error(`Error failed to delete ${jobId} from DB: `, error);
+      return { success: false, error: error.message };
+    }
+  }
+  
+  async handleUpdateJobStatusAndDetailsById(jobId, jobStatus, jobDetails) {
+    try {
+      const result = await this.updateJobStatusAndDetailsById(jobId, jobStatus, jobDetails)
+      return {success: true, data: result};
+    } catch (error) {
+      console.error(`Error failed to delete ${jobId} from DB: `, error);
+      return { success: false, error: error.message };
+    }
+  }
 
-
-  // Deletes all records from DB
+   /**
+   * Deletes all records from the r2d-job-db/user-story-job-queue-store
+   * @returns {Object} An object containing the success status and error message (if any)
+   */
   async handleClearDb() {
     try {
       const result = await this.clearDB()
       return { success: true };
     } catch (error) {
-      console.error("Failed to clear IndexedDb file store: ", error)
+      console.error(`Failed to delete all records from ${this.dbName}-${this.storeName}: `, error)
       return { success: false, error: error.message };
     }
   }

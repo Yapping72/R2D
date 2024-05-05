@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import GenericJobSanitizer from '../Sanitizers/GenericJobSanitizer';
 import GenericJobValidator from '../Validators/GenericJobValidator';
 
-
 export const JobStatus = {
     DRAFT: "Draft",
     QUEUED: "Queued",
@@ -10,10 +9,12 @@ export const JobStatus = {
     ERROR_FAILED_TO_SUBMIT: "Error Failed to Submit",
     PROCESSING: "Processing",
     ERROR_FAILED_TO_PROCESS: "Error Failed to Process",
+    ABORTED: "Job Aborted",
     COMPLETED: "Completed"
 };
-
-
+/**
+ * GenericJobHandler class 
+ */
 class GenericJobHandler {
     /**
      * @param {object} jobParameterValidator - Object responsible for parsing and validating job parameters.
@@ -70,10 +71,9 @@ class GenericJobHandler {
     
     /**
     * Populates the job parameters based on the provided data.
-    * @param {object} data - The data to populate the job parameters.
     * @throws {Error} Throws an error if data sanitization or validation fails.
     */
-    populateJobParameters(data) {
+    populateJobParameters() {
         throw new Error("Method 'populateJobParameters' must be implemented by subclass");
     }
     /**
@@ -93,8 +93,16 @@ class GenericJobHandler {
     }
 
     /**
-     * Note this may need refactoring to incorporate validation
-     * @param {job} job 
+     * Removes job from an IndexedDb Queue
+     * This function should also modify the job status accordingly
+     */
+    retrieveJobFromQueue() {
+        throw new Error("Method 'retrieveJobFromQueue' must be implemented by subclass");
+    }
+
+    /**
+     * Sets the current job dictionary
+     * @param {object} job object that stores job parameters
      */
     setJob(job) {
         const requiredFields = ['job_id', 'user_id', 'job_status', 'job_details', 'tokens', 'parameters', 'created_timestamp', 'last_updated_timestamp'];

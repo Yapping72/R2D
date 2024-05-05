@@ -9,7 +9,7 @@ const read_only_options = {
   automaticLayout: true,
   theme: 'vs',
   fontSize: 14,
-  scrollBeyondLastLine:false,
+  scrollBeyondLastLine:true,
 };
 
 // MonacoEditor maps file extensions to a language, populate this map so that MonacoEditor can prettify content.

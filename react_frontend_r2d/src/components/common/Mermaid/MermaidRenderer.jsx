@@ -5,7 +5,6 @@ mermaid.initialize({
     startOnLoad: false, 
     theme: 'forest',
     securityLevel: 'loose',
-    fontFamily: 'monospace',
     useMaxWidth:true,
     themeVariables: {
         fontSize: '20px', 
@@ -51,6 +50,6 @@ mermaid.initialize({
     
     render() {
         // Apply full width and height to the div that Mermaid will use
-        return <div ref={this.divRef} style={{width: '100%', height: '100%', overflow:'hidden' }}></div>;
+        return <div ref={this.divRef} style={{width: '100%', height: '100%', overflow:'visible' }}></div>;
     }
 }

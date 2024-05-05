@@ -64,7 +64,6 @@ class UserStoryJobSanitizer extends GenericJobSanitizer {
         } else {
             console.debug(`No services to use provided`);
         }
-        console.debug("Word Count: ", totalWordCount);
         return totalWordCount; // Return the total word count
     }
 
@@ -90,35 +89,34 @@ class UserStoryJobSanitizer extends GenericJobSanitizer {
             const sanitizedSubFeature = subFeature;
             this.sanitizedSubFeatures.add(sanitizedSubFeature);
         }
-        
+
         this.sanitizedData["sub_features"] = Array.from(this.sanitizedSubFeatures);
         return this.sanitizedSubFeatures;
     }
+
     // Sanitizes job parameters dictionary
     // Returns a sanitized job parameter dictionary 
-    sanitizeJobParameters(jobParameters ) {
-        // TBC in security sprint
-        for (const featureKey in jobParameters) {
-            let sanitizedFeature = jobParameters[featureKey]; // Sanitize Features
-            this.sanitizedJobParams[sanitizedFeature] = {}; // Initialize nested object for feature
+    sanitizeJobParameters(jobParameters) {
+        this.sanitizedJobParams = {}; // Reset or initialize the sanitized parameters object
+        this.tokenCount = 0; // Reset token count
 
-            console.debug(featureKey, jobParameters[featureKey], sanitizedFeature); 
+        for (const featureKey in jobParameters) {
+            let sanitizedFeature = featureKey; // Sanitize Feature key if necessary
+            this.sanitizedJobParams[sanitizedFeature] = this.sanitizedJobParams[sanitizedFeature] || {}; // Initialize nested object for feature
+
             for (const subFeatureKey in jobParameters[featureKey]) {
-                let sanitizedSubFeature = jobParameters[featureKey][subFeatureKey]; // Sanitize SubFeature
-                this.sanitizedJobParams[sanitizedFeature][sanitizedSubFeature] = {}; // Initialize nested object for subFeature
-                console.debug(subFeatureKey, jobParameters[featureKey][subFeatureKey], sanitizedSubFeature);
+                let sanitizedSubFeature = subFeatureKey; // Sanitize SubFeature key if necessary
+                this.sanitizedJobParams[sanitizedFeature][sanitizedSubFeature] = this.sanitizedJobParams[sanitizedFeature][sanitizedSubFeature] || {}; // Initialize nested object for subFeature
+
                 for (const storyId in jobParameters[featureKey][subFeatureKey]) {
                     let sanitizedStoryId = storyId; // Sanitize This
-                    let sanitizedStory = jobParameters[featureKey][subFeatureKey][storyId]; // Sanitize the story - requirement, acceptance_criteria etc.
+                    let sanitizedStory = jobParameters[featureKey][subFeatureKey][storyId]; // Get the story object
                     this.tokenCount += this.countTokens(sanitizedStory); // Counts tokens that will be sent for analysis
-                    console.debug(storyId, jobParameters[featureKey][subFeatureKey][storyId], sanitizedStory);
                     this.sanitizedJobParams[sanitizedFeature][sanitizedSubFeature][sanitizedStoryId] = sanitizedStory;
-                    console.debug("Sanitized Job Parameters: ", this.sanitizedJobParams)
-                }   
+                }
             }
         }
-        
-    // Merge this into the existing job_parameters without overwriting
+        // Merge this into the existing job_parameters without overwriting
         this.sanitizedData["job_parameters"] = {
             ...this.sanitizedData["job_parameters"],
             ...this.sanitizedJobParams
@@ -128,11 +126,9 @@ class UserStoryJobSanitizer extends GenericJobSanitizer {
     }
 
     getSanitizedData(data) {
-        console.debug("In UserStoryJobSanitizer");
-        // Iterate through each key and perform the sanitization
-        console.debug(this.sanitizeFeatures(data['features']));
-        console.debug(this.sanitizeSubFeatures(data['sub_features']));
-        console.debug(this.sanitizeJobParameters(data['job_parameters']));
+        console.debug(this.sanitizeFeatures(data.features));
+        console.debug(this.sanitizeFeatures(data.sub_features));
+        console.debug(this.sanitizeJobParameters(data.job_parameters));
         return this.sanitizedData;
     }
 }
