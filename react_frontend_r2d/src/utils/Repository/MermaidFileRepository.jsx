@@ -1,4 +1,4 @@
-import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
+import {GenericFileRepository} from './GenericFileRepository'
 
 /*
 * Wrapper class for GenericIndexedDBRepository
@@ -8,9 +8,9 @@ import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
             size: file.size,
             lines: null, }
 */
-export class MermaidFileRepository extends GenericIndexedDBRepository {
+export class MermaidFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-mermaid-db", "mermaid-file-store");
+      super("r2d-file-db", "mermaid-file-store"); // Must match what is stored in GenericFileRepository
     }
 
     async handleFindById(id) {
@@ -24,9 +24,9 @@ export class MermaidFileRepository extends GenericIndexedDBRepository {
         }
     }
 
-    async handleReadAllFiles() {
+    async handleReadAll() {
         try{
-            const result = await this.readAllFiles();
+            const result = await this.readAll();
             // console.log("All files retrieved", result);
             return { success: true, data: result};
         } catch(error) {

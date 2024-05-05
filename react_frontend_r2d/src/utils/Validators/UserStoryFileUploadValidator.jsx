@@ -66,7 +66,7 @@ class UserStoryFileUploadValidator extends FileUploadValidator {
     
     // Return the extracted metadata
     return {
-        "word count": totalWordCount,
+        "words": totalWordCount,
         "features": featuresSet,
         "sub features": subFeaturesSet
     };

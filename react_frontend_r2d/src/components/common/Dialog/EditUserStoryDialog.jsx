@@ -11,8 +11,20 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {Typography} from '@mui/material';
 
 /**
- * Dialog that enables editing of requirement cards used on Upload page
- * Note that keys have to match the one in json file
+ * Displays a Dialog that supports modification of a user story
+ * @param {string} open -  This state is used to decide whether the dialog should be displayed
+ * @param {function} handleClose - Function that is invoked when the dialog is closed
+ * @param {string} feature - Name of the feature the user story belongs to.
+ * @param {string} subFeature - Name of the sub-feature the user story belongs to.
+ * @param {string} Id - User story Id 
+ * @param {string} requirement - Description of the user story requirement.
+ * @param {string} recordId - Unique identifier for the user story.
+ * @param {array} servicesToUse - List of services to use in this user story.
+ * @param {string} additionalInformation - Additional information about the user story.
+ * @param {string} acceptanceCriteria - Acceptance criteria for the user story.
+ * @param {function} handleRequirementsEdit - Function to handle editing user story details.
+ * @param {function} handleRequirementsDelete - Function to handle deleting the user story.
+ * @returns {component} Dialog box that saves edits to IndexedDb
  */
 const EditUserStoryDialog = ({ 
   open, 
@@ -64,7 +76,7 @@ const EditUserStoryDialog = ({
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit Requirement</DialogTitle>
+      <DialogTitle>User Story Editor</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -95,7 +107,7 @@ const EditUserStoryDialog = ({
         />
         <TextField
           margin="dense"
-          label="ID"
+          label="User Story ID"
           type="text"
           fullWidth
           variant="standard"
@@ -107,7 +119,7 @@ const EditUserStoryDialog = ({
         />
         <TextField
           margin="dense"
-          label="Requirement"
+          label="User Story"
           type="text"
           fullWidth
           variant="standard"

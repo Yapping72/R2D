@@ -1,4 +1,4 @@
-import {GenericIndexedDBRepository} from './GenericIndexedDBRepository'
+import {GenericFileRepository} from './GenericFileRepository'
 import FileReaderUtility from '../FileHandling/FileReaderUtility';
 import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValidator';
 
@@ -6,9 +6,9 @@ import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValid
 * Repository to retrieve and write requirements (JSON based)
 */
 
-export class UserStoryFileRepository extends GenericIndexedDBRepository {
+export class UserStoryFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-user-story-db", "user-story-file-store");
+      super("r2d-file-db", "user-story-file-store"); // Must match what is stored in GenericFileRepository
     }
     
     // Retrieves data stored in IndexedDB by id
@@ -23,9 +23,9 @@ export class UserStoryFileRepository extends GenericIndexedDBRepository {
         }
     }
     // Retrieves all requirements file uploaded
-    async handleReadAllFiles() {
+    async handleReadAll() {
         try{
-            const result = await this.readAllFiles();
+            const result = await this.readAll();
             // console.log("All files retrieved", result);
             return { success: true, data: result};
         } catch(error) {
@@ -49,7 +49,7 @@ export class UserStoryFileRepository extends GenericIndexedDBRepository {
             const result = await this.clearDB()
             return { success: true };
         } catch(error) {
-            console.error("Failed to clear IndexedDb file store: ", error)
+            console.error(`Failed to delete all records from ${this.dbName}-${this.storeName}: `, error)
             return { success: false, error: error.message };
         }
     }

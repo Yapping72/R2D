@@ -3,27 +3,32 @@
  * initialize transactions, and perform CRUD operations on the specified object store within the database.
  */
 
-export class GenericIndexedDBRepository {
-    constructor(dbName, storeName) {
-        this.dbName = dbName; // Name of the IndexedDB database
+export class GenericFileRepository {
+    constructor(dbName = "r2d-file-db", storeName) {
+        this.dbName = dbName; // Name of the IndexedDB database (r2d-file-store) is the default repository to store files to
         this.storeName = storeName; // Name of the object store within the database
+        this.dbVersion = 2; // Update this version whenever a new store is added or schema changes
     }
    
     /**
-     * Opens a connection to the IndexedDB database. If the database or object store does not exist, they are created.
+     * Opens a connection to the IndexedDB database. 
+     * If the database or object store does not exist, they are created.
+     * When onboarding new stores to the database they must be added here
      */
     async openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, 1);
+            const request = indexedDB.open(this.dbName, this.dbVersion);
 
             request.onupgradeneeded = (event) => {
-                // Create the object store if it does not exist
                 const db = event.target.result;
-                if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName, { keyPath: "id", autoIncrement: true });
+                // Create all required object stores here
+                if (!db.objectStoreNames.contains("user-story-file-store")) {
+                    db.createObjectStore("user-story-file-store", { keyPath: "id", autoIncrement: true });
+                }
+                if (!db.objectStoreNames.contains("mermaid-file-store")) {
+                    db.createObjectStore("mermaid-file-store", { keyPath: "id", autoIncrement: true });
                 }
             };
-
             request.onerror = (event) => reject(event.target.error);
             request.onsuccess = (event) => resolve(event.target.result);
         });
@@ -62,9 +67,8 @@ export class GenericIndexedDBRepository {
     * @returns {Promise<Array>} A promise that resolves with an array of all records in the object store if the operation is successful. 
     * The promise rejects with an error if the operation fails, providing an error message detailing the cause of the failure.
     */
-    async readAllFiles() {
+    async readAll() {
         const store = await this.initTransactionAndStore("readonly");
-
         return new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onerror = (event) => reject(event.target.error);

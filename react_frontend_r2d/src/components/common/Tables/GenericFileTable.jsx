@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography} from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Chip, Tooltip, Box, Divider } from '@mui/material';
 import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
 import FileContentDialog from '../Dialog/FileContentDialog';
 import { useAlert } from '../Alerts/AlertContext';
-
+import FolderOffOutlinedIcon from '@mui/icons-material/FolderOffOutlined';
 
 // Compares two items based on the orderBy property in descending order
 function descendingComparator(a, b, orderBy) {
@@ -32,8 +32,8 @@ function getComparator(order, orderBy) {
 * Displays a Table with pagination and sorting by columns.
 * The table retrieves its data from the indexedDb datastore specified by the repository.
 * Expects the table to store a column for File data types
-*/
-const GenericFileTable = ({ repository, handleFileSelection}) => {
+**/
+const GenericFileTable = ({ repository, handleFileSelection }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -44,26 +44,25 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
   const [fileContent, setFileContent] = useState('');
   const [fileMetadata, setFileMetadata] = useState('');
   const { showAlert } = useAlert();
-  const [isVisible, setIsVisible] = useState(true); // manages visibility of table
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await repository.handleReadAllFiles();
+      const response = await repository.handleReadAll();
       if (response.success) {
-        setData(response.data); 
+        setData(response.data);
       } else {
         showAlert('error', `We're having trouble retrieving uploaded files at the moment. Please try again shortly, or reach out to our support team for assistance. We appreciate your patience.`)
       }
     };
     fetchData();
-  }, [repository]); 
-  
+  }, [repository]);
+
   useEffect(() => {
     if (data.length > 0) {
-      const columnNames = Object.keys(data[0]).filter(key => key !== "content");
+      const columnNames = Object.keys(data[0]).filter(key => key !== "content"); // Excludes content type
       setColumns(columnNames);
     }
-  }, [data]); 
+  }, [data]);
 
   const handleRequestSort = (_, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -93,41 +92,102 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
   };
 
   const handleCloseDialog = () => {
-      setOpenDialog(false);
-      setFileContent('');
+    setOpenDialog(false);
+    setFileContent('');
   };
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+  const truncateLabel = (label) => {
+    const maxCharLimit = 20; // Maximum character limit for chip labels
+    let words = label.split(" "); // Split label into words
+    let truncatedLabel = "";
+    let currentLength = 0;
+    let wordCount = 0;
+
+    for (let word of words) {
+      // Check the length with the next word added
+      if (currentLength + word.length + (truncatedLabel ? 1 : 0) > maxCharLimit) {
+        // If adding this word exceeds the limit and more than one word has been added, stop
+        truncatedLabel += (truncatedLabel ? " " : "") + word;
+        break;
+      }
+      // Add the word to the result (add a space before the word if it's not the first word)
+      truncatedLabel += (truncatedLabel ? " " : "") + word;
+      currentLength += word.length + (truncatedLabel ? 1 : 0); // Update the current length including space
+      wordCount++;
+    }
+
+    // Add an ellipsis if the resulting string is shorter than the original label
+    if (label.length > truncatedLabel.length) {
+      truncatedLabel += '...';
+    }
+    return truncatedLabel;
+  };
+
+  const renderArrayContentAsChips = (value, chipColor = "secondary") => {
+    const numberOfChipsToShow = 2; // Number of chips to display
+    if (value.length > numberOfChipsToShow) {
+      const visibleChips = value.slice(0, numberOfChipsToShow);
+      const moreCount = value.length - numberOfChipsToShow;
+      return (
+        <TableCell>
+          {visibleChips.map((item, index) => (
+            <Tooltip title={value.join(', ')}>
+              <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
+            </Tooltip>
+          ))}
+          <Tooltip title={value.splice(numberOfChipsToShow).join(', ')}>
+            <Chip label={`+${moreCount} more`} style={{ margin: '2px' }} variant='outlined' />
+          </Tooltip>
+        </TableCell>
+      );
+    }
+
+    return (
+      <TableCell>
+        {value.map((item, index) => (
+          <Tooltip title={value.join(', ')}>
+            <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
+          </Tooltip>
+        ))}
+      </TableCell>
+    );
+  }
 
   return (
-  <>
-  <Paper sx={{ border: '1.5px solid #e0e0e0', borderRadius: '5px', minHeight: data.length >= rowsPerPage ? 'auto' : 'calc(10px * 47.5)' }}>
-    <TableContainer sx={{ maxHeight: '70vh', overflow: 'auto'}}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column}
-                  align="center"
-                  sortDirection={orderBy === column ? order : false}
-                  sx={{
-                    fontWeight: 'bold',
-                    fontSize: '20px', // Set column name size
-                  }}
-                >
-                  <TableSortLabel
-                    active={orderBy === column}
-                    direction={orderBy === column ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, column)}
+    <>
+      <Paper elevation={0} sx={{
+        border: '1px solid #90caf9',
+      }}>
+        <TableContainer sx={{ maxHeight: '100%' }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) =>  {
+                if (column === "type") {return null};
+                return (
+                  <TableCell
+                    key={column}
+                    align="left"
+                    sortDirection={orderBy === column ? order : false}
+                    sx={{
+                      fontWeight: 'bold',
+                      fontSize: '18px', // Set column name size
+                      backgroundColor: 'black',
+                    }}
                   >
-                    {column.charAt(0).toUpperCase() + column.slice(1)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody >
+                    <TableSortLabel
+                      active={orderBy === column}
+                      direction={orderBy === column ? order : 'desc'}
+                      onClick={(event) => handleRequestSort(event, column)}
+                    >
+                      {column.charAt(0).toUpperCase() + column.slice(1)}
+                    </TableSortLabel>
+                  </TableCell>
+                );
+                })}
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {data.length > 0 ? (
                 data
                   .sort(getComparator(order, orderBy))
@@ -135,22 +195,28 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
                   .map((row) => {
                     return (
                       <TableRow
-                      hover 
-                      role="checkbox" 
-                      tabIndex={-1} 
-                      key={row.id}
-                      onClick={() => handleOpenDialog(row.id)}>
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                        onClick={() => handleOpenDialog(row.id)}>
                         {columns.map((column) => {
                           let value = row[column];
+                          // Check if the column is 'features' or 'sub features' and the value is a Set or List
+                          if ((column === "features" || column === "sub features") && (Array.isArray(value) || value instanceof Set)) {
+                            value = Array.from(value); // Ensure value is an array
+                            const chipColor = (column === "features") ? "primary" : "secondary";
+                            return (
+                              renderArrayContentAsChips(value, chipColor)
+                            );
+                          }
 
-                          // Check if the value is a Set or List
-                          if (Array.isArray(value) || value instanceof Set) {
-                            // Convert the set/list to a string delimited by commas
-                            value = Array.from(value).join(', ');
+                          if (column === "type") {
+                             return null;
                           }
 
                           return (
-                            <TableCell key={column} align="center">
+                            <TableCell key={column} align="left">
                               {value}
                             </TableCell>
                           );
@@ -162,39 +228,43 @@ const GenericFileTable = ({ repository, handleFileSelection}) => {
                 // Render a row with a cell that spans all columns if data is empty
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center">
-                    <Typography>Table is Empty</Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={2}
+                    >
+                      <FolderOffOutlinedIcon fontSize="large" />
+                      <Typography>No files found, upload your files to get started ! </Typography>
+                    </Box>
                   </TableCell>
                 </TableRow>
               )}
-              {emptyRows > 0 && data.length > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={columns.length} />
-                </TableRow>
-              )}
-          <TableRow>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            count={data.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableRow>
-        </TableBody>
-        </Table>
-      </TableContainer>
-  
-     {/* Dialog for displaying file content on click*/}
-     <FileContentDialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        fileContent={fileContent}
-        fileMetadata={fileMetadata}
-        handleFileSelection={handleFileSelection}
-      />
- </Paper>
-</>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Dialog for displaying file content on click*/}
+        <FileContentDialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          fileContent={fileContent}
+          fileMetadata={fileMetadata}
+          handleFileSelection={handleFileSelection}
+        />
+      </Paper>
+    </>
   );
 };
 

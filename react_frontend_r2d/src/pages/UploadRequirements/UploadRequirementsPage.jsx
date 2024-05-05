@@ -8,7 +8,6 @@ import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
 
-
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization
  * of user stories from files. It allows users to upload files, select files for viewing,
@@ -59,7 +58,7 @@ const UploadRequirementsPage = () => {
         }
     };
 
-      /**
+    /**
      * Handles the selection of files, updating the state with the selected file's data.
      * This allows the FeatureVisualizer to display the selected file's user stories.
      * @param {string} fileContents - The contents of the selected file.
@@ -73,8 +72,6 @@ const UploadRequirementsPage = () => {
                 { featureData: jsonFileContents, fileId: fileMetadata.id, fileMetadata: fileMetadata}
             ]);
             setValue(1);
-            console.log("filedata")
-            console.log(filesData)
         } catch (error) {
             console.error('Error processing the selected file', error);
             showAlert("error", "Error processing the selected file");
@@ -170,6 +167,17 @@ const UploadRequirementsPage = () => {
         }
     }
 
+    const handleUserStorySubmit = async (result) => {
+        if (result.success) {
+            showAlert("success", "Job successfully added to queue.");
+            // Redirect to analysis page (TBC)
+        } 
+        else {
+            showAlert("error",  `Failed to add job to queue.`);
+        }
+
+    }
+
     return (
         <UserStoryContextProvider
             handleFileUpload={handleFileUpload}
@@ -180,7 +188,7 @@ const UploadRequirementsPage = () => {
             <Container>
                 <Typography variant='h3'>User Story Uploader</Typography>
                 <Box >
-                    <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
+                    <Tabs value={value} onChange={handleTabChange} aria-label="Upload requirements tabs">
                         <Tab label="Upload & Select User Stories" />
                         <Tab label="Feature Visualizer" />
                     </Tabs>
@@ -195,7 +203,7 @@ const UploadRequirementsPage = () => {
                 )}
                 {value === 1 && (
                     <Box>
-                        <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile}/>
+                        <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile} handleUserStorySubmit={handleUserStorySubmit}/>
                     </Box>
                 )}
             </Container>

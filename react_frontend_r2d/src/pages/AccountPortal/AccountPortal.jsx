@@ -14,8 +14,8 @@ const AccountPortalPage = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-            <Typography variant="h4" gutterBottom>
+        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 0}}>
+            <Typography variant="h4" gutterBottom >
                 {isLoginForm ? <TypingAnimation text = "Start Designing" variant='h4'></TypingAnimation> : <TypingAnimation text = "Create your R2D Account" variant='h4'></TypingAnimation> }
             </Typography>
             <Stack direction="row" spacing={1} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>

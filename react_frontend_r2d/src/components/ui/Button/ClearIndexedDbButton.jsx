@@ -40,16 +40,16 @@ const ClearIndexedDbButton = ({ repository }) => {
                 variant="outlined"
                 startIcon={<DeleteIcon />}
                 onClick={handleOpenConfirmDialog}>
-                <Typography variant='p'>Delete all locally stored files</Typography>
+                <Typography variant='p'>Delete all records from table</Typography>
             </Button>
             <R2DConfirmationDialog
                 open={openConfirmDialog}
-                title={<Typography variant="h6">Confirm Deletion</Typography>}
+                title="Confirm Deletion"
                 content={
-                    <Typography>
-                        Are you sure you want to permanently delete all locally stored data? <br />
-                        <strong>This action cannot be undone.</strong>
-                    </Typography>
+                    <>
+                        Are you sure you want to permanently delete all table data ?
+                        <br></br><strong> This action cannot be undone. </strong>
+                    </>
                 }
                 onConfirm={handleClearDatabase}
                 onCancel={handleCloseConfirmDialog}

@@ -47,7 +47,7 @@ const VisualizePage = () => {
       <Container>
       <AlertProvider>
       <Box>
-      <Typography variant='h2'> Mermaid Visualizer</Typography>
+      <Typography variant='h2'> Mermaid Live Editor</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
       </Box>
@@ -55,7 +55,7 @@ const VisualizePage = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden'}}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={5} lg={5}> {/* Adjusted for 40% width at large screens */}
-        <Box  sx={{ height: '50vh', width:'100%'}}>
+        <Box  sx={{ height: '80vh', width:'100%'}}>
         <MermaidEditor mermaidCode={mermaidCode} onCodeChange={handleDiagramChange} />
         </Box>
         <Box>
@@ -68,7 +68,7 @@ const VisualizePage = () => {
             <ZoomAndPan >
               <MermaidRenderer chart={mermaidCode}/>
             </ZoomAndPan>
-            </Box>
+        </Box>
         </Grid>
       </Grid>
     </Box>
