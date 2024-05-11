@@ -26,14 +26,22 @@ function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-/*
-* Displays a Table with pagination and sorting by columns.
-* The table retrieves its data from the indexedDb datastore specified by the repository.
-* Expects the table to store a column for File data types
-**/
-
-    // Render status as chips.
-    // Add an indefinite spinner for processing status
+/**
+ * Renders a status chip with a tooltip based on the status.
+ * 
+ * Supported statuses:
+ * - Draft: Ready to submit.
+ * - Queued: Queued and ready for processing.
+ * - Submitted: Successfully submitted, waiting for processing.
+ * - Error Failed to Submit: Errors occurred during submission.
+ * - Error Failed to Process: Errors occurred during processing.
+ * - Completed: Successfully completed.
+ * - Processing: Currently being processed.
+ * - Job Aborted: Job has been aborted.
+ *
+ * @param {string} status - The current status of a job or request.
+ * @returns {JSX.Element|null} A Material-UI Chip wrapped in a Tooltip if a valid status, otherwise null.
+ */
    export const renderStatus = (status) => {
         switch (status) {
             case "Draft":
@@ -97,6 +105,12 @@ function getComparator(order, orderBy) {
         }
 };
 
+/**
+ * Generic Job Table that renders items within the IndexedDB (repository will provide which db to retrieve from). Provides sorting and sizing.
+ * @param {repository} repository Concrete Job Repository that provides a ReadAll function to retrieve all records from IndexedDB.
+ * @param {buttonGroup} buttonGroup optional ButtonGroup object that implements its on OnClick functionality. Rendered for each row under the Actions column. 
+ * @returns 
+ */
 const GenericJobTable = ({ repository, buttonGroup = null }) => {
     const [order, setOrder] = useState('desc');
     const [orderBy, setOrderBy] = useState('');
