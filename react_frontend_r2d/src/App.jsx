@@ -9,7 +9,8 @@ import AnalyzePage from './pages/Analyze/AnalyzePage.jsx';
 import UploadRequirementsPage from './pages/UploadRequirements/UploadRequirementsPage.jsx';
 import VisualizePage from './pages/Visualize/VisualizePage.jsx';
 import AccountPortalPage from './pages/AccountPortal/AccountPortal.jsx';
-import { AlertProvider } from './components/common/Alerts/AlertContext.jsx';
+import ErrorPage from './pages/ErrorPage/ErrorPage.jsx';
+import { ROUTES } from './utils/Pages/RoutesConfig.jsx';
 
 function App() {
   const theme = createTheme({
@@ -33,12 +34,13 @@ function App() {
         <div className="main-content">
           <main>
             <Routes>
-            <Route path="/" element={<Layout><HomePage /></Layout>} />
-            <Route path="/home" element={<Layout><HomePage /></Layout>} />
-            <Route path="/analyze" element={<Layout><AnalyzePage /></Layout>} />
-            <Route path="/upload" element={<Layout><UploadRequirementsPage /></Layout>} />
-            <Route path="/visualize" element={<Layout><VisualizePage /></Layout>} />
-            <Route path="/account-portal" element={<Layout><AccountPortalPage /></Layout>} />
+            <Route path={ROUTES.BASE} element={<Layout><HomePage /></Layout>} />
+            <Route path={ROUTES.HOME} element={<Layout><HomePage /></Layout>} />
+            <Route path={ROUTES.ANALYZE} element={<Layout><AnalyzePage /></Layout>} />
+            <Route path={ROUTES.UPLOAD} element={<Layout><UploadRequirementsPage /></Layout>} />
+            <Route path={ROUTES.VISUALIZE} element={<Layout><VisualizePage /></Layout>} />
+            <Route path={ROUTES.ACCOUNT_PORTAL} element={<Layout><AccountPortalPage /></Layout>} />
+            <Route path={ROUTES.ERROR} element={<Layout><ErrorPage /></Layout>} />  
             </Routes>
           </main>
         </div>
