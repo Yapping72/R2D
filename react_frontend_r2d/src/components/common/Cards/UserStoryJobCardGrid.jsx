@@ -57,7 +57,7 @@ const UserStoryJobCardGrid = ({ jobParameters }) => {
               <Grid item>
                 {Array.from(jobParameters.parameters.sub_features).map((sub_feature, index) => (
                   <Chip
-                    label={sub_feature} size="small" style={{ marginRight: '5px', marginBottom:'20px'}}
+                    label={sub_feature} size="small" style={{ marginRight: '5px', marginBottom:'10px'}}
                     variant="outlined" color="secondary"
                   />
                 ))}

@@ -2,7 +2,7 @@ import React from 'react';
 import JobAccordion from '../Accordion/JobAccordion';
 import UserStoryJobCardGrid from '../Cards/UserStoryJobCardGrid';
 import InformationPaperCard from '../Cards/InformationPaperCard';
-import { Box, Chip, Stack, Tooltip } from '@mui/material';
+
 
 const UserStoryJobParametersVisualizer = ({ jobParameters }) => {
     // Check if jobParameters is null or undefined and render a placeholder if so
