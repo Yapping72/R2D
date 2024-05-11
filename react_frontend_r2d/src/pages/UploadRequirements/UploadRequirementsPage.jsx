@@ -7,7 +7,8 @@ import { UserStoryContextProvider } from '../../components/common/UserStory/User
 import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRepository';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
-
+import { PageNavigationService } from '../../utils/Pages/PageNavigationService'
+import { ROUTES } from '../../utils/Pages/RoutesConfig';
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization
  * of user stories from files. It allows users to upload files, select files for viewing,
@@ -23,6 +24,8 @@ import { useAlert } from '../../components/common/Alerts/AlertContext';
 
 const UploadRequirementsPage = () => {
     const { showAlert } = useAlert();
+    const {navigateTo} = PageNavigationService();
+
     const [value, setValue] = useState(0); // Tab Value
     const [filesData, setFilesData] = useState([]);
     
@@ -170,7 +173,7 @@ const UploadRequirementsPage = () => {
     const handleUserStorySubmit = async (result) => {
         if (result.success) {
             showAlert("success", "Job successfully added to queue.");
-            // Redirect to analysis page (TBC)
+            navigateTo(ROUTES.ANALYZE);
         } 
         else {
             showAlert("error",  `Failed to add job to queue.`);

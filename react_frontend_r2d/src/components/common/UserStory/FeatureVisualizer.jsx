@@ -47,7 +47,6 @@ const FeatureVisualizer = ({ filesData, handleRemoveSelectedFile, handleUserStor
         setOpenConfirmDialog(false);
     };
 
-
     // Remove the selected file from filesData 
     const handleRemove = (index) => {
         handleRemoveSelectedFile(index);

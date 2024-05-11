@@ -4,7 +4,6 @@ import { useAlert } from '../../components/common/Alerts/AlertContext';
 import UserStoryJobTable from '../../components/common/Jobs/UserStoryJobTable';
 import { UserStoryJobContextProvider } from '../../components/common/Jobs/UserStoryJobContextProvider';
 import UserStoryJobHandler from '../../utils/JobHandling/UserStoryJobHandler';
-import JobAccordion from '../../components/common/Accordion/JobAccordion';
 import UserStoryJobParametersVisualizer from '../../components/common/Jobs/UserStoryJobParametersVisualizer';
 
 const AnalyzePage = () => {
@@ -104,7 +103,7 @@ const AnalyzePage = () => {
             }
         }
         catch (error) {
-            console.error("Error encountered editting user story in job parameters", error);
+            console.error("Error encountered editing user story in job parameters", error);
             showAlert("error", "Failed to edit user story in job parameters, please try again later.")
         }
     }
