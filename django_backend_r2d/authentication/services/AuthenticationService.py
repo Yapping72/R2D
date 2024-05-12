@@ -1,48 +1,49 @@
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ObjectDoesNotExist  
-
 from authentication.services.AuthenticationInterface import AuthenticationInterface
-from authentication.services.AuthenticationExceptions import UsernameFormatError, PasswordFormatError, CompromisedPasswordError 
-from authentication.services.AuthenticationExceptions import UserAlreadyExistsError, PassphraseFormatError, RegistrationError, AuthenticationError
+from authentication.services.AuthenticationExceptions import UsernameFormatError, PasswordFormatError, CompromisedPasswordError, AuthorizationError
+from authentication.services.AuthenticationExceptions import UserAlreadyExistsError, RegistrationError, AuthenticationError, FailedToCallPwnedAPIError
 from authentication.services.OTPAuthenticator import OTPAuthenticator
 from authentication.services.OTPInterface import OTPInterface
 from django.utils import timezone
 from ..models import FailedLoginAttempt
 import hashlib
 import requests
+
 from django.contrib.auth import get_user_model
 User = get_user_model() # Use custom User model instead of Django default user model
 
+import logging 
+logger = logging.getLogger("application_logging") # Instantiate logger class
+
 class AuthenticationService(AuthenticationInterface):
     """
-    AuthenticationService will check Django Auth tables to determine if user is valid.
-    Returns a User object if valid, else returns None
+    Authentication Service that is responsible for registering and authenticating users.
+    The authentication service here registers a user based on username, email and password.
     """
     def __init__(self, serializer_class, otp_authenticator: AuthenticationInterface):
         self.serializer_class = serializer_class
         self.otp_authenticator = otp_authenticator
 
-    def register(self, data):
-        """Adds a user to the database"""
-        getUsername = data.get('username')
-        data['username'] = getUsername.lower()
+    def register(self, data:dict):
+        data['username'] = data.get('username').lower()
 
         if not self.is_valid_username(data.get('username')):
-            raise UsernameFormatError('Username must be at contain at least 8 alphanumeric characters, and cannot contain more than 64 alphanumeric characters.')
+            raise UsernameFormatError()
         
         if not self.is_valid_password(data.get('password')):
-            raise PasswordFormatError('CreateFailPassword')
+            raise PasswordFormatError()
         
         if(self.is_password_compromised(data.get('password'))):
-            raise CompromisedPasswordError('The password you are trying to use is in a list of leaked passwords.')
+            raise CompromisedPasswordError()
 
         # Check if the user already exists based on username or email
         if User.objects.filter(username=data.get('username')).exists():
-            raise UserAlreadyExistsError("CreateFail")
+            raise UserAlreadyExistsError()
         
         if User.objects.filter(email=data.get('email')).exists():
-            raise UserAlreadyExistsError("CreateFail")
+            raise UserAlreadyExistsError()
 
         # Create a serializer instance with the provided data
         serializer = self.serializer_class(data=data)
@@ -81,7 +82,7 @@ class AuthenticationService(AuthenticationInterface):
                     return True  # Password is compromised
         else:
             # Handle API request error
-            raise Exception("Failed to check password against PwnedPasswords API")
+            raise FailedToCallPwnedAPIError("Failed to check password against PwnedPasswords API")
 
         return False  # Password is not compromised
 
@@ -102,7 +103,7 @@ class AuthenticationService(AuthenticationInterface):
                 user = User.objects.get(username=username)
                 user_id = user.id
             except User.DoesNotExist:
-                pass  # Handle the case where the user does not exist
+               raise AuthenticationError(f"This user does not exists.")
 
             if user_id is not None:
                 try:
@@ -117,8 +118,7 @@ class AuthenticationService(AuthenticationInterface):
                 else:
                     stored_failedAttempt.add_failed_attempt()
 
-            raise AuthenticationError(f"Invalid Credentials")
-
+            raise AuthenticationError(f"Invalid Credentials Provided")
         return user, otp
         
     def verify_password(self, user_id:str, password:str):
@@ -129,12 +129,14 @@ class AuthenticationService(AuthenticationInterface):
         try:
             # Retrieve the user object by its ID
             user = User.objects.get(pk=user_id)
+            logger.debug(f"Verifying password for {user}")
         except User.DoesNotExist:
             # If the user does not exist, raise an AuthenticationError
+            logger.debug(f"User does not exists")
             raise AuthenticationError("User not found.")
-
+        
         # Use Django's built-in check_password function to verify the password
         if not user.check_password(password):
             # If the password does not match, raise an AuthenticationError
-            raise AuthenticationError("Invalid password.")
+            raise AuthorizationError()
         return True

@@ -1,4 +1,4 @@
-from framework.daos.daos import BaseDao
+from framework.daos.BaseDao import BaseDao
 from accounts.models import User
 
 class UserDao(BaseDao):

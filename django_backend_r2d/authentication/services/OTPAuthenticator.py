@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-
 from authentication.services.AuthenticationInterface import AuthenticationInterface
 from authentication.services.AuthenticationExceptions import AuthenticationError
 from authentication.services.OTPInterface import OTPInterface
@@ -42,6 +41,7 @@ class OTPAuthenticator(AuthenticationInterface):
             if is_correct is True and is_valid is True:
                 # Reset failed count
                 stored_failedAttempt.reset_failed_attempts()
+                self.otp_service.clear_otp(user_id)
                 return True
             else:
                 # Add failed count
