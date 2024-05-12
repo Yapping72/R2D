@@ -14,7 +14,7 @@ const read_only_options = {
 
 // MonacoEditor maps file extensions to a language, populate this map so that MonacoEditor can prettify content.
 const fileExtensionToLanguageMap = {
-    'json': 'json',
+    'application/json': 'json',
     'text/plain': 'plaintext',
     'md': 'markdown',
     'mermaid':'yaml'
@@ -31,7 +31,7 @@ const ReadOnlyEditor = ({ fileExtension, fileContents }) => {
     <MonacoEditor
       height="100%" 
       width="100%"
-      language={language} 
+      language="json"
       value={fileContents}
       options={read_only_options}
       editorDidMount={editorDidMount}

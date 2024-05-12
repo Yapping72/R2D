@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Box, Typography, Container, Divider} from "@mui/material";
+import { Grid, Box, Typography, Container, Divider } from "@mui/material";
 import MermaidRenderer from '../../components/common/Mermaid/MermaidRenderer';
 import MermaidEditor from '../../components/common/Mermaid/MermaidEditor';
 import ZoomAndPan from '../../components/ui/Interactions/ZoomAndPan';
@@ -12,70 +12,68 @@ import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import './VisualizePage.css'
 
 const VisualizePage = () => {
-    // Randomly select an example from mermaidExamples when initializing state
-    const [mermaidCode, setMermaidCode] = useState(() => {
-        const randomIndex = Math.floor(Math.random() * mermaidExamples.length);
-        return mermaidExamples[randomIndex].content;
-    });
+  // Randomly select an example from mermaidExamples when initializing state
+  const [mermaidCode, setMermaidCode] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * mermaidExamples.length);
+    return mermaidExamples[randomIndex].content;
+  });
 
-    const [selectedExample, setSelectedExample] = useState('');
-    // Selects an example and sets it in the MermaidEditor
-    const handleExampleSelect = (content) => {
-      setSelectedExample(content); 
-      setMermaidCode(selectedExample);
-    };
+  const [selectedExample, setSelectedExample] = useState('');
+  // Selects an example and sets it in the MermaidEditor
+  const handleExampleSelect = (content) => {
+    setSelectedExample(content);
+    setMermaidCode(selectedExample);
+  };
 
-    // Renders the diagram whenever there is a change in the editor
-    const handleDiagramChange = (code) => {
-        setMermaidCode(code);
-    };
-    
-    // Defines the actions to take when a file is uploaded to the MermaidFileManagementAccordion (DragDropComponent)
-    const  handleFileUpload = async (file, file_metadata) => {
-      // Callback function that will read the file 
-      const fileContents = await FileReaderUtility.readAsText(file);  
-      setMermaidCode(fileContents)
-    };
+  // Renders the diagram whenever there is a change in the editor
+  const handleDiagramChange = (code) => {
+    setMermaidCode(code);
+  };
 
-    // Defines the actions to take when a file is selected from the mermaid table 
-    const handleFileSelection = (fileContents) => {
-      setMermaidCode(fileContents)
-    };
+  // Defines the actions to take when a file is uploaded to the MermaidFileManagementAccordion (DragDropComponent)
+  const handleFileUpload = async (file, file_metadata) => {
+    // Callback function that will read the file 
+    const fileContents = await FileReaderUtility.readAsText(file);
+    setMermaidCode(fileContents)
+  };
 
-    return (
-      <MermaidContextProvider handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}>
+  // Defines the actions to take when a file is selected from the mermaid table 
+  const handleFileSelection = (fileContents) => {
+    setMermaidCode(fileContents)
+  };
+
+  return (
+    <MermaidContextProvider handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}>
       <Container>
-      <AlertProvider>
-      <Box>
-      <Typography variant='h2'> Mermaid Live Editor</Typography>
-      <Divider sx={{ my: 2 }}></Divider>
-      <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
-      </Box>
-      <Divider sx={{ my: 2 }}></Divider> 
-      <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden'}}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={5} lg={5}> {/* Adjusted for 40% width at large screens */}
-        <Box  sx={{ height: '80vh', width:'100%'}}>
-        <MermaidEditor mermaidCode={mermaidCode} onCodeChange={handleDiagramChange} />
-        </Box>
-        <Box>
-        <Divider sx={{ my: 2 }}></Divider>
-        <MermaidTemplatesAccordion onExampleSelect={handleExampleSelect}></MermaidTemplatesAccordion>
-        </Box>
-        </Grid>
-        <Grid item xs={12} md={7} lg={7}> {/* Adjusted for 60% width at large screens */}
-        <Box className='drawioGrid' sx={{ height: '100%', width: '100%' }}> {/* Width 100% to fill grid item */}
-            <ZoomAndPan >
-              <MermaidRenderer chart={mermaidCode}/>
-            </ZoomAndPan>
-        </Box>
-        </Grid>
-      </Grid>
-    </Box>
-    </AlertProvider>
-    </Container>
+        <AlertProvider>
+          <Box>
+            <Typography variant='h4'> Mermaid Live Editor</Typography>
+            <Divider sx={{ my: 2 }}></Divider>
+            <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
+            <Divider sx={{ my: 1 }}></Divider>
+            <MermaidTemplatesAccordion onExampleSelect={handleExampleSelect}></MermaidTemplatesAccordion>
+          </Box>
+          <Divider sx={{ my: 2 }}></Divider>
+          <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, overflow: 'hidden' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={5} lg={5}>
+                <Box sx={{ height: '100vh', width: '100%' }}>
+                  <MermaidEditor mermaidCode={mermaidCode} onCodeChange={handleDiagramChange} />
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={7} lg={7}>
+                <Box className='drawioGrid' sx={{ height: '100vh', width: '100%' }}>
+                  <ZoomAndPan >
+                    <MermaidRenderer chart={mermaidCode} />
+                  </ZoomAndPan>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </AlertProvider>
+      </Container>
     </MermaidContextProvider>
-    );
+  );
 };
 
 export default VisualizePage;

@@ -6,7 +6,7 @@ import {Box, Divider} from '@mui/material'
 import ClearIndexedDbButton from '../../ui/Button/ClearIndexedDbButton'
 
 const UserStoryTable = () => {
-    const { handleFileSelection, _ } = useUserStoryContext();
+    const { handleFileSelection } = useUserStoryContext();
     return(
         <Box>
         <GenericFileTable repository={new UserStoryFileRepository()} handleFileSelection={handleFileSelection}></GenericFileTable>

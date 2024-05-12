@@ -1,16 +1,18 @@
 import React from 'react';
 import { UserStoryJobQueueRepository } from '../../../utils/Repository/UserStoryJobQueueRepository'
-import { Box, Divider } from '@mui/material'
+import {Button, Stack, Box, Divider } from '@mui/material'
 import GenericJobTable from '../Tables/GenericJobTable';
 import UserStoryJobQueueButtons from './UserStoryJobQueueButtons';
 import JobStatusChipStack from '../Chips/JobStatusChipStack';
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
 const UserStoryJobTable = () => {
     return (
         <>
         <Box>
+        <Stack direction="row">
             <JobStatusChipStack repository={new UserStoryJobQueueRepository()}></JobStatusChipStack>
-            <Divider sx={{my:2}}></Divider>
+         </Stack>
         </Box>
         <Box>
             <GenericJobTable

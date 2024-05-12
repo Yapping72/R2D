@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardActions, Button, Typography, Divider, Pagination, Chip } from '@mui/material';
+import {Card, CardContent, CardActions, Button, Typography, Divider, Pagination, Chip } from '@mui/material';
 import EditUserStoryDialog from '../Dialog/EditUserStoryDialog';
+
 
 /**
  * Displays a card for a user story with functionality to edit and delete the story.
@@ -48,6 +49,7 @@ const UserStoryCard = ({
       case 1:
         return (
           <>
+            
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               {feature || 'Feature'}
             </Typography>
@@ -69,7 +71,7 @@ const UserStoryCard = ({
             <ol style={{ margin: 0 }}>
               {servicesToUse.map((service, index) => (
                 <li key={index}>
-                <Typography variant='body2'>{service}</Typography>
+                  <Typography variant='body2'>{service}</Typography>
                 </li>
               ))}
             </ol>
@@ -99,8 +101,19 @@ const UserStoryCard = ({
 
   return (
     <>
-      <Card variant="outlined"
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+      <Card
+        variant="outlined"
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'auto',
+          transition: 'transform 0.3s ease', // Smooth transition for transform change
+          transform: 'scale(1)', // Normal state scale
+          ':hover': {
+            transform: 'scale(1.025)'  // Scale up by 5% on hover
+          }
+        }}>
         <CardContent sx={{ flex: '1 0 auto' }}>
           {pageContent(currentPage)}
         </CardContent>

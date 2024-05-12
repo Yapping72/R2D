@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
       <Header />
       <Container disableGutters maxWidth={false} sx={{
         flexGrow: 1, // container takes up all available space
-        p: 1, // padding inside the container
+        p: 0, // padding inside the container
         width: '95%', // full width of the parent
       }}>
       <AlertProvider>
