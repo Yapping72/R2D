@@ -30,6 +30,9 @@ from authentication.services.OTPService import OTPService
 from notification.services.SendGridEmailService import SendGridEmailService
 import base64
 
+import logging
+logger = logging.getLogger('application_logging')
+
 otp_service = OTPService() # To handle OTP generation and user association
 token_service = JWTTokenService() # To generate JWT Tokens
 notification = SendGridEmailService()
@@ -45,10 +48,13 @@ class SignUpView(APIView):
             return Response({'access_token': str(access_token),"private_key":private_key}, status=status.HTTP_200_OK)
         
         except UserAlreadyExistsError as e:
+            logger.error(repr(e), exc_info=True)
             return Response({'error': e.error_message}, status=status.HTTP_400_BAD_REQUEST)
         except JWTTokenGenerationError as e:
+            logger.error(repr(e), exc_info=True)
             return Response({'error': e.error_message}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
+            logger.error(repr(e), exc_info=True)
             return Response({'error': f'An unexpected error occurred {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class LoginView(APIView):
