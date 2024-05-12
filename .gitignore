@@ -198,3 +198,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+*.logs
+*.rest
+
+*.pem

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+"""
+User class overrides django's default user to incorporate different roles.
+"""
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('NORMAL_USER', 'Normal User'),
