@@ -3,12 +3,26 @@ from application_logging.services.ApplicationLogFormatter import ApplicationLogF
 import os 
 
 
+"""
+Application logging configuration. The log template is defined in ApplicationLogFormatter.py
+Application logs support different log levels e.g., DEBUG, INFO, WARN, ERROR.
+Sample Log Created:
+{
+    "message": "WSGI Initialized",
+    "time_stamp": "2024-05-12 16:55:19",
+    "level": "INFO",
+    "application_name": "django_backend_r2d",
+    "function": "Log message created directly in wsgi.py", (Will be function name if called within a function)
+    "file_name": "wsgi.py"
+}
+"""
+
 LOGGING_CONFIG = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'application_logs': {
-            '()': ApplicationLogFormatter, # Custom log formatter that contains log template
+            '()': ApplicationLogFormatter, 
         },
     },
     'handlers': {
