@@ -1,6 +1,6 @@
 import inspect
 from django.test import TestCase
-from framework.daos.dao_factory import DjangoPostgresDaoFactory
+from framework.daos.DjangoPostgresDaoFactory import DjangoPostgresDaoFactory
 from accounts.daos.UserDAO import UserDao
 
 class DjangoPostgresDaoFactoryTestCase(TestCase):

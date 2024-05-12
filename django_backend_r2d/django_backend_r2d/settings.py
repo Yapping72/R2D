@@ -158,8 +158,8 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True, # updates user model whenever a token is obtained
 
     "ALGORITHM": "RS256",
-    "AUDIENCE": None,
-    "ISSUER": None,
+    "AUDIENCE": "React-Frontend-R2D",
+    "ISSUER": "Django-Backend-R2D",
     "JSON_ENCODER": None,
     "JWK_URL": None,
     "LEEWAY": 0,

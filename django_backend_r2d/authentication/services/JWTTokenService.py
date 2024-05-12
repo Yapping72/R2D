@@ -10,8 +10,8 @@ from authentication.services.Serializers import CustomTokenPairSerializer
 
 class JWTTokenService(TokenInterface):
     def __init__(self):
-        self.base_url = "http://localhost:8000/"
-        self.get_new_access_token_endpoint = f"{self.base_url}api/token/refresh/"
+        self.base_url = "http://localhost:8000/api/auth" # Refactor to reference common URLs config class
+        self.get_new_access_token_endpoint = f"{self.base_url}/token/refresh/"  # Refactor to reference common URLs config class
 
     def generate_token(self, user) -> str:
         """Creates refresh token for user and returns an access token"""
@@ -51,7 +51,7 @@ class JWTTokenService(TokenInterface):
             return self._refresh_token(payload, auth_header)
 
         except TokenError as e:
-            raise JWTTokenGenerationError(f"Error refreshing access token: {e}")
+            raise JWTTokenGenerationError(f"Error refreshing access token: {e.error_message}")
         except AuthenticationError as e:
             raise AuthenticationError(e.error_message)
         except JWTTokenGenerationError as e:
@@ -81,7 +81,7 @@ class JWTTokenService(TokenInterface):
         except (AttributeError, ValueError, KeyError, JWTTokenGenerationError) as e:
             raise JWTTokenGenerationError(f"Error extracting access token. Content: {response.content}")  
     
-    def extract_user_id(self,request) -> int:
+    def extract_user_id(self, request) -> int:
         """
         Retrieves the user_id from the request object
         Returns user_id (int) if token is valid.

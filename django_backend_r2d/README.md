@@ -1,6 +1,6 @@
 # Helpful Commands
 1. Accessing Db Shell
-    * ``docker exec -it [CONTAINER_NAME_OR_ID] psql -U [YOUR_POSTGRES_USERNAME] -d [YOUR_DATABASE_NAME]``
+    * ``docker exec -it [CONTAINER_NAME_OR_ID] psql -U [YOUR_POSTGRES_USERNAME] -d requirements_to_design_db``
 2. Retrieving container information
     * ``docker ps``
 3. Generating new django secret key

@@ -1,6 +1,7 @@
 import inspect
 from django.test import TestCase
-from framework.response.response import JSONResponse
+from framework.responses.JSONResponse import JSONResponse
+from rest_framework import status
 
 class JSONResponseTestCases(TestCase):
     @classmethod
@@ -18,11 +19,10 @@ class JSONResponseTestCases(TestCase):
         # Test data
         data = {"key1": "value1", "key2": "value2"}
         message = "Test message"
-        status = "OK"
-        status_code = 200
-
+        success = True
+        status_code = status.HTTP_200_OK
         # Create a JSONResponse object
-        json_response = JSONResponse(data, message, status, status_code)
+        json_response = JSONResponse(data=data, message=message, success=success, status_code=status_code)
 
         # Call the transform method
         response = json_response.transform()
@@ -32,8 +32,6 @@ class JSONResponseTestCases(TestCase):
         self.assertEqual(response.data, {
             "data": data,
             "message": message,
-            "status": status,
+            "success": success,
+            "status_code": status.HTTP_200_OK,
         })
-
-        # Check if the headers are set correctly
-        self.assertEqual(response["HTTP_CODE"], str(status_code))

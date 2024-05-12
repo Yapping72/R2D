@@ -203,3 +203,5 @@ dist-ssr
 *.rest
 
 *.pem
+.vscode
+.venv

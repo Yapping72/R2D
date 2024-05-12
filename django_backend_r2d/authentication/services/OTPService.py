@@ -37,4 +37,7 @@ class OTPService(OTPInterface):
         OTP.objects.create(user=user, otp=hashed_otp, timestamp=timezone.now())
         return hashed_otp
 
-
+    def clear_otp(self, user):
+        # Delete any existing OTP for the user
+        OTP.objects.filter(user=user).delete()
+        
