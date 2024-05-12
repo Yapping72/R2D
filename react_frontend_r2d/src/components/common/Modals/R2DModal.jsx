@@ -15,6 +15,7 @@ const style = {
 
 /**
  * Button excepts either a title, a icon or both
+ * @param {children} children - The child object to render
  * @param {string} title - Title that will be displayed on the button to open the modal
  * @param {icon} icon - MUI icon to be displayed on the button 
  * @returns 
@@ -29,7 +30,7 @@ const R2DModal = ({children, title="R2DModal", icon=null}) => {
       <Button variant="outlined" onClick={handleOpen} startIcon={icon}>
       {title && <Typography>{title}</Typography>}
       </Button>
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
         {children}
         </Box>

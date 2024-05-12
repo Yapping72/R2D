@@ -149,26 +149,70 @@ class UserStoryJobHandler extends GenericJobHandler {
         }
     }
 
+    /**
+     * Helper function to deletes a nested property within the job dictionary structure and cleans up any empty parent objects.
+     * @param {Object} params - The main object containing nested properties.  let parameters = data.data.parameters.job_parameters;
+     * @param {string} feature - The first-level key within the params object. 
+     * @param {string} subFeature - The second-level key within the feature object.
+     * @param {string} recordId - The third-level key within the subFeature object, which is to be deleted.
+     */
+    deleteNestedProperty(params, feature, subFeature, recordId) {
+        if (params[feature] && params[feature][subFeature] && params[feature][subFeature][recordId]) {
+            // Delete the specific recordId from subFeature
+            delete params[feature][subFeature][recordId];
+
+            // Check if subFeature object is now empty, and if so, delete it
+            if (Object.keys(params[feature][subFeature]).length === 0) {
+                delete params[feature][subFeature];
+                
+                // Check if feature object is now empty, and if so, delete it
+                if (Object.keys(params[feature]).length === 0) {
+                    delete params[feature];
+                }
+            }
+        }
+    }
+    
+    async updateDatabaseWithJobData(data) {
+        // Update modified fields
+        data.data.last_updated_timestamp = new Date().toISOString();
+        const tokens = this.recountTokens(data.data.parameters.job_parameters);
+        data.data.tokens = tokens;
+        data.data.parameters.tokens = tokens;
+
+        const updatedFeaturesAndSubFeatures = this.extractAllFeaturesAndSubFeatures(data.data.parameters.job_parameters);
+        data.data.parameters.features = updatedFeaturesAndSubFeatures.features;
+        data.data.parameters.sub_features = updatedFeaturesAndSubFeatures.subFeatures;
+        // Propagate changes to database
+        return await this.repository.handleUpdateRecordById(data.data);
+    }
+    /**
+     * Updates a user story in a job parameter
+     * @param {*} jobIdentifier - identifier for job
+     * @param {*} feature  - feature that user story belongs to
+     * @param {*} subFeature  - subFeature that user story belongs to
+     * @param {*} recordId  - user story id e.g., jira-id or apollo-13
+     * @param {*} editedData  - edited user story payload containing acceptance_criteria, additional_information, id, requirement and services_to_use
+     * @returns 
+     */
     async updateUserStoryInJob(jobIdentifier, feature, subFeature, recordId, editedData) {
         try {
             const newData = {
-                acceptance_criteria: editedData.acceptance_criteria,
-                additional_information: editedData.additional_information,
-                id: editedData.id,
-                requirement: editedData.requirement,
-                services_to_use: editedData.services_to_use,
-            }
+                acceptance_criteria: editedData.acceptance_criteria || "",
+                additional_information: editedData.additional_information || "",
+                id: editedData.id || "",
+                requirement: editedData.requirement || "",
+                services_to_use: editedData.services_to_use || []
+            };
 
             // Retrieve existing job parameters to find the record
             const data = await this.retrieveJobFromQueue(jobIdentifier);
 
-            // Safely navigate and update the nested structure
+            // Retrieve the job parameters to modify
             let parameters = data.data.parameters.job_parameters;
-
+            
             // Remove the old entry if it exists
-            if (parameters[feature] && parameters[feature][subFeature] && parameters[feature][subFeature][recordId]) {
-                delete parameters[feature][subFeature][recordId];
-            }
+            this.deleteNestedProperty(parameters, feature, subFeature, recordId);
 
             // Handle potential absence of any level in the path
             if (!parameters[editedData.feature]) {
@@ -179,24 +223,23 @@ class UserStoryJobHandler extends GenericJobHandler {
             }
 
             parameters[editedData.feature][editedData.sub_feature][editedData.id] = newData;
-
-            // Update modified fields before committing to DB
-            data.data.last_updated_timestamp = new Date().toISOString();
-            const tokens = this.recountTokens(data.data.parameters.job_parameters);
-            data.data.tokens = tokens;
-            data.data.parameters.tokens = tokens;
-            const updatedFeaturesAndSubFeatures = this.extractAllFeaturesAndSubFeatures(data.data.parameters.job_parameters);
-            data.data.parameters.features = updatedFeaturesAndSubFeatures.features;
-            data.data.parameters.sub_features = updatedFeaturesAndSubFeatures.subFeatures;
-            // Propagate changes to database
-            const result = await this.repository.handleUpdateRecordById(data.data); 
+            const result = await this.updateDatabaseWithJobData(data);
+            
             return result;
         } catch (error) {
             console.error("Failed to update user story in job:", error);
             throw new Error("Failed to update user story in job: ", error);
         }
     }
-
+    /**
+     * Deletes a user story in a job parameter
+     * @param {*} jobIdentifier - identifier for job
+     * @param {*} feature  - feature that user story belongs to
+     * @param {*} subFeature  - subFeature that user story belongs to
+     * @param {*} recordId  - user story id e.g., jira-id or apollo-13
+     * @param {*} editedData  - edited user story payload containing acceptance_criteria, additional_information, id, requirement and services_to_use
+     * @returns 
+     */
     async deleteUserStoryInJob(jobIdentifier, feature, subFeature, recordId) {
         try {
             // Retrieve existing job parameters to find the record
@@ -205,22 +248,8 @@ class UserStoryJobHandler extends GenericJobHandler {
             // Safely navigate and update the nested structure
             let parameters = data.data.parameters.job_parameters;
 
-            // Remove the old entry if it exists
-            if (parameters[feature] && parameters[feature][subFeature] && parameters[feature][subFeature][recordId]) {
-                delete parameters[feature][subFeature][recordId];
-            }
-
-            // Update modified fields before committing to DB
-            data.data.last_updated_timestamp = new Date().toISOString();
-            const tokens = this.recountTokens(data.data.parameters.job_parameters);
-            data.data.tokens = tokens;
-            data.data.parameters.tokens = tokens;
-            const updatedFeaturesAndSubFeatures = this.extractAllFeaturesAndSubFeatures(data.data.parameters.job_parameters);
-            data.data.parameters.features = updatedFeaturesAndSubFeatures.features; // DEBUG THIS NOT WROKING
-            data.data.parameters.sub_features = updatedFeaturesAndSubFeatures.subFeatures;
-            console.log(updatedFeaturesAndSubFeatures);
-            console.log(data)
-            const result = await this.repository.handleUpdateRecordById(data.data); // Propagate changes to database
+            this.deleteNestedProperty(parameters, feature, subFeature, recordId);
+            const result = await this.updateDatabaseWithJobData(data);
             return result;
         } catch (error) {
             console.error("Failed to add job to queue:", error);

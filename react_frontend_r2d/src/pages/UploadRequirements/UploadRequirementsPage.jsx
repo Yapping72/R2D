@@ -189,7 +189,7 @@ const UploadRequirementsPage = () => {
             handleRequirementsAdd={handleRequirementsAdd}
             handleRequirementsDelete={handleRequirementsDelete}>
             <Container>
-                <Typography variant='h3'>User Story Uploader</Typography>
+                <Typography variant='h4'>User Story Uploader</Typography>
                 <Box >
                     <Tabs value={value} onChange={handleTabChange} aria-label="Upload requirements tabs">
                         <Tab label="Upload & Select User Stories" />

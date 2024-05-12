@@ -3,6 +3,9 @@ import { Box, Tooltip, IconButton, Accordion, AccordionSummary, AccordionDetails
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { renderStatus } from '../Tables/GenericJobTable';
 import DownloadIcon from '@mui/icons-material/Download';
+import FileDownloadUtility from '../../../utils/FileHandling/FileDownloaderUtility';
+import UserStoryJobHandler from '../../../utils/JobHandling/UserStoryJobHandler';
+import { useAlert } from '../Alerts/AlertContext';
 
 /**
  * Base JobAccordion component, 
@@ -10,21 +13,32 @@ import DownloadIcon from '@mui/icons-material/Download';
  * @param {Component} children - Component that renders job parameters (jobParameters.parameters.job_parameters) 
  * @returns Accordion that displays job_id, token_count and job_status as accordion summary, on expand, displays children
  */
+
 const JobAccordion = ({ jobParameters = null, children = null, defaultExpanded = true }) => {
     const [expanded, setExpanded] = useState(defaultExpanded);
+    const { showAlert } = useAlert();
 
     const handleExpansion = () => {
         setExpanded(!expanded);
     };
 
-    const handleDownload = () => {
-        console.log("Download Button Clicked")
+    const handleDownload = async () => {
+        const handler = new UserStoryJobHandler();
+        try {
+            console.log(jobParameters.job_id);
+            let result = await handler.retrieveJobFromQueue(jobParameters.job_id);
+            const fileName = `${jobParameters.job_id}_${jobParameters.job_status}.json`
+            FileDownloadUtility.downloadJson(result.data, fileName);
+        }
+        catch (error) {
+            console.error("Failed to download job parameters", error);
+            showAlert('error',"Failed to download job parameters.")
+        }
     }
     return (
         <Accordion
             onChange={handleExpansion}
             expanded={expanded}
-            variant='outlined'
         >
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}

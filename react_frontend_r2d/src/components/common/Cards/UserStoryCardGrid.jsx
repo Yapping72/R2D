@@ -5,7 +5,6 @@ import { Container } from '@mui/material';
 import { useUserStoryContext } from '../UserStory/UserStoryContextProvider';
 import AddUserStoryCard from './AddUserStoryCard';
 import Grow from '@mui/material/Grow';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * RequirementsCardGrid renders a grid of RequirementCards.

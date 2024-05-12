@@ -155,9 +155,7 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
 
   return (
     <>
-      <Paper elevation={0} sx={{
-        border: '1px solid #90caf9',
-      }}>
+      <Paper elevation={0}>
         <TableContainer sx={{ maxHeight: '100%' }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -172,7 +170,6 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
                     sx={{
                       fontWeight: 'bold',
                       fontSize: '18px', // Set column name size
-                      backgroundColor: 'black',
                     }}
                   >
                     <TableSortLabel

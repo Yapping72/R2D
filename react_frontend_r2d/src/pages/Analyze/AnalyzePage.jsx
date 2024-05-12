@@ -86,10 +86,7 @@ const AnalyzePage = () => {
     }
 
     const handleEditUserStoryJob = async (fileId, recordId, editedData) => {
-        const jobId = fileId; 
-        // Add edit job parameters in queue
-        // Update token count here, logic should be: Existing count - count of old story + count of new story
-        // fileId Here refers to jobId, named as filedId for legacy purposes
+        const jobId = fileId;  // fileId Here refers to jobId, named as filedId for legacy purposes
         const handler = new UserStoryJobHandler();
         try {
             let result = await handler.updateUserStoryInJob(jobId, recordId.feature, recordId.subFeature, recordId.recordId, editedData);
@@ -111,13 +108,9 @@ const AnalyzePage = () => {
     const handleRemoveUserStoryFromJob = async (fileId, recordId) => {
         console.log(fileId, recordId);
         const jobId = fileId; 
-        // Add edit job parameters in queue
-        // Update token count here, logic should be: Existing count - count of old story + count of new story
-        // fileId Here refers to jobId, named as filedId for legacy purposes
         const handler = new UserStoryJobHandler();
         try {
             let result = await handler.deleteUserStoryInJob(jobId, recordId.feature, recordId.subFeature, recordId.recordId);
-            
             if (result.success) {
                 setJobParameters(result.data)
                 showAlert("success", `Successfully deleted user story in job: ${jobId}`);
@@ -133,10 +126,26 @@ const AnalyzePage = () => {
     }
     
 
-    const handleAddUserStoryToJob = (fileID, newUserStory) => {
+    const handleAddUserStoryToJob = async (fileId, newUserStory) => {
         // fileId Here refers to jobId, named as filedId for legacy purposes
         // Adds newUserStory to jobParameters.parameters.job_parameters
-        console.log(fileId, newUserStory)
+        const jobId = fileId;  // fileId Here refers to jobId, named as filedId for legacy purposes
+        const handler = new UserStoryJobHandler();
+        try {
+            let result = await handler.updateUserStoryInJob(jobId, newUserStory.feature, newUserStory.sub_feature, newUserStory.id, newUserStory);
+            console.debug("Added job parameter ", result.data);
+            if (result.success) {
+                setJobParameters(result.data)
+                showAlert("success", `Successfully edited user story in job: ${jobId}`);
+            }
+            else {
+                showAlert("error", `Failed to edit user story in job: ${jobId}`)
+            }
+        }
+        catch (error) {
+            console.error("Error encountered while adding user story to job parameters", error);
+            showAlert("error", "Failed to add new user story to job parameters, please try again later.")
+        }
     }
 
     return (
@@ -148,9 +157,10 @@ const AnalyzePage = () => {
             handleAbortUserStoryJob={handleAbortUserStoryJob}
             handleEditUserStoryJob={handleEditUserStoryJob}
             handleRemoveUserStoryFromJob={handleRemoveUserStoryFromJob}
+            handleAddUserStoryToJob={handleAddUserStoryToJob}
         >   
             <Container>
-            <Typography variant='h3'>Analyze and View Results</Typography>
+            <Typography variant='h4'>Analyze and View Results</Typography>
             <Divider sx={{ my: 2 }} /> 
                 <Box >
                     <Tabs value={tabValue} onChange={handleTabChange} aria-label="User Story Job Queue Tabs">
