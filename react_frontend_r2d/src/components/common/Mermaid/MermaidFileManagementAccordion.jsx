@@ -17,6 +17,7 @@ const MermaidFileManagementAccordion = () => {
              validator={new FileUploadValidator(['txt', 'mmd','md'])} 
              repository={new MermaidFileRepository()}
              handleFileUpload={handleFileUpload}
+             additionalValidationInfo={["Your uploaded diagrams are stored locally in your browser and are not saved on our servers."]}
              ></DragDropFileUpload>
              <p></p>
              <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
