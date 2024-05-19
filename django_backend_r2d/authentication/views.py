@@ -45,6 +45,7 @@ class SignUpView(BaseView):
         Creates the user account and registers them if the account is valid.
         Returns access token for users that are successfully registered 
         """
+        logger.info("api/")
         user = auth_service.register(request.data)
         access_token = token_service.generate_token(user)
         return SyncAPIReturnObject(
@@ -64,7 +65,7 @@ class LoginView(APIView):
         password = request.data.get('password')
         user, otp = auth_service.authenticate(username, password) # retrieve the user object and the otp 
         return SyncAPIReturnObject(
-            data = {'user_id': user.id }, 
+            data = {'user_id': user.id, 'user_email': user.email }, 
             message = "Please verify your OTP", 
             success = True, 
             status_code = status.HTTP_200_OK)
