@@ -1,15 +1,19 @@
-import { Typography, Avatar, Box, Paper, Container, Checkbox, Grid, Link, FormControlLabel, FormLabel, TextField, Button} from "@mui/material"
+import { Typography, Avatar, Box, Container, Checkbox, Grid, Link, FormControlLabel, FormLabel, TextField, Button} from "@mui/material"
 import LockOutlined from '@mui/icons-material/LockOutlined';
+import { WarningOutlined } from "@mui/icons-material";
 import './LoginForm.css'
 
-const LoginForm = () => {
+/**
+ * Login form 
+ * @param {function} loginUser - Function that takes in username and password and logs in a user
+ * @returns 
+ */
+const LoginForm = ({loginUser = (username, password) => {console.log(username, password)}, errorMessage}) => {
+
     const handleLogin = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-          email: data.get('email'),
-          password: data.get('password'),
-        });
+        loginUser(data.get('username'), data.get('password'));
       };
 
     return (
@@ -24,11 +28,28 @@ const LoginForm = () => {
           }}
         >
           <Avatar sx = {{bgcolor: 'primary.main'}}>
-                <LockOutlined />
+          <LockOutlined />
           </Avatar>
           <Typography component="h1" variant="h5">
           Login
           </Typography>
+          {errorMessage && (
+                    <Box sx={{ 
+                        mt: 2, 
+                        p: 2, 
+                        borderRadius: 1, 
+                        bgcolor: 'rgba(244, 67, 54, 0.15)', // Slightly transparent red
+                        color: 'error.main',
+                        border: '1px solid',
+                        borderColor: 'error.dark', // Darker shade of red for the border
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%'
+                    }}>
+                        <WarningOutlined sx={{ mr: 1 }} /> {/* Warning icon */}
+                        <Typography>{errorMessage}</Typography>
+                    </Box>
+                )}
           <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"

@@ -1,21 +1,26 @@
 import { Typography, Avatar, Box, Container, TextField, Button, Grid, Link, FormControlLabel, Checkbox } from "@mui/material";
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import { WarningOutlined } from "@mui/icons-material";
+
 import './RegisterForm.css';
 
-const RegisterForm = () => {
+/**
+ * Renders a registration form triggers the registerUser function provided by parent
+ * @param {Function} registerUser - function to invoke user registration
+ * @returns 
+ */
+const RegisterForm = ({registerUser = (username, email, firstName, lastName, password, confirmPassword) => {}, errorMessage}) => {
     const handleRegister = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        // Here you would typically validate that the passwords match
-        // before doing anything with the data
-        console.log({
-          username: data.get('username'),
-          email: data.get('email'),
-          firstName: data.get('firstName'),
-          lastName: data.get('lastName'),
-          password: data.get('password'),
-          confirmPassword: data.get('confirmPassword'),
-        });
+        registerUser(
+            data.get('username'),
+            data.get('email'),
+            data.get('firstName'),
+            data.get('lastName'),
+            data.get('password'),
+            data.get('confirmPassword'),
+        )
     };
 
     return (
@@ -38,8 +43,25 @@ const RegisterForm = () => {
                 <Typography component="h1" variant="h5">
                     Register
                 </Typography>
+                {errorMessage && (
+                    <Box sx={{ 
+                        mt: 2, 
+                        p: 2, 
+                        borderRadius: 1, 
+                        bgcolor: 'rgba(244, 67, 54, 0.15)', // Slightly transparent red
+                        color: 'error.main',
+                        border: '1px solid',
+                        borderColor: 'error.dark', // Darker shade of red for the border
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%'
+                    }}>
+                        <WarningOutlined sx={{ mr: 1 }} /> {/* Warning icon */}
+                        <Typography>{errorMessage}</Typography>
+                    </Box>
+                )}
                 <Box component="form" onSubmit={handleRegister} noValidate sx={{ mt: 2 }}>
-                <Grid container spacing={2}>
+                    <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required

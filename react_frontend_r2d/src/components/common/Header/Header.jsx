@@ -12,12 +12,17 @@ import PersonIcon from '@mui/material/Avatar';
 import MenuNavigation from './MenuNavigation';
 import SettingsNavigation from './SettingsNavigation';
 
-const pages = ["Upload", "Analyze", "Visualize", "Home"];
-const settings = ['My Profile', 'My Actions', 'History', 'Logout'];
+import { useAuth } from '../Authentication/AuthContext';
+
 
 function Header() {
+  const { isLoggedIn } = useAuth(); // Get the login status from AuthContext
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  // Define pages and settings based on login status
+  const pages = isLoggedIn ? ["Upload", "Analyze", "Visualize", "Home"] : ["Visualize", "Home"];
+  const settings = isLoggedIn ? ['My Profile', 'My Actions', 'History', 'Logout'] : ['Account-Portal'];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);

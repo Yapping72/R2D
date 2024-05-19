@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
  * @param {string} message - The message text to display inside the alert.
  * @returns A Material-UI Alert component configured to be dismissible after 5 seconds.
  *
- * Note: This component is typically used in conjunction with AlertContext, which manages
+ * Note: This component is  used in conjunction with AlertContext, which manages
  * the display and state of alerts throughout the application. The showAlert function provided
  * by AlertContext can be used to display the alert with a specified severity and message.
  */
