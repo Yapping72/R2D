@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Grid, TextField, Typography, Box, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-
+import { WarningOutlined } from "@mui/icons-material";
 /**
  * OTP Input field that is rendered by the OTPForm
  */
@@ -32,7 +32,7 @@ const OTPInput = styled(({ valid, ...other }) => <TextField {...other} />)(({ va
  * OTP Form that renders 8 OTP Inputs by default. Accepts a performOTPVerification function.
  * The form will be disabled after 10mins (OTP duration)
  */
-const OTPForm = ({ performOTPVerification = (otp) => {console.log(otp)}, numberOfBoxes = 8 }) => {
+const OTPForm = ({ performOTPVerification = (otp) => {console.log(otp)}, errorMessage, email, numberOfBoxes = 8 }) => {
   const [otp, setOtp] = useState(Array(numberOfBoxes).fill(''));
   const [validity, setValidity] = useState(Array(numberOfBoxes).fill(null)); // null for blank, true for valid, false for invalid
   const [timeLeft, setTimeLeft] = useState(600); // 600 seconds = 5 minutes
@@ -58,8 +58,13 @@ const OTPForm = ({ performOTPVerification = (otp) => {console.log(otp)}, numberO
       document.getElementById(`otp-${firstEmptyIndex}`).focus();
     }
   }, [otp]);
-  const onComplete = (otp) => {
-    performOTPVerification(otp);
+
+  const onComplete = async (otp) => {
+    const isValid = await performOTPVerification(otp); // Assume performOTPVerification returns a boolean indicating validity
+    if (!isValid) {
+      setOtp(Array(numberOfBoxes).fill('')); // Reset OTP inputs
+      setValidity(Array(numberOfBoxes).fill(null)); // Reset validity states
+    }
   }
 
   const handleInputChange = (index) => (e) => {
@@ -117,7 +122,24 @@ const OTPForm = ({ performOTPVerification = (otp) => {console.log(otp)}, numberO
       <Stack spacing={2} alignItems="center">
         <Box textAlign="center">
           <Typography variant='h4'>OTP Verification</Typography>
-          <Typography variant='subtitle1'>A one-time password has been sent to your registered email account.</Typography>
+          <Typography variant='subtitle1'>A one time password has been sent to <b>{email}</b></Typography>
+          {errorMessage && (
+                    <Box sx={{ 
+                        mt: 2, 
+                        p: 2, 
+                        borderRadius: 1, 
+                        bgcolor: 'rgba(244, 67, 54, 0.15)', // Slightly transparent red
+                        color: 'error.main',
+                        border: '1px solid',
+                        borderColor: 'error.dark', // Darker shade of red for the border
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%'
+                    }}>
+                        <WarningOutlined sx={{ mr: 1 }} /> {/* Warning icon */}
+                        <Typography>{errorMessage}</Typography>
+                    </Box>
+                )}
         </Box>
         <Grid container spacing={2} justifyContent="center">
           {otp.map((value, index) => (
