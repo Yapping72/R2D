@@ -18,4 +18,16 @@ class User(AbstractUser):
     )
 
     def __str__(self):
-        return self.username
+        fields = {
+            'username': self.username,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'role': self.role,
+            'is_active': self.is_active,
+            'is_staff': self.is_staff,
+            'is_superuser': self.is_superuser,
+            'date_joined': self.date_joined.strftime('%Y-%m-%d %H:%M:%S') if self.date_joined else None,
+            'last_login': self.last_login.strftime('%Y-%m-%d %H:%M:%S') if self.last_login else None,
+        }
+        return ', '.join(f"{key}: {value}" for key, value in fields.items() if value is not None)
