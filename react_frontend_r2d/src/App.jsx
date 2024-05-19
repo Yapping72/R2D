@@ -10,7 +10,10 @@ import UploadRequirementsPage from './pages/UploadRequirements/UploadRequirement
 import VisualizePage from './pages/Visualize/VisualizePage.jsx';
 import AccountPortalPage from './pages/AccountPortal/AccountPortal.jsx';
 import ErrorPage from './pages/ErrorPage/ErrorPage.jsx';
+import OTPPage from './pages/AccountPortal/OTPPage.jsx';
+import LogoutPage from './pages/LogoutPage/LogoutPage.jsx';
 import { ROUTES } from './utils/Pages/RoutesConfig.jsx';
+import { AuthProvider } from './components/common/Authentication/AuthContext.jsx';
 
 function App() {
   const theme = createTheme({
@@ -30,6 +33,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline /> 
       <Router>
+      <AuthProvider>
       <div id="root">
         <div className="main-content">
           <main>
@@ -40,11 +44,15 @@ function App() {
             <Route path={ROUTES.UPLOAD} element={<Layout><UploadRequirementsPage /></Layout>} />
             <Route path={ROUTES.VISUALIZE} element={<Layout><VisualizePage /></Layout>} />
             <Route path={ROUTES.ACCOUNT_PORTAL} element={<Layout><AccountPortalPage /></Layout>} />
+            <Route path={ROUTES.OTP} element={<Layout><OTPPage /></Layout>} /> 
+       
+            <Route path={ROUTES.LOGOUT} element={<Layout><LogoutPage /></Layout>} />  
             <Route path={ROUTES.ERROR} element={<Layout><ErrorPage /></Layout>} />  
             </Routes>
           </main>
         </div>
       </div>
+      </AuthProvider>
       </Router>
     </ThemeProvider>
   );

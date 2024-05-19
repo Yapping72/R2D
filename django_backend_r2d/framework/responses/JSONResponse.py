@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from framework.responses.BaseResponse import BaseResponse
 from framework.responses.BaseReturnObject import BaseReturnObject
 from rest_framework import status
+import logging
 
 class JSONResponse(BaseResponse):
     """
@@ -27,6 +28,7 @@ class JSONResponse(BaseResponse):
             self.success = success
             self.status_code = status_code
             
+        self.logger = logging.getLogger("application_logging")
         self.headers = {}  
         self.headers["HTTP_CODE"] = str(self.status_code)
 
@@ -41,6 +43,7 @@ class JSONResponse(BaseResponse):
         This method helps in abstracting the response creation process and ensures that all outgoing responses
         are formatted consistently with the necessary HTTP headers.
         """
+        
         # Construct the response data dictionary
         response_data = {
             "data": self.data,
@@ -50,4 +53,5 @@ class JSONResponse(BaseResponse):
         }
         # Create a DRF Response object with the data, status code, and headers
         response = Response(response_data, status=self.status_code, headers=self.headers)
+        self.logger.info(f"{str(response)}")
         return response

@@ -40,10 +40,10 @@ class AuthenticationService(AuthenticationInterface):
 
         # Check if the user already exists based on username or email
         if User.objects.filter(username=data.get('username')).exists():
-            raise UserAlreadyExistsError()
+            raise UserAlreadyExistsError("Username already in use")
         
         if User.objects.filter(email=data.get('email')).exists():
-            raise UserAlreadyExistsError()
+            raise UserAlreadyExistsError("Email already in use")
 
         # Create a serializer instance with the provided data
         serializer = self.serializer_class(data=data)
@@ -96,11 +96,13 @@ class AuthenticationService(AuthenticationInterface):
         
         if user:
             otp = self.otp_authenticator.register(user)  # Start the 2FA flow.
+            logger.info(f"User details - username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
         else:
             # Capture the user_id from the failed authentication
             user_id = None
             try:
                 user = User.objects.get(username=username)
+                logger.info(f"User details - userid = {user.id} username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
                 user_id = user.id
             except User.DoesNotExist:
                raise AuthenticationError(f"This user does not exists.")
@@ -108,6 +110,10 @@ class AuthenticationService(AuthenticationInterface):
             if user_id is not None:
                 try:
                     stored_failedAttempt, created = FailedLoginAttempt.objects.get_or_create(user_id=user_id)
+                    logger.info(f"Failed counts for user ID [{user_id}] -- {stored_failedAttempt.failed_count}")
+                    if stored_failedAttempt.failed_count >= 5:
+                        logger.info("Account Locked")
+                        raise AuthenticationError(f"Account has been disabled due to repeated failed login attempts. Please contact system administrator.")
                 except FailedLoginAttempt.DoesNotExist:
                     # If row doesn't exist, create a new entry
                     FailedLoginAttempt.objects.create(timestamp=timezone.now(), failed_count=0, user_id=user_id)
@@ -117,7 +123,9 @@ class AuthenticationService(AuthenticationInterface):
                     stored_failedAttempt.add_failed_attempt()
                 else:
                     stored_failedAttempt.add_failed_attempt()
-
+                    if stored_failedAttempt.failed_count >= 5:
+                        raise AuthenticationError(f"Account has been disabled due to repeated failed login attempts. Please contact system administrator.")
+                    
             raise AuthenticationError(f"Invalid Credentials Provided")
         return user, otp
         

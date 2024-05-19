@@ -32,7 +32,7 @@ class BaseView(APIView):
                 return JSONResponse(data = {"error": str(e)}, message ="Validation error during serialization", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except UserAlreadyExistsError as e:
                 logger.error(repr(e), exc_info=True)
-                return JSONResponse(data = {"error": str(e)}, message ="User Already Exists", success = False,  status_code=status.HTTP_400_BAD_REQUEST).transform()
+                return JSONResponse(data = {"error": str(e)}, message ="Username or email already in use", success = False,  status_code=status.HTTP_400_BAD_REQUEST).transform()
             except JWTTokenGenerationError as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "JWT Token Generation Error Could not generate access token for user.", success = False, status_code=status.HTTP_401_UNAUTHORIZED).transform()
@@ -47,7 +47,7 @@ class BaseView(APIView):
                 return JSONResponse(data = {"error": str(e)}, message = "Password must be at least 12 characters long but not longer than 128 characters.", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except RegistrationError as e:
                 logger.error(repr(e), exc_info=True)
-                return JSONResponse(data = {"error": str(e)}, message = "Registration errors were encountered", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+                return JSONResponse(data = {"error": str(e)}, message = "Registration errors were encountered, check that you provided a valid email", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except AuthenticationError as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "Authentication Error", success = False, status_code=status.HTTP_401_UNAUTHORIZED).transform()

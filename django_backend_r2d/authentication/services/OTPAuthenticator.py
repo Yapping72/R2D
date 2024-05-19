@@ -7,6 +7,9 @@ from django.utils import timezone
 from ..models import OTP
 from ..models import FailedLoginAttempt
 
+import logging 
+logger = logging.getLogger("application_logging") # Instantiate logger class
+
 class OTPAuthenticator(AuthenticationInterface):
     """Performs OTP authentication"""
     def __init__(self, otp_service:OTPInterface, notification:EmailNotificationInterface):
@@ -34,6 +37,9 @@ class OTPAuthenticator(AuthenticationInterface):
             
             try:
                 stored_failedAttempt, created = FailedLoginAttempt.objects.get_or_create(user_id=user_id)
+                logger.info(f"Failed counts for user ID [{user_id}] -- {stored_failedAttempt.failed_count}")
+                if stored_failedAttempt.failed_count >= 5:
+                    raise AuthenticationError(f"Account has been disabled due to repeated failed login attempts. Please contact system administrator.")
             except FailedLoginAttempt.DoesNotExist:
                 # If row don't exist
                 FailedLoginAttempt.objects.create(timestamp=timezone.now(), failed_count = 0, user_id = user_id)
@@ -50,6 +56,8 @@ class OTPAuthenticator(AuthenticationInterface):
                     stored_failedAttempt.add_failed_attempt()
                 else:
                     stored_failedAttempt.add_failed_attempt()
+                    if stored_failedAttempt.failed_count >= 5:
+                        raise AuthenticationError(f"Account has been disabled due to repeated failed login attempts. Please contact system administrator.")
                 return False
             
         except User.DoesNotExist:
