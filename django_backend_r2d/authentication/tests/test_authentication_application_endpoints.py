@@ -26,7 +26,7 @@ class AuthenticationAPIEndpointTests(APITestCase):
         User = get_user_model()
         self.signup_url = '/api/auth/signup/'
         self.login_url = '/api/auth/login/'
-        self.verify_password = "/api/auth/verify/"
+        self.verify_password = "/api/auth/verify-password/"
         self.otp_verify_url = '/api/auth/otp/'
         # Create a test user to verify login functionality
         self.test_user = User.objects.create_user(username='auth-test-mock-user', password='1234', email="mock-gmail@gmail.com")

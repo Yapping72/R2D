@@ -16,7 +16,7 @@ urlpatterns = [
     path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('signup/', SignUpView.as_view(), name='api_signup'),
     path('login/', LoginView.as_view(), name='api_login'),
-    path('verify/', VerifyPassword.as_view(), name="api_verify"),
+    path('verify-password/', VerifyPassword.as_view(), name="api_verify"),
     path('refresh-access-token/', RefreshAccessTokenView.as_view(), name="api_refresh_token"),
     path('otp/', VerifyOTPView.as_view(), name="api_verify"),
 ]

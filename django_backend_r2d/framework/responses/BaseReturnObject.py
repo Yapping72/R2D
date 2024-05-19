@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import logging
 
 class BaseReturnObject(ABC):
     """
@@ -13,7 +12,6 @@ class BaseReturnObject(ABC):
         status_code (int): The HTTP status code for the response. 
     """
     def __init__(self, data, message, success, status_code):
-        self.logger = logging.getLogger("application_logging")
         self.data = data
         self.message = message
         self.success = success

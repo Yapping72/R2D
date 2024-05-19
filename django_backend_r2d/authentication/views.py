@@ -53,7 +53,6 @@ class SignUpView(BaseView):
             success = True, 
             status_code = status.HTTP_200_OK)
             
-
 class LoginView(APIView):
     @BaseView.handle_exceptions
     def post(self, request):
