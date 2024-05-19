@@ -5,11 +5,11 @@
 export const ROUTES = {
     BASE: '/',
     HOME: '/home',
-    ACCOUNT: '/account-portal',
     UPLOAD: '/upload',
     ANALYZE: '/analyze',
     VISUALIZE: '/visualize',
     ACCOUNT_PORTAL: '/account-portal', // Login & registration form.
+    OTP: '/otp',
     ERROR:'*'
 };
 
