@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'accounts', # contains custom user class
     'authentication', # contains simplejwt authentication & authorization components
     'notification', # contains notification 
-    'application_logging'# application logging 
+    'application_logging', # application logging 
+    'admin_portal', # contains admin portal
 ]
 
 # White listing the localhost:5143 for React Frontend

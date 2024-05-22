@@ -60,6 +60,9 @@ class BaseView(APIView):
             except AuthorizationError as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "Authorization Error", success = False, status_code=status.HTTP_403_FORBIDDEN).transform()
+            except CompromisedPasswordError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "The password you have provided is not secure and has been found in databases of leaked passwords. For your safety, please choose a different password that has not been compromised.", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except Exception as e:
                 # Log the unexpected error
                 logger.error(f"Unhandled exception: {str(e)}", exc_info=True)

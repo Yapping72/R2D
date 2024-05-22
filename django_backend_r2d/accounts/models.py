@@ -9,6 +9,7 @@ class User(AbstractUser):
         ('NORMAL_USER', 'Normal User'),
         ('PAID_USER', 'Paid User'),
         ('IT_ADMINISTRATOR', 'IT Administrator'),
+        ('ROOT','Root')
     ]
     
     role = models.CharField(
