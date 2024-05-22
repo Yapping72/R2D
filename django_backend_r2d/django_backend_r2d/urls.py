@@ -23,5 +23,6 @@ When onboarding new applications, include the api/app-name-abbreviation
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
-    path('api/auth/', include('authentication.urls'))
+    path('api/auth/', include('authentication.urls')),
+    path('staff-administration/', include('admin_portal.urls')) # Include the staff admin portal
 ]
