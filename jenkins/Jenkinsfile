@@ -22,7 +22,11 @@ pipeline {
                 sh "ls -la"
             }
         }
-        
+        stage('Install Dependencies') {
+            steps {
+                sh "npm install"
+            }
+        }
         stage('OWASP Dependency-Check Vulnerabilities') {
             steps {
                 dependencyCheck additionalArguments: """
