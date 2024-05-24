@@ -52,6 +52,7 @@ class AuthenticationService(AuthenticationInterface):
         if serializer.is_valid():
             # Save the user object to the database
             user = serializer.save()
+            logger.debug(f"New user registered - ${user.username}")
             # Return the created user object and None for errors
             return user
         # If the data is not valid, return None for the user and the serializer errors
@@ -96,13 +97,13 @@ class AuthenticationService(AuthenticationInterface):
         
         if user:
             otp = self.otp_authenticator.register(user)  # Start the 2FA flow.
-            logger.info(f"User details - username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
+            logger.debug(f"User details - username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
         else:
             # Capture the user_id from the failed authentication
             user_id = None
             try:
                 user = User.objects.get(username=username)
-                logger.info(f"User details - userid = {user.id} username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
+                logger.debug(f"User details - userid = {user.id} username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
                 user_id = user.id
             except User.DoesNotExist:
                raise AuthenticationError(f"This user does not exists.")
@@ -110,9 +111,9 @@ class AuthenticationService(AuthenticationInterface):
             if user_id is not None:
                 try:
                     stored_failedAttempt, created = FailedLoginAttempt.objects.get_or_create(user_id=user_id)
-                    logger.info(f"Failed counts for user ID [{user_id}] -- {stored_failedAttempt.failed_count}")
+                    logger.debug(f"Failed counts for user ID [{user_id}] -- {stored_failedAttempt.failed_count}")
                     if stored_failedAttempt.failed_count >= 5:
-                        logger.info("Account Locked")
+                        logger.debug("Account Locked")
                         raise AuthenticationError(f"Account has been disabled due to repeated failed login attempts. Please contact system administrator.")
                 except FailedLoginAttempt.DoesNotExist:
                     # If row doesn't exist, create a new entry

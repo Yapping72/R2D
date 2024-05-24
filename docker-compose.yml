@@ -9,10 +9,14 @@ services:
       - "8000:8000"
     depends_on:
       - postgres_r2d_db
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB_PORT=${POSTGRES_DB_PORT}
+      - POSTGRES_R2D_HOST=${POSTGRES_R2D_HOST}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     entrypoint: /app/entrypoint.sh  # bash script will create the database if it doesnt exists
     container_name: django_backend_r2d
@@ -35,6 +39,8 @@ services:
     image: postgres:latest
     volumes:
       - postgres_r2d_db_data:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}

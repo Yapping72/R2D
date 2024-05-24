@@ -22,7 +22,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class CustomTokenPairSerializer(TokenObtainPairSerializer):
-    """Serializer for JWT Tokens add more fields in the get_token method to append information to JWT Tokens"""
+    """
+    Serializer for JWT Tokens add more fields in the get_token method to append information to JWT Tokens
+    Adds the masked email to the users JWT token
+    """
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -30,6 +33,13 @@ class CustomTokenPairSerializer(TokenObtainPairSerializer):
         token['email'] = EmailHandler.mask_email(user.email)
         token['role'] = user.role
         return token
+
+    @staticmethod
+    def mask_email(email):
+        """ Mask the email address for privacy """
+        name, domain = email.split('@')
+        return f"{name[0]}{'*' * (len(name) - 2)}{name[-1]}@{domain}"
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenPairSerializer
