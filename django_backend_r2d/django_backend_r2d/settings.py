@@ -2,6 +2,10 @@ from pathlib import Path
 import os
 from datetime import timedelta
 import subprocess
+import logging
+
+# R2D Logger module
+logger = logging.getLogger('application_logging')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -99,16 +103,16 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB"), 
-        "USER": os.getenv("POSTGRES_USER"),  
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),  
-        "HOST": "postgres_r2d_db",  
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_R2D_HOST'),
+        'PORT': os.environ.get('POSTGRES_DB_PORT'),
     }
 }
-
+logger.info(f"DATABASES: {DATABASES}")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
