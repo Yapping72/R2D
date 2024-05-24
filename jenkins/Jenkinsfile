@@ -24,7 +24,11 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh "npm install"
+                script {
+                    dir('react_frontend_r2d') {  
+                        sh 'npm install'
+                    }
+                }
             }
         }
         stage('OWASP Dependency-Check Vulnerabilities') {
