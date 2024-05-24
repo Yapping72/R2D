@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from framework.utils.EmailHandler import EmailHandler
 from django.contrib.auth import get_user_model
 User = get_user_model() 
 
@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email']
+        fields = ['id', 'username', 'email', 'preferred_name', 'first_name', 'last_name', 'password', 'email']
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -29,7 +29,9 @@ class CustomTokenPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['email'] = cls.mask_email(user.email)
+        token['preferred_name'] = user.preferred_name
+        token['email'] = EmailHandler.mask_email(user.email)
+        token['role'] = user.role
         return token
 
     @staticmethod

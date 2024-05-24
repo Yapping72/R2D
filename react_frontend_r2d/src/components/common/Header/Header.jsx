@@ -41,8 +41,8 @@ function Header() {
   };
 
   return (
-    <AppBar position="static" color="transparent" sx={{ mt: 'auto', paddingLeft: '20px', paddingRight: '20px' }}>
-      <Toolbar disableGutters>
+    <AppBar position="static" color="transparent">
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
         <IconButton
           size="large"
           aria-label="menu"
@@ -81,8 +81,7 @@ function Header() {
           sx={{
             mr: 3,
             flexGrow: 1,
-            fontFamily: 'monospace',
-            fontWeight: 700,
+            fontWeight: 800,
             letterSpacing: '.3rem',
             color: 'inherit',
             textDecoration: 'none',
@@ -90,6 +89,7 @@ function Header() {
         >
           R2D
         </Typography>
+        
         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {pages.map((page) => (
             <Button
@@ -98,13 +98,22 @@ function Header() {
               sx={{ my: 2, color: 'white', display: 'block' }}
               href={`/${page}`}
             >
-              {page}
+              <Typography variant='body1'
+                sx={{
+                  flexGrow: 1,
+                  fontWeight: 550,
+                  letterSpacing: '.1rem',
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}>
+                {page}
+              </Typography>
             </Button>
           ))}
         </Box>
         <Tooltip title="Open settings">
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <PersonIcon />
+            <PersonIcon></PersonIcon>
           </IconButton>
         </Tooltip>
         <Menu

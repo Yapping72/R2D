@@ -24,7 +24,7 @@ function App() {
       },
     },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', 
+      fontFamily: '"Roboto"', 
       fontSize: 16, 
     },
   });
@@ -38,16 +38,18 @@ function App() {
         <div className="main-content">
           <main>
             <Routes>
+            {/*Pages that dont require JWT*/}
             <Route path={ROUTES.BASE} element={<Layout><HomePage /></Layout>} />
             <Route path={ROUTES.HOME} element={<Layout><HomePage /></Layout>} />
-            <Route path={ROUTES.ANALYZE} element={<Layout><AnalyzePage /></Layout>} />
-            <Route path={ROUTES.UPLOAD} element={<Layout><UploadRequirementsPage /></Layout>} />
-            <Route path={ROUTES.VISUALIZE} element={<Layout><VisualizePage /></Layout>} />
             <Route path={ROUTES.ACCOUNT_PORTAL} element={<Layout><AccountPortalPage /></Layout>} />
             <Route path={ROUTES.OTP} element={<Layout><OTPPage /></Layout>} /> 
-       
+            <Route path={ROUTES.VISUALIZE} element={<Layout><VisualizePage /></Layout>} />
             <Route path={ROUTES.LOGOUT} element={<Layout><LogoutPage /></Layout>} />  
             <Route path={ROUTES.ERROR} element={<Layout><ErrorPage /></Layout>} />  
+            
+            {/*Pages that require JWT*/}
+            <Route path={ROUTES.ANALYZE} element={<Layout><AnalyzePage /></Layout>} />
+            <Route path={ROUTES.UPLOAD} element={<Layout><UploadRequirementsPage /></Layout>} />
             </Routes>
           </main>
         </div>

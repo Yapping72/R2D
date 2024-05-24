@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Switch, Box, Stack, Container } from '@mui/material';
+import {Switch, Box, Stack, Tooltip } from '@mui/material';
 import LoginForm from '../../components/common/Form/LoginForm';
 import RegisterForm from '../../components/common/Form/RegisterForm';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -10,12 +10,17 @@ import UrlsConfig from '../../utils/Api/UrlsConfig';
 import { useAlert } from '../../components/common/Alerts/AlertContext';
 import { PageNavigationService } from '../../utils/Pages/PageNavigationService';
 import { ROUTES } from '../../utils/Pages/RoutesConfig';
+import JwtHandler from '../../utils/Jwt/JwtHandler';
+import { useAuth } from '../../components/common/Authentication/AuthContext';
+import TimedBackdrop from '../../components/common/Backdrops/TimedBackdrop';
 
 const AccountPortalPage = () => {
     const [isLoginForm, setIsLoginForm] = useState(true);
     const { showAlert } = useAlert();
     const { navigateTo } = PageNavigationService();
     const [errorMessage, setErrorMessage] = useState('');
+    const { setLoginAndStartInactivityTimer } = useAuth();
+    const [showBackdrop, setShowBackdrop] = useState(false);
 
     const handleToggle = (event) => {
         setIsLoginForm(event.target.checked);
@@ -38,8 +43,7 @@ const AccountPortalPage = () => {
             const result = await ApiManager.postData(UrlsConfig.endpoints.LOGIN, requestPayload);
             if (result.success) {
                 console.debug(`${username}, ${password}, ${result.data.user_id} - Login successful, proceeding to OTP`);
-  
-                navigateTo(ROUTES.OTP, { userId: result.data.user_id, email: result.data.user_email}); // Pass userId as state
+                navigateTo(ROUTES.OTP, { userId: result.data.user_id, email: result.data.user_email }); // Pass userId as state
             } else {
                 // Set error message
                 setErrorMessage('Incorrect username or password provided. Note that your account will be disabled after 5 invalid login attempts.');
@@ -50,25 +54,40 @@ const AccountPortalPage = () => {
             showAlert("error", "An unexpected error occurred while trying to sign you in")
         }
     }
-
-    const registerUser = async (username, email, firstName, lastName, password, confirmPassword) => {
-        console.log(`${username}, ${email}, ${firstName}, ${lastName}, ${password}, ${confirmPassword}`)
+    /**
+     * Retrieves registration details and attempts to registers a user
+     * Triggers the registration flow, if account successfully registered, users are redirected to upload page and access token stored in local storage.
+     * @param {String} username Username to register a user
+     * @param {String} email email to register a user
+     * @param {String} firstName first name to register a user
+     * @param {String} lastName last name to register a user
+     * @param {String} password password to register a user
+     * @param  {String} confirmPassword confirm password to register a user
+     */
+    const registerUser = async (registrationData) => {
         // Create the payload data 
         const requestPayload = {
-            "username": username,
-            "password": password,
-            "email":email,
-            "first_name":firstName,
-            "last_name":lastName,
-            "password":password,
-            "confirmPassword":confirmPassword
+            "username": registrationData.username,
+            "email": registrationData.email,
+            "preferred_name": registrationData.preferredName || registrationData.username, 
+            "first_name": registrationData.firstName,
+            "last_name": registrationData.lastName || "", 
+            "password": registrationData.password,
+            "confirmPassword": registrationData.confirmPassword
         }
+
         try {
             const result = await ApiManager.postData(UrlsConfig.endpoints.REGISTER, requestPayload);
             if (result.success) {
-                console.debug(`${username}, ${password}, ${result.access_token} - Login successful, proceeding to OTP`);
+                console.debug(`${result.data}`);
+                JwtHandler.setToken(result.data.access_token);
+                setLoginAndStartInactivityTimer();
+                setShowBackdrop(true); // Show the backdrop
+                setTimeout(() => {
+                    setShowBackdrop(false);
+                    navigateTo(ROUTES.UPLOAD);
+                }, 1000);
             } else {
-                // Set error message
                 setErrorMessage(`${result.message}`);
             }
         } catch (error) {
@@ -79,19 +98,25 @@ const AccountPortalPage = () => {
     }
 
     return (
-        <Container>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {/* Form Container with reduced margin */}
-                <Box sx={{ width: '100%', transition: 'transform 0.3s', mt: -1 }}>
-                    <Stack direction="row" spacing={0} alignItems="center" justifyContent="center" sx={{ mb: -8 }}>
-                        <AppRegistrationIcon color="action" />
-                        <Switch checked={isLoginForm} onChange={handleToggle} />
-                        <LockOutlined color="action" />
-                    </Stack>
-                    {isLoginForm ? <LoginForm loginUser={loginUser} errorMessage={errorMessage}></LoginForm> : <RegisterForm registerUser={registerUser}  errorMessage={errorMessage}></RegisterForm>}
-                </Box>
+        <Box>
+            <Box sx={{ width: '100%', transition: 'transform 0.3s', mt: isLoginForm ? 11 : 5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Stack direction="row" spacing={0} alignItems="center" justifyContent="center" sx={{ mb: isLoginForm ? -8 : -8 }}>
+                    <Tooltip title="Select to register for an account!">
+                        <AppRegistrationIcon />
+                    </Tooltip>
+                    <Switch checked={isLoginForm} onChange={handleToggle} />
+                    <Tooltip title="Select to login to your account!">
+                        <LockOutlined />
+                    </Tooltip>
+                </Stack>
+                    {isLoginForm ? (
+                        <LoginForm loginUser={loginUser} errorMessage={errorMessage}/>
+                    ) : (
+                        <RegisterForm registerUser={registerUser} errorMessage={errorMessage} />
+                    )}
             </Box>
-        </Container>
+            <TimedBackdrop open={showBackdrop} onClose={() => setShowBackdrop(false)} duration={1000} />
+        </Box>
     );
 };
 
