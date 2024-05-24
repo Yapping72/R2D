@@ -5,7 +5,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Footer = () => {
   return (
-        <AppBar position="relative" color="transparent" sx={{ mt: 'auto' }}>
+        <AppBar position="relative" color="transparent">
             <Toolbar sx={{ justifyContent: 'space-between' }}>
               <Typography variant="subtitle2" color="inherit">
                 &copy; 2024 Requirements2Design. All rights reserved.

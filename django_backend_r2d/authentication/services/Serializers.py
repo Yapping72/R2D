@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from framework.utils.EmailHandler import EmailHandler
 from django.contrib.auth import get_user_model
 User = get_user_model() 
 
@@ -26,9 +26,8 @@ class CustomTokenPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['username'] = user.username
-        token['email'] = user.email
-        token['is_active'] = user.is_active
+        token['preferred_name'] = user.preferred_name
+        token['email'] = EmailHandler.mask_email(user.email)
         token['role'] = user.role
         return token
 

@@ -39,10 +39,10 @@ const OTPPage = () => {
             const result = await ApiManager.postData(UrlsConfig.endpoints.OTP, requestPayload);
             if (result.success) {
                 console.debug(`${otp} ${result.data.access_token} - Login successful, proceeding to OTP`);
-                showAlert("success", "Login Successful !");
+                showAlert("success", "Welcome back !");
                 JwtHandler.setToken(result.data.access_token)
                 setLoginAndStartInactivityTimer();
-                navigateTo(ROUTES.HOME); // Pass userId as state
+                navigateTo(ROUTES.UPLOAD); // Pass userId as state
                 return true;
             } else {
                 setErrorMessage('Incorrect OTP provided. Note that your account will be disabled after 5 invalid login attempts.');

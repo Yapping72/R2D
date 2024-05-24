@@ -1,9 +1,6 @@
 .register-form-container {
     background-color: black; /* Slightly lighter than the page background */
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 10px 20px 0 rgb(10, 10, 10); /* Subtle shadow for depth */
-    border: 1.5px solid #90caf9; ; /* Slightly lighter border for subtle definition */
   }
   
 /*By default when forms are autofilled the color will be BLUE*/
