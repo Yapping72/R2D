@@ -21,12 +21,12 @@ class InputValidator {
     }
     /**
      * Validates the given display name.
-     * @param {string} displayname - The display name to validate.
+     * @param {string} preferredName - The display name to validate.
      * @returns {boolean} - Returns true if the display name contains only letters and is between 1 and 64 characters.
      */
-    static isValidDisplayname(displayname) {
-        const displaynameRegex = /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{1,64}$/;
-        return displaynameRegex.test(displayname);
+    static isValidPreferredName(preferredName) {
+        const preferredNameRegex = /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{1,64}$/;
+        return preferredNameRegex.test(preferredName);
     }
     /**
      * Validates the given password.

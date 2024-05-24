@@ -64,17 +64,16 @@ const AccountPortalPage = () => {
      * @param {String} password password to register a user
      * @param  {String} confirmPassword confirm password to register a user
      */
-    const registerUser = async (username, email, displayName, firstName, lastName, password, confirmPassword) => {
-        console.log(`${username}, ${email}, ${firstName}, ${lastName}, ${password}, ${confirmPassword}`)
+    const registerUser = async (registrationData) => {
         // Create the payload data 
         const requestPayload = {
-            "username": username,
-            "email": email,
-            "display_name": displayName || username, 
-            "first_name": firstName,
-            "last_name": lastName || "", 
-            "password": password,
-            "confirmPassword": confirmPassword
+            "username": registrationData.username,
+            "email": registrationData.email,
+            "preferred_name": registrationData.preferredName || registrationData.username, 
+            "first_name": registrationData.firstName,
+            "last_name": registrationData.lastName || "", 
+            "password": registrationData.password,
+            "confirmPassword": registrationData.confirmPassword
         }
 
         try {

@@ -12,7 +12,7 @@ import './RegisterForm.css';
  * @returns 
  */
 
-const RegisterForm = ({ registerUser = (username, email, displayName, firstName, lastName, password, confirmPassword) => { }, errorMessage }) => {
+const RegisterForm = ({ registerUser = (registrationData) => { }, errorMessage }) => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -20,7 +20,7 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
         lastName: '',
         password: '',
         confirmPassword: '',
-        displayName: ''
+        preferredName: ''
     });
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
@@ -42,8 +42,8 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
                     return 'Username must be alphanumeric and between 9 and 64 characters, with at least one digit';
                 }
                 break;
-            case 'displayName':
-                if (!InputValidator.isValidDisplayname(value)) {
+            case 'preferredName':
+                if (!InputValidator.isValidPreferredName(value)) {
                     return 'Display name may be alphanumeric and between 3 and 64 characters';
                 }
                 break;
@@ -90,7 +90,7 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
     };
 
     const validateForm = () => {
-        const fields = ['username', 'email', 'firstName', 'lastName', 'displayName', 'password', 'confirmPassword'];
+        const fields = ['username', 'email', 'firstName', 'lastName', 'preferredName', 'password', 'confirmPassword'];
         let isValid = true;
 
         fields.forEach((name) => {
@@ -108,7 +108,7 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
         const errors = {};
         let isValid = true;
 
-        ['username', 'email', 'firstName', 'lastName', 'password', 'confirmPassword', 'displayName'].forEach((name) => {
+        ['username', 'email', 'firstName', 'lastName', 'password', 'confirmPassword', 'preferredName'].forEach((name) => {
             const value = formData[name];
             const error = validate(name, value, formData);
             if (error) {
@@ -128,15 +128,18 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
     const handleRegister = (event) => {
         event.preventDefault();
         if (validateInputs()) {
-            registerUser(
-                formData.username,
-                formData.email,
-                formData.firstName,
-                formData.lastName,
-                formData.password,
-                formData.confirmPassword,
-                formData.displayName
-            );
+            // Prepare registration data to send to the parent component
+            const registrationData = { 
+                username: formData.username,
+                email: formData.email,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                password: formData.password,
+                confirmPassword: formData.confirmPassword,
+                preferredName: formData.preferredName
+            }
+            // Invoke the registerUser function provided by the parent component
+            registerUser(registrationData);
         }
     };
 
@@ -246,13 +249,13 @@ const RegisterForm = ({ registerUser = (username, email, displayName, firstName,
                         <TextField
                             margin="normal"
                             fullWidth
-                            id="displayName"
+                            id="preferredName':"
                             label="Display Name"
-                            name='displayName'
-                            onBlur={handleBlur('displayName')}
+                            name='preferredName'
+                            onBlur={handleBlur('preferredName')}
                             onChange={handleChange}
-                            error={touched.displayName && Boolean(errors.displayName)}
-                            helperText={touched.displayName && errors.displayName}
+                            error={touched.preferredName && Boolean(errors.preferredName)}
+                            helperText={touched.preferredName && errors.preferredName}
                             inputProps={{ minLength: 9, maxLength: 64 }}
                         />
                     </Tooltip>

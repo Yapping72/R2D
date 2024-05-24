@@ -27,6 +27,7 @@ class AuthenticationService(AuthenticationInterface):
         self.otp_authenticator = otp_authenticator
 
     def register(self, data:dict):
+        logger.debug(f"Registering new user - {data}")
         data['username'] = data.get('username').lower()
 
         if not self.is_valid_username(data.get('username')):
