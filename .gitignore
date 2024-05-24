@@ -205,3 +205,6 @@ dist-ssr
 *.pem
 .vscode
 .venv
+
+aws_configuration/r2d-cloud-administrator_accessKeys.csv
+aws_configuration/r2d-cloud-administrator_credentials.csv

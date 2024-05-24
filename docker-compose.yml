@@ -9,8 +9,6 @@ services:
       - "8000:8000"
     depends_on:
       - postgres_r2d_db
-    env_file:
-      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -39,8 +37,6 @@ services:
     image: postgres:latest
     volumes:
       - postgres_r2d_db_data:/var/lib/postgresql/data
-    env_file:
-      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
