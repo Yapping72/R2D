@@ -26,6 +26,7 @@ from authentication.services.OTPService import OTPService
 from notification.services.SendGridEmailService import SendGridEmailService
 from framework.views.BaseView import BaseView
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
+from framework.utils.EmailHandler import EmailHandler
 
 import logging
 logger = logging.getLogger('application_logging')
@@ -65,7 +66,7 @@ class LoginView(APIView):
         password = request.data.get('password')
         user, otp = auth_service.authenticate(username, password) # retrieve the user object and the otp 
         return SyncAPIReturnObject(
-            data = {'user_id': user.id, 'user_email': user.email }, 
+            data = {'user_id': user.id, 'user_email': EmailHandler.mask_email(user.email) }, 
             message = "Please verify your OTP", 
             success = True, 
             status_code = status.HTTP_200_OK)
