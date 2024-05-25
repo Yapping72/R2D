@@ -7,6 +7,8 @@ from django.test import Client
 from authentication.services.TokenInterface import TokenInterface
 from authentication.services.AuthenticationExceptions import JWTTokenGenerationError, AuthenticationError, UserIDNotFoundError
 from authentication.services.Serializers import CustomTokenPairSerializer
+import logging
+logger = logging.getLogger('application_logging')
 
 class JWTTokenService(TokenInterface):
     def __init__(self):
@@ -18,7 +20,7 @@ class JWTTokenService(TokenInterface):
         if not user.is_authenticated:
             raise JWTTokenGenerationError("User must be authenticated to generate a token.")
         try:
-            self.invalidate_previous_tokens(user) # Blacklist all other outstanding tokens, this way only 1 concurrent user.
+            self.invalidate_previous_tokens(user) # Blacklist all other outstanding tokens, this way we allow only 1 concurrent user.
             # Add custom claims before generating the token
             refresh_token = CustomTokenPairSerializer.get_token(user)
             return str(refresh_token.access_token)
@@ -100,13 +102,30 @@ class JWTTokenService(TokenInterface):
     
     def invalidate_previous_tokens(self, user):
         """Invalidates all outstanding tokens for the given user."""
-        tokens = OutstandingToken.objects.filter(user_id=user.id)
+        # Retrieve all tokens associated with the user
+        try:
+            tokens = OutstandingToken.objects.filter(user_id=user.id)
+            logger.debug(f"Refresh tokens associated with user: {[token.id for token in tokens]}")
+        except Exception as e:
+            raise JWTTokenGenerationError(f"Error retrieving outstanding tokens: {e}")
+         
+        # Retrieve all blacklisted token IDs
+        try:
+            blacklisted_token_ids = set(BlacklistedToken.objects.values_list('token_id', flat=True))
+            logger.debug(f"Blacklisted token IDs: {blacklisted_token_ids}")
+        except Exception as e:
+            raise JWTTokenGenerationError(f"Error retrieving blacklisted token IDs: {e}")
+ 
         for token in tokens:
-            try:
-                # blacklist the Refresh token
-                refresh_token = RefreshToken(token=token.token)
-                refresh_token.blacklist()
-            except Exception as e:
-                print(f"Error blacklisting token: {e}")
+            if token.id not in blacklisted_token_ids:
+                logger.debug(f"Token not blacklisted: {token.id}")
+                try:
+                    # Blacklist the Refresh token
+                    logger.debug(f"Blacklisting token: {token.id}")
+                    refresh_token = RefreshToken(token.token)
+                    refresh_token.blacklist()
+                except Exception as e:
+                    print(f"Error blacklisting token: {e}")
+
 
     
