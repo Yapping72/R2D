@@ -36,8 +36,12 @@ const UserStoryAccordion = ({ fileData, index, handleRemove }) => {
                                 <Grid item>
                                     {Array.from(fileData.fileMetadata.features).map((feature, index) => (
                                         <Chip
-                                            label={feature} size="small" style={{ marginRight: '5px' }}
-                                            variant="outlined" color="primary"
+                                            key={`${feature}-${index}`} 
+                                            label={feature} 
+                                            size="small" 
+                                            style={{ marginRight: '5px' }}
+                                            variant="outlined" 
+                                            color="primary"
                                         />
                                     ))}
                                 </Grid>
@@ -46,8 +50,12 @@ const UserStoryAccordion = ({ fileData, index, handleRemove }) => {
                                 <Grid item>
                                     {Array.from(fileData.fileMetadata['sub features']).map((sub_feature, index) => (
                                         <Chip
-                                            label={sub_feature} size="small" style={{ marginRight: '5px' }}
-                                            variant="outlined" color="secondary"
+                                            key={`${sub_feature}-${index}`} 
+                                            label={sub_feature} 
+                                            size="small" 
+                                            style={{ marginRight: '5px' }}
+                                            variant="outlined" 
+                                            color="secondary"
                                         />
                                     ))}
                                 </Grid>

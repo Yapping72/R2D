@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Chip, Tooltip, Box, Divider } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, Chip, Tooltip, Box } from '@mui/material';
 import FileReaderUtility from '../../../utils/FileHandling/FileReaderUtility';
 import FileContentDialog from '../Dialog/FileContentDialog';
 import { useAlert } from '../Alerts/AlertContext';
@@ -126,33 +126,49 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
   const renderArrayContentAsChips = (value, chipColor = "secondary") => {
     const numberOfChipsToShow = 2; // Number of chips to display
     if (value.length > numberOfChipsToShow) {
-      const visibleChips = value.slice(0, numberOfChipsToShow);
-      const moreCount = value.length - numberOfChipsToShow;
-      return (
-        <TableCell>
-          {visibleChips.map((item, index) => (
-            <Tooltip title={value.join(', ')}>
-              <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
-            </Tooltip>
-          ))}
-          <Tooltip title={value.splice(numberOfChipsToShow).join(', ')}>
-            <Chip label={`+${moreCount} more`} style={{ margin: '2px' }} variant='outlined' />
-          </Tooltip>
-        </TableCell>
-      );
+        const visibleChips = value.slice(0, numberOfChipsToShow);
+        const moreCount = value.length - numberOfChipsToShow;
+        return (
+            <TableCell key={`chips-cell-${value[0]}`}>
+                {visibleChips.map((item, index) => (
+                    <Tooltip key={`tooltip-visible-${index}`} title={value.join(', ')}>
+                        <Chip
+                            key={`chip-visible-${index}`}
+                            color={chipColor}
+                            label={truncateLabel(item)}
+                            style={{ margin: '2px' }}
+                            variant='outlined'
+                        />
+                    </Tooltip>
+                ))}
+                <Tooltip key="tooltip-more" title={value.slice(numberOfChipsToShow).join(', ')}>
+                    <Chip
+                        key="chip-more"
+                        label={`+${moreCount} more`}
+                        style={{ margin: '2px' }}
+                        variant='outlined'
+                    />
+                </Tooltip>
+            </TableCell>
+        );
     }
 
     return (
-      <TableCell>
-        {value.map((item, index) => (
-          <Tooltip title={value.join(', ')}>
-            <Chip key={`${item}-${index}`} color={chipColor} label={truncateLabel(item)} style={{ margin: '2px' }} variant='outlined' />
-          </Tooltip>
-        ))}
-      </TableCell>
+        <TableCell key={`chips-cell-${value[0]}`}>
+            {value.map((item, index) => (
+                <Tooltip key={`tooltip-${index}`} title={value.join(', ')}>
+                    <Chip
+                        key={`chip-${index}`}
+                        color={chipColor}
+                        label={truncateLabel(item)}
+                        style={{ margin: '2px' }}
+                        variant='outlined'
+                    />
+                </Tooltip>
+            ))}
+        </TableCell>
     );
-  }
-
+};
   return (
     <>
       <Paper elevation={0}>
@@ -224,7 +240,7 @@ const GenericFileTable = ({ repository, handleFileSelection }) => {
               ) : (
                 // Render a row with a cell that spans all columns if data is empty
                 <TableRow>
-                  <TableCell colSpan={columns.length} align="center">
+                  <TableCell key={1} colSpan={columns.length} align="center">
                     <Box
                       display="flex"
                       flexDirection="column"
