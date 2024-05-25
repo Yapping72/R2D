@@ -4,9 +4,13 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import OutstandingToken
 from django.test import Client
 
+
 from authentication.services.TokenInterface import TokenInterface
 from authentication.services.AuthenticationExceptions import JWTTokenGenerationError, AuthenticationError, UserIDNotFoundError
 from authentication.services.Serializers import CustomTokenPairSerializer
+
+import datetime
+from django.utils import timezone
 import logging
 logger = logging.getLogger('application_logging')
 
@@ -39,7 +43,7 @@ class JWTTokenService(TokenInterface):
         try:
             # Retrieve the user's outstanding token from the database
             outstanding_token = OutstandingToken.objects.filter(user_id=user.id).order_by('-created_at').first()
-
+            logger.debug(f"Refreshing token for user: {user.id}, token: {outstanding_token.id}")
             if not outstanding_token:
                 raise AuthenticationError("Outstanding token not found for the user.")
 
@@ -48,6 +52,7 @@ class JWTTokenService(TokenInterface):
                 raise AuthenticationError("Refresh token has been blacklisted.")
 
             refresh_token = str(outstanding_token.token)
+            # Form the payload to be sent to the /token/refresh endpoint
             payload = {"refresh": refresh_token} 
 
             return self._refresh_token(payload, auth_header)
@@ -74,14 +79,22 @@ class JWTTokenService(TokenInterface):
                 self.get_new_access_token_endpoint,
                 data=payload,
                 content_type="application/json",
-                **header,
+                **header
             )
+            
             if response.status_code != 200:
                 raise JWTTokenGenerationError(f"Unexpected response code {response.status_code}. Content: {response.content}")
-
+            logger.debug(f"Successfully refreshed token: {response.data}")
+            # Add the new refresh token to outstanding tokens
+            new_refresh_token = response.data["refresh"]
+             # Add the new refresh token to outstanding tokens
+            self.save_outstanding_token(new_refresh_token)
+            # Return the new access token
             return str(response.data["access"])
         except (AttributeError, ValueError, KeyError, JWTTokenGenerationError) as e:
             raise JWTTokenGenerationError(f"Error extracting access token. Content: {response.content}")  
+        except Exception as e:
+            raise JWTTokenGenerationError(f"Error refreshing access token: {e}")
     
     def extract_user_id(self, request) -> int:
         """
@@ -125,7 +138,23 @@ class JWTTokenService(TokenInterface):
                     refresh_token = RefreshToken(token.token)
                     refresh_token.blacklist()
                 except Exception as e:
-                    print(f"Error blacklisting token: {e}")
-
-
-    
+                    logger.error(f"Error blacklisting token: {e}")
+                    raise JWTTokenGenerationError(f"Error blacklisting token: {e}")
+    """
+    Accepts a refresh token, decodes it and saves it to the database.
+    """
+    def save_outstanding_token(self, refresh_token):
+        try:
+            token = RefreshToken(refresh_token)
+            exp_timestamp = token["exp"]
+            exp_datetime = datetime.datetime.fromtimestamp(exp_timestamp, tz=datetime.timezone.utc)  # Convert Unix timestamp to datetime with UTC
+            OutstandingToken.objects.create(
+                user_id=token["user_id"],
+                jti=token["jti"],
+                token=str(token),
+                created_at=timezone.now(),  # Set created_at to the current time
+                expires_at=exp_datetime,  # Use the timezone-aware datetime object
+            )
+            logger.debug(f"New refresh token saved:{token['user_id']}-{token['jti']}")
+        except Exception as e:
+            raise JWTTokenGenerationError(f"Error saving the newly refreshed token: {e}")
