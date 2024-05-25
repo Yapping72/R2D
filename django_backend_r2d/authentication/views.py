@@ -96,6 +96,8 @@ class RefreshAccessTokenView(APIView):
         access_token = request.headers.get('Authorization', '')
         user = request.user
         response = token_service.refresh_access_token(user, access_token)
+        logger.log(logging.INFO, f"Successfully refreshed access token for user {user.id}")
+        logger.log(logging.DEBUG, f"Access token: {response}")
         return SyncAPIReturnObject(
                 data = {"access_token": response},
                 message = "Successfully Refreshed Access Token",
