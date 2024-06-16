@@ -83,7 +83,7 @@ class JwtHandler {
             console.debug("Token could not be refreshed as it has expired")
             return false
         }
-        
+
         try {
             const requestPayload = {} // Refresh token endpoint does not require a pay
             const result = await ApiManager.postData(UrlsConfig.endpoints.REFRESH_ACCESS_TOKEN, requestPayload)
@@ -99,6 +99,19 @@ class JwtHandler {
         }
 
         return false;
+    }
+
+    /**
+         * Retrieves the user ID from the decoded JWT token.
+         * @returns {number|null} The user ID if present, otherwise null.
+    */
+    static getUserId() {
+        const decodedToken = JwtHandler.decodeToken();
+        if (decodedToken) {
+            console.log('Decoded token payload:', decodedToken); // Log the decoded token for debugging
+            return decodedToken.user_id || null; // Ensure user_id exists in the decoded token
+        }
+        return null;
     }
 }
 

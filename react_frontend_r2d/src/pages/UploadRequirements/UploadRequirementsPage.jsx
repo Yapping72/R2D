@@ -217,7 +217,6 @@ const UploadRequirementsPage = () => {
                         <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile} handleUserStorySubmit={handleUserStorySubmit}/>
                     </Box>
                 )}
-            <Button onClick={refreshToken}>Refresh</Button>
             </Container>
         </UserStoryContextProvider>
     )

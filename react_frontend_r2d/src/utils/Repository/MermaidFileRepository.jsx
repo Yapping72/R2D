@@ -1,4 +1,5 @@
 import {GenericFileRepository} from './GenericFileRepository'
+import JwtHandler from '../Jwt/JwtHandler';
 
 /*
 * Wrapper class for GenericIndexedDBRepository
@@ -10,7 +11,8 @@ import {GenericFileRepository} from './GenericFileRepository'
 */
 export class MermaidFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-file-db", "mermaid-file-store"); // Must match what is stored in GenericFileRepository
+        const userId = JwtHandler.getUserId(); // Get user ID from JWT
+        super("r2d-file-db", "mermaid-file-store", userId); // Pass userId to the superclass
     }
 
     async handleFindById(id) {
