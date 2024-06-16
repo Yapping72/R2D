@@ -10,8 +10,10 @@ import { AlertProvider } from '../../components/common/Alerts/AlertContext';
 import { mermaidExamples } from '../../components/common/Mermaid/MermaidTemplatesAccordion';
 import FileReaderUtility from '../../utils/FileHandling/FileReaderUtility';
 import './VisualizePage.css'
+import { useAuth } from '../../components/common/Authentication/AuthContext';
 
 const VisualizePage = () => {
+  const { isLoggedIn } = useAuth(); // Get the login status from AuthContext - Display file upload accordion if logged in
   // Randomly select an example from mermaidExamples when initializing state
   const [mermaidCode, setMermaidCode] = useState(() => {
     const randomIndex = Math.floor(Math.random() * mermaidExamples.length);
@@ -49,8 +51,12 @@ const VisualizePage = () => {
           <Box>
             <Typography variant='h4'> Mermaid Live Editor</Typography>
             <Divider sx={{ my: 2 }}></Divider>
-            <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection}></MermaidFileManagementAccordion>
-            <Divider sx={{ my: 1 }}></Divider>
+            {isLoggedIn && (
+              <>
+                <MermaidFileManagementAccordion handleFileUpload={handleFileUpload} handleFileSelection={handleFileSelection} />
+                <Divider sx={{ my: 1 }}></Divider>
+              </>
+            )}            
             <MermaidTemplatesAccordion onExampleSelect={handleExampleSelect}></MermaidTemplatesAccordion>
           </Box>
           <Divider sx={{ my: 2 }}></Divider>

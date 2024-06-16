@@ -1,11 +1,13 @@
+import JwtHandler from "../Jwt/JwtHandler";
+
 /**
  * A generic class for interacting with IndexedDB. It provides a set of utility functions to open a database,
  * initialize transactions, and perform CRUD operations on the specified object store within the database.
  */
 
 export class GenericFileRepository {
-    constructor(dbName = "r2d-file-db", storeName) {
-        this.dbName = dbName; // Name of the IndexedDB database (r2d-file-store) is the default repository to store files to
+    constructor(dbName = "r2d-file-db", storeName, user_id) {
+        this.dbName = `${dbName}_${user_id}`; // Name of the IndexedDB database (r2d-file-store) is the default repository to store files to
         this.storeName = storeName; // Name of the object store within the database
         this.dbVersion = 2; // Update this version whenever a new store is added or schema changes
     }

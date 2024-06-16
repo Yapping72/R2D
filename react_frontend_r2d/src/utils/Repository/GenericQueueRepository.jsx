@@ -6,8 +6,8 @@
  * each CRUD operation as needed (e.g., handleFindById, handleAddJobToQueue, etc.).
  */
 export class GenericQueueRepository {
-    constructor(dbName = "r2d-job-db", storeName) {
-        this.dbName = dbName; // Name of the IndexedDB database
+    constructor(dbName = "r2d-queue-db", storeName, user_id) {
+        this.dbName = `${dbName}_${user_id}`;// Name of the IndexedDB database
         this.storeName = storeName; // Name of the object store within the database
         this.dbVersion = 1; // Update this version whenever a new store is added or schema changes
     }

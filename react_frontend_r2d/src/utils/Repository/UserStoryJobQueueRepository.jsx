@@ -1,11 +1,12 @@
 import { GenericQueueRepository } from './GenericQueueRepository'
-
+import JwtHandler from '../Jwt/JwtHandler';
 /**
  * Repository class that provides CRUD to 'r2d-job-db' (database) and 'user-story-job-queue-store' (store)
  */
 export class UserStoryJobQueueRepository extends GenericQueueRepository {
   constructor() {
-    super("r2d-job-db", "user-story-job-queue-store");
+    const userId = JwtHandler.getUserId(); // Get user ID from JWT
+    super("r2d-job-db", "user-story-job-queue-store", userId);
   }
 
    /** 

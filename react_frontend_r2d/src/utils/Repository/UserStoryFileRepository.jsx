@@ -1,14 +1,15 @@
 import {GenericFileRepository} from './GenericFileRepository'
 import FileReaderUtility from '../FileHandling/FileReaderUtility';
 import UserStoryFileUploadValidator from '../Validators/UserStoryFileUploadValidator';
-
+import JwtHandler from '../Jwt/JwtHandler';
 /*
 * Repository to retrieve and write requirements (JSON based)
 */
 
 export class UserStoryFileRepository extends GenericFileRepository {
     constructor() {
-      super("r2d-file-db", "user-story-file-store"); // Must match what is stored in GenericFileRepository
+      const userId = JwtHandler.getUserId(); // Get user ID from JWT
+      super("r2d-file-db", "user-story-file-store",userId); // Must match what is stored in GenericFileRepository
     }
     
     // Retrieves data stored in IndexedDB by id
