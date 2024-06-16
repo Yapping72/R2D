@@ -56,7 +56,10 @@ const UserStoryJobCardGrid = ({ jobParameters }) => {
               <Grid item>
                 {Array.from(jobParameters.parameters.features).map((feature, index) => (
                   <Chip
-                    label={feature} size="small" style={{ marginRight: '5px', marginBottom: '10px' }}
+                    key={`feature-${index}`} // Added key prop
+                    label={feature} 
+                    size="small" 
+                    style={{ marginRight: '5px', marginBottom: '10px' }}
                     variant="outlined" color="primary"
                   />
                 ))}
@@ -66,7 +69,10 @@ const UserStoryJobCardGrid = ({ jobParameters }) => {
               <Grid item>
                 {Array.from(jobParameters.parameters.sub_features).map((sub_feature, index) => (
                   <Chip
-                    label={sub_feature} size="small" style={{ marginRight: '5px', marginBottom: '10px' }}
+                    key={`sub-feature-${index}`} // Added key prop
+                    label={sub_feature} 
+                    size="small" 
+                    style={{ marginRight: '5px', marginBottom: '10px' }}
                     variant="outlined" color="secondary"
                   />
                 ))}

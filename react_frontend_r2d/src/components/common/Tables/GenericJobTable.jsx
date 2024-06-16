@@ -244,7 +244,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                                         const formattedTimestamp = new Date(value).toLocaleString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
                                                         const [datePart, timePart] = formattedTimestamp.split(','); // Split date and time parts
                                                         return (
-                                                            <TableCell>
+                                                            <TableCell key={`${row.job_id}-${column}`}>
                                                                 {datePart.trim()} {/* Display date */}
                                                                 {timePart.trim()} {/* Display time */}
                                                             </TableCell>);
@@ -252,7 +252,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
 
                                                     if (column == "job_status") {
                                                         return (
-                                                            <TableCell>
+                                                            <TableCell key={`${row.job_id}-${column}`}>
                                                                 {renderStatus(value)}
                                                             </TableCell>
                                                         )
@@ -260,7 +260,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
 
                                                     // For rows that do not require additional handling
                                                     return (
-                                                        <TableCell key={column} align="left">
+                                                        <TableCell key={`${row.job_id}-${column}`} align="left">
                                                             {column === "job_id" ? (
                                                                 showJobIds ? value : <IconButton onClick={toggleShowJobIds}><VisibilityIcon /></IconButton>
                                                             ) : value}
@@ -269,7 +269,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                                                 })}
                                                 {/* Conditionally render the "Actions" column */}
                                                 {buttonGroup && (
-                                                    <TableCell align="left">
+                                                    <TableCell align="left" key={`actions-${row.job_id}`}>
                                                         {/* Pass the job status for the current row as a prop */}
                                                         {React.cloneElement(buttonGroup,
                                                             {

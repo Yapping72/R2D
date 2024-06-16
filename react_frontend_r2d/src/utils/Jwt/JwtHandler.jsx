@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import ApiManager from '../Api/ApiManager';
 import UrlsConfig from '../Api/UrlsConfig';
-import { ROUTES } from '../Pages/RoutesConfig';
+import { ACCESS_TOKEN_KEY } from './TokenConstants';
 
 /**
  * A utility class for handling JSON Web Tokens (JWT) in local storage.
@@ -12,7 +12,7 @@ class JwtHandler {
      * @returns {string|null} The JWT token if present, otherwise null.
      */
     static getToken() {
-        return localStorage.getItem('r2d_access_token');
+        return localStorage.getItem(ACCESS_TOKEN_KEY);
     }
 
     /**
@@ -20,14 +20,14 @@ class JwtHandler {
      * @param {string} token - The JWT token to be stored.
      */
     static setToken(token) {
-        localStorage.setItem('r2d_access_token', token);
+        localStorage.setItem(ACCESS_TOKEN_KEY, token);
     }
 
     /**
      * Clears the JWT token from local storage.
      */
     static clearToken() {
-        localStorage.removeItem('r2d_access_token');
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
 
     /**
@@ -35,7 +35,7 @@ class JwtHandler {
      * @returns {boolean} True if a JWT token is present, otherwise false.
      */
     static checkLocalStorage() {
-        return localStorage.getItem('r2d_access_token') !== null;
+        return localStorage.getItem(ACCESS_TOKEN_KEY) !== null;
     }
 
     /**
@@ -74,14 +74,20 @@ class JwtHandler {
      */
     static async refreshToken() {
         const token = JwtHandler.getToken();
-        if (!token || JwtHandler.isTokenExpired) {
-            console.debug("Token could not be refreshed as it does not exists, or has already expired")
+        if (!token) {
+            console.debug(`Token could not be refreshed as it does not exist in local storage key - ${ACCESS_TOKEN_KEY}`)
             return false
         }
 
+        if (JwtHandler.isTokenExpired()) {
+            console.debug("Token could not be refreshed as it has expired")
+            return false
+        }
+        
         try {
             const requestPayload = {} // Refresh token endpoint does not require a pay
-            result = await ApiManager.postData(UrlsConfig.endpoints.REFRESH_ACCESS_TOKEN, requestPayload)
+            const result = await ApiManager.postData(UrlsConfig.endpoints.REFRESH_ACCESS_TOKEN, requestPayload)
+            console.log(result)
             if (result.success) {
                 console.log(`Successfully Refreshed Access Token: ${result.data.access_token}`)
                 JwtHandler.setToken(result.data.access_token)

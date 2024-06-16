@@ -61,6 +61,6 @@ class OTPAuthenticator(AuthenticationInterface):
                 return False
             
         except User.DoesNotExist:
-            raise AuthenticationError("Oops your account doesn't seem to exists.")
+            raise AuthenticationError("Account does not exists")
         except OTP.DoesNotExist:
             raise AuthenticationError("No valid OTP found for user.")

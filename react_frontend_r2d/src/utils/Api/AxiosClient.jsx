@@ -1,7 +1,6 @@
 import axios from 'axios';
 import JwtHandler from '../Jwt/JwtHandler';
 import UrlsConfig from './UrlsConfig';
-import { PageNavigationService } from '../Pages/PageNavigationService';
 
 class CustomError extends Error {
     constructor(message, data) {

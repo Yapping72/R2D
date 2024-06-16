@@ -1,0 +1,131 @@
+.pulsating-text {
+    animation: pulse 1s infinite;
+}
+.idle-timeout-dialog {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.idle-timeout-dialog .MuiPaper-root {
+    background-color: black; /* Dark background */
+    color: #ffffff; /* White text */
+}
+
+.dialog-title {
+    color: #ffffff; /* White text */
+}
+
+.dialog-description {
+    color: #cccccc; /* Light grey text */
+}
+
+.pulsating-text {
+    animation: pulsate 1s infinite;
+}
+
+@keyframes pulsate {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.linear-progress .MuiLinearProgress-bar {
+    background-color: #3f51b5; /* Primary color */
+}
+
+.dialog-button {
+    color: #ffffff; /* White text */
+    border-color: #3f51b5; /* Primary color border */
+}
+
+.dialog-button:hover {
+    background-color: #3f51b5; /* Primary color background */
+    color: #ffffff; /* White text */
+}
+
+.clock{  
+    background: white;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto; 
+    box-shadow: inset 0 0 0 .25rem #aaa;
+    flex-direction: column;
+    animation: clock 5s ease-in-out infinite;
+  }
+  
+  .cup{
+    background: #aaa; 
+    height: 30%;
+    width: 30%;
+    border-radius: 50% 50% 0 0/ 100% 100% 0 0;
+    overflow: hidden;
+  }
+  
+  .top{
+    transform: rotate(180deg)  ;
+  }
+  
+  .sand{
+    background: #555;
+    height: 150%;
+    width: 150%;
+    transform-origin: 0% 0%;
+    animation: sand 5s linear infinite -2.5s;
+  }
+  
+  .delayed{
+    animation-delay: 0s; 
+  }
+  
+  
+  @keyframes clock{
+    0%{
+      transform: rotate(0deg)
+    }
+    25%,50%{
+      transform: rotate(180deg)
+    }
+    75%{
+      transform: rotate(360deg);
+    }
+    100%{
+      transform: rotate(360deg);
+    }
+  }
+  
+  
+  @keyframes sand{
+    0%, 100%{
+      border-radius: 5%;
+      transform: translate(35%,20%) rotate(45deg);
+    }
+    15%{
+      border-radius:40%;
+      transform: translate(0%,35%) rotate(-65deg) scale(1.5,1.5);
+    }
+    25%{
+      border-radius:20%;
+      transform: translate(-15%,35%) rotate(-90deg) scale(1.2,1.2);
+    }
+    50%{
+      border-radius:5%;
+      transform: translate(0%,0%) rotate(-90deg) scale(1,1);
+      opacity: 1;
+    }
+    50.01%,64.99%{
+      opacity: 0;
+    }
+    65%{
+      border-radius:35%;
+      transform: translate(20%,50%) rotate(30deg);
+      opacity: 1;    
+    }
+    75%{
+      border-radius:10%;
+      transform: translate(35%,40%) rotate(45deg);
+    }
+  }
+  
