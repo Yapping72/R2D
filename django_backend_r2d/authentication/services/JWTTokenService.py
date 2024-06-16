@@ -4,13 +4,12 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import OutstandingToken
 from django.test import Client
 
-
 from authentication.services.TokenInterface import TokenInterface
 from authentication.services.AuthenticationExceptions import JWTTokenGenerationError, AuthenticationError, UserIDNotFoundError
 from authentication.services.Serializers import CustomTokenPairSerializer
 
-import datetime
-from django.utils import timezone
+from datetime import datetime, timezone
+from django.utils import timezone as dj_timezone
 import logging
 logger = logging.getLogger('application_logging')
 
@@ -114,7 +113,10 @@ class JWTTokenService(TokenInterface):
             raise UserIDNotFoundError()
     
     def invalidate_previous_tokens(self, user):
-        """Invalidates all outstanding tokens for the given user."""
+        """
+        Invalidates all outstanding tokens for the given user.
+        Raises JWTTokenGenerationError if an error occurs.    
+        """
         # Retrieve all tokens associated with the user
         try:
             tokens = OutstandingToken.objects.filter(user_id=user.id)
@@ -133,10 +135,17 @@ class JWTTokenService(TokenInterface):
             if token.id not in blacklisted_token_ids:
                 logger.debug(f"Token not blacklisted: {token.id}")
                 try:
+                    # Check if the token is expired before blacklisting
+                    refresh_token = RefreshToken(token.token)
+                    if refresh_token.access_token.get('exp') < datetime.now().timestamp():
+                        logger.debug(f"Token already expired: {token.id}")
+                        continue
+
                     # Blacklist the Refresh token
                     logger.debug(f"Blacklisting token: {token.id}")
-                    refresh_token = RefreshToken(token.token)
                     refresh_token.blacklist()
+                except TokenError:
+                    logger.debug(f"Token is already invalid or expired: {token.id}")
                 except Exception as e:
                     logger.error(f"Error blacklisting token: {e}")
                     raise JWTTokenGenerationError(f"Error blacklisting token: {e}")
@@ -147,14 +156,14 @@ class JWTTokenService(TokenInterface):
         try:
             token = RefreshToken(refresh_token)
             exp_timestamp = token["exp"]
-            exp_datetime = datetime.datetime.fromtimestamp(exp_timestamp, tz=datetime.timezone.utc)  # Convert Unix timestamp to datetime with UTC
+            exp_datetime = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)  # Convert Unix timestamp to datetime with UTC
             OutstandingToken.objects.create(
                 user_id=token["user_id"],
                 jti=token["jti"],
                 token=str(token),
-                created_at=timezone.now(),  # Set created_at to the current time
+                created_at=dj_timezone.now(),  # Set created_at to the current time
                 expires_at=exp_datetime,  # Use the timezone-aware datetime object
             )
-            logger.debug(f"New refresh token saved:{token['user_id']}-{token['jti']}")
+            logger.debug(f"New refresh token saved: {token['user_id']}-{token['jti']}")
         except Exception as e:
             raise JWTTokenGenerationError(f"Error saving the newly refreshed token: {e}")

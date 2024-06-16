@@ -22,7 +22,7 @@ const OTPPage = () => {
     const { showAlert } = useAlert();
     const { navigateTo } = PageNavigationService();
     const [errorMessage, setErrorMessage] = useState('');
-    const { setLoginAndStartInactivityTimer } = useAuth();
+    const { setLoginAndSilentRefreshTimer } = useAuth();
     /**
      * Triggers the OTP authentication flow.
      * BE otp authentication relies on userId and otp 
@@ -41,7 +41,7 @@ const OTPPage = () => {
                 console.debug(`${otp} ${result.data.access_token} - Login successful, proceeding to OTP`);
                 showAlert("success", "Welcome back !");
                 JwtHandler.setToken(result.data.access_token)
-                setLoginAndStartInactivityTimer();
+                setLoginAndSilentRefreshTimer();
                 navigateTo(ROUTES.UPLOAD); // Pass userId as state
                 return true;
             } else {

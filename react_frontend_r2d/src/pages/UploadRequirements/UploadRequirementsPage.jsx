@@ -9,6 +9,14 @@ import { UserStoryFileRepository } from '../../utils/Repository/UserStoryFileRep
 import { useAlert } from '../../components/common/Alerts/AlertContext';
 import { PageNavigationService } from '../../utils/Pages/PageNavigationService'
 import { ROUTES } from '../../utils/Pages/RoutesConfig';
+
+
+import JwtHandler from '../../utils/Jwt/JwtHandler';
+
+const refreshToken = async () => {
+    JwtHandler.refreshToken();
+}
+
 /**
  * The `UploadRequirementsPage` is responsible for managing the upload and visualization
  * of user stories from files. It allows users to upload files, select files for viewing,
@@ -209,6 +217,7 @@ const UploadRequirementsPage = () => {
                         <FeatureVisualizer filesData={filesData} handleRemoveSelectedFile={handleRemoveSelectedFile} handleUserStorySubmit={handleUserStorySubmit}/>
                     </Box>
                 )}
+            <Button onClick={refreshToken}>Refresh</Button>
             </Container>
         </UserStoryContextProvider>
     )

@@ -21,7 +21,7 @@ function Header() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   // Define pages and settings based on login status
-  const pages = isLoggedIn ? ["Upload", "Analyze", "Visualize", "Home"] : ["Visualize", "Home"];
+  const pages = isLoggedIn ? ["Upload", "Analyze", "Visualize", "Home"] : ["Visualize", "Home", "Account-Portal"];
   const settings = isLoggedIn ? ['My Profile', 'My Actions', 'History', 'Logout'] : ['Account-Portal'];
 
   const handleOpenNavMenu = (event) => {
@@ -98,16 +98,7 @@ function Header() {
               sx={{ my: 2, color: 'white', display: 'block' }}
               href={`/${page}`}
             >
-              <Typography variant='body1'
-                sx={{
-                  flexGrow: 1,
-                  fontWeight: 550,
-                  letterSpacing: '.1rem',
-                  color: 'inherit',
-                  textDecoration: 'none',
-                }}>
-                {page}
-              </Typography>
+            {page}
             </Button>
           ))}
         </Box>

@@ -36,7 +36,7 @@ const ProtectedRoute = ({ element }) => {
     return isAuthenticated ? element : 
     <Layout>
         <ErrorPage errorCode='401' 
-        errorMessage='Your login session has expired, please re-login again' 
+        errorMessage='Your session has expired, please login again.' 
         redirectToPage={ROUTES.ACCOUNT_PORTAL}>
         </ErrorPage>
     </Layout>;

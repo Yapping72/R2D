@@ -3,7 +3,7 @@ from framework.responses.BaseReturnObject import BaseReturnObject
 
 class SyncAPIReturnObject(BaseReturnObject):
     """
-    Initializes an API response object.
+    Initializes an Synchronous API response object.
 
     Args:
         data (dict): The payload to be returned in the response. Defaults to an empty dict.

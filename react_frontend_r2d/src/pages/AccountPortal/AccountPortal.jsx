@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Switch, Box, Stack, Tooltip } from '@mui/material';
+import {Switch, Box, Stack, Tooltip, Button } from '@mui/material';
 import LoginForm from '../../components/common/Form/LoginForm';
 import RegisterForm from '../../components/common/Form/RegisterForm';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -19,7 +19,7 @@ const AccountPortalPage = () => {
     const { showAlert } = useAlert();
     const { navigateTo } = PageNavigationService();
     const [errorMessage, setErrorMessage] = useState('');
-    const { setLoginAndStartInactivityTimer } = useAuth();
+    const { setLoginAndSilentRefreshTimer } = useAuth();
     const [showBackdrop, setShowBackdrop] = useState(false);
 
     const handleToggle = (event) => {
@@ -81,7 +81,7 @@ const AccountPortalPage = () => {
             if (result.success) {
                 console.debug(`${result.data}`);
                 JwtHandler.setToken(result.data.access_token);
-                setLoginAndStartInactivityTimer();
+                setLoginAndSilentRefreshTimer();
                 setShowBackdrop(true); // Show the backdrop
                 setTimeout(() => {
                     setShowBackdrop(false);

@@ -16,7 +16,9 @@ import LogoutPage from './pages/LogoutPage/LogoutPage.jsx';
 // Add providers, utils and other components here
 import { ROUTES } from './utils/Pages/RoutesConfig.jsx';
 import { AuthProvider } from './components/common/Authentication/AuthContext.jsx';
+
 import ProtectedRoute from './components/common/Authentication/ProtectedRoutes.jsx';
+import IdleTimeoutDialog from './components/common/Dialog/IdleTimeoutDialog.jsx';
 
 function App() {
   const theme = createTheme({
@@ -37,6 +39,7 @@ function App() {
       <CssBaseline />
       <Router>
         <AuthProvider>
+        <IdleTimeoutDialog/>
           <div id="root">
             <div className="main-content">
               <main>
@@ -57,6 +60,7 @@ function App() {
               </main>
             </div>
           </div>
+          
         </AuthProvider>
       </Router>
     </ThemeProvider>
