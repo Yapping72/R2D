@@ -6,6 +6,8 @@ from framework.responses.JSONResponse import JSONResponse
 from framework.responses.BaseReturnObject import BaseReturnObject
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from authentication.services.AuthenticationExceptions import *
+from jobs.services.JobExceptions import *
+
 import logging
 logger = logging.getLogger('application_logging')
 
@@ -63,6 +65,9 @@ class BaseView(APIView):
             except CompromisedPasswordError as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "The password you have provided is not secure and has been found in databases of leaked passwords. For your safety, please choose a different password that has not been compromised.", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except JobCreationException as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to create Job Record", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except Exception as e:
                 # Log the unexpected error
                 logger.error(f"Unhandled exception: {str(e)}", exc_info=True)

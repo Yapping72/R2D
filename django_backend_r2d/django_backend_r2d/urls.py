@@ -20,9 +20,10 @@ from django.urls import path, include
 """
 When onboarding new applications, include the api/app-name-abbreviation
 """
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/accounts/', include('accounts.urls')),
-    path('api/auth/', include('authentication.urls')),
-    path('staff-administration/', include('admin_portal.urls')) # Include the staff admin portal
+urlpatterns = [ 
+    path('admin/', admin.site.urls), # url for the admin portal
+    path('api/accounts/', include('accounts.urls')), # URL for the accounts app
+    path('api/auth/', include('authentication.urls')), # URL for the authentication app
+    path('staff-administration/', include('admin_portal.urls')), # URL for the staff admin portal
+    path('api/jobs/', include('jobs.urls')) # URL for the jobs app
 ]

@@ -208,3 +208,6 @@ dist-ssr
 
 aws_configuration/r2d-cloud-administrator_accessKeys.csv
 aws_configuration/r2d-cloud-administrator_credentials.csv
+
+rest_endpoint_testing
+rest_endpoint_testing/*

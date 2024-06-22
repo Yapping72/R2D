@@ -46,7 +46,7 @@ class SignUpView(BaseView):
         Creates the user account and registers them if the account is valid.
         Returns access token for users that are successfully registered 
         """
-        logger.info("api/")
+        logger.debug("api/signup invoked")
         user = auth_service.register(request.data)
         access_token = token_service.generate_token(user)
         return SyncAPIReturnObject(
@@ -62,6 +62,7 @@ class LoginView(APIView):
         On successful login, the OTP flow is triggered.
         User.id is returned to Frontend 
         """
+        logger.debug("api/login invoked")
         username = request.data.get('username')
         password = request.data.get('password')
         user, otp = auth_service.authenticate(username, password) # retrieve the user object and the otp 
@@ -75,6 +76,7 @@ class VerifyPassword(APIView):
     permission_classes = [IsAuthenticated]
     @BaseView.handle_exceptions
     def post(self, request):
+        logger.debug("api/verify invoked")
         user_id = token_service.extract_user_id(request)  # Safe extraction of user_id from jwt and not from payload
         password = request.data.get('password')
         if not user_id or not password:
@@ -93,6 +95,7 @@ class RefreshAccessTokenView(APIView):
     permission_classes = [IsAuthenticated]
     @BaseView.handle_exceptions
     def post(self, request):
+        logger.debug("api/refresh invoked")
         access_token = request.headers.get('Authorization', '')
         user = request.user
         response = token_service.refresh_access_token(user, access_token)
@@ -112,6 +115,7 @@ class VerifyOTPView(APIView):
         user_id = request.data.get('user_id')  
         provided_otp = request.data.get('otp')
         user = User.objects.get(pk=user_id)  
+        logger.debug("api/otp invoked")
         # Verify the OTP
         is_valid = otp_authenticator.authenticate(user_id = user.id, provided_otp=provided_otp)
         if is_valid:

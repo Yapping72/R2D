@@ -63,6 +63,7 @@ class JwtHandler {
         const decodedToken = JwtHandler.decodeToken();
         if (decodedToken) {
             const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+            console.debug(`Token expiry time: ${decodedToken.exp}, Current time: ${currentTime}`);
             return decodedToken.exp < currentTime;
         }
         return true; // Return true if there is no token or if it couldn't be decoded
