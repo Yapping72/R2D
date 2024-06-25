@@ -1,5 +1,7 @@
 from rest_framework import status
 from framework.responses.BaseReturnObject import BaseReturnObject
+import logging
+
 
 class SyncAPIReturnObject(BaseReturnObject):
     """
@@ -15,6 +17,8 @@ class SyncAPIReturnObject(BaseReturnObject):
         ValueError: If any of the required fields are inappropriately set.
     """
     def __init__(self, data: dict = None, message: str = "", success: bool = False, status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR):
+        self.logger = logging.getLogger("application_logging")
+        
         if data is None:
             data = {}  # Ensure data is always a dictionary
 

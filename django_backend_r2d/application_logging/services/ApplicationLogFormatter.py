@@ -4,7 +4,6 @@ import inspect
 import sys
 import os
 
-
 class ApplicationLogFormatter(jsonlogger.JsonFormatter):
     """
     A custom log formatter that formats logging messages into a structured JSON format.
