@@ -68,6 +68,9 @@ class BaseView(APIView):
             except JobCreationException as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "Failed to create Job Record", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except AddToJobQueueException as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to add Job to Job Queue", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except Exception as e:
                 # Log the unexpected error
                 logger.error(f"Unhandled exception: {str(e)}", exc_info=True)

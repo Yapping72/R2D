@@ -58,3 +58,28 @@ class Job(models.Model):
     def __str__(self):
         return f"Job Id: {self.job_id}\nCreated By:{self.user}\nStatus:{self.job_status}\nCreated on:{self.created_timestamp}\nUpdated on:{self.last_updated_timestamp}"
 
+class JobQueue(models.Model):
+    """
+    JobQueue table will be referenced by Consumers e.g., LLM Service(s) to fetch jobs for processing.
+    """
+    job = models.OneToOneField(Job, on_delete=models.CASCADE, primary_key=True)
+    status = models.ForeignKey(JobStatus, to_field='code', on_delete=models.CASCADE)
+    consumer = models.CharField(max_length=50, default="None") # Consumer name 
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    last_updated_timestamp = models.DateTimeField(auto_now=True)
+    
+class JobHistory(models.Model):
+    """
+    JobHistory table will store the history of job status changes.
+    Used for tracking the status changes of a job. 
+    """
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    previous_status = models.ForeignKey(JobStatus, related_name='previous_status_histories', to_field='code', on_delete=models.CASCADE)
+    current_status = models.ForeignKey(JobStatus, related_name='current_status_histories', to_field='code', on_delete=models.CASCADE) 
+    reason = models.TextField(max_length=100, default="Status changed by user.")
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    last_updated_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Job Id: {self.job.job_id}, Status: {self.status}, Updated on: {self.updated_timestamp}"

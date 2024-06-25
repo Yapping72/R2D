@@ -5,6 +5,7 @@ from jobs.interfaces.JobServiceInterface import JobServiceInterface
 from jobs.models import Job, JobStatus
 from jobs.serializers.JobSerializer import JobSerializer
 from jobs.serializers.UpdateJobStatusSerializer import UpdateJobStatusSerializer
+from jobs.serializers.GetJobSerializer import GetJobSerializer
 from jobs.services.JobExceptions import *
 
 import logging 
@@ -56,14 +57,14 @@ class JobService(JobServiceInterface):
     def update_status(self, user, job_data):
         """
         Service class for handling Job-related operations.
-        Expects a valid user object and job_data dictionary as input.
         """
         serializer = UpdateJobStatusSerializer(data=job_data)
-        
+        # Raise an error if serializer is not valid
         if not serializer.is_valid():
             logger.error(f"Serializer validation error for job data {job_data} with errors: {serializer.errors}")
             raise ValidationError(serializer.errors)
 
+        # Retrieve the validated job_id and job_status from the serializer
         job_id = serializer.validated_data.get('job_id')
         job_status = serializer.validated_data.get('job_status')
 
@@ -71,22 +72,35 @@ class JobService(JobServiceInterface):
             job = Job.objects.get(job_id=job_id, user=user)
             job_status_instance = JobStatus.objects.get(name=job_status)
             job.job_status = job_status_instance
-            job.save()
+            job.save() 
             return job
         except Job.DoesNotExist:
             raise JobNotFoundException(f"Job with id {job_id} does not exist for user {user.id}.")
         except JobStatus.DoesNotExist:
             raise InvalidJobStatus(f"Invalid job status: {job_status}")
+        
+    def get_job_for_user(self, user, request_payload):
+        """
+        Retrieves a specific job for a user by job_id.
+        """
+        request_payload['user'] = user.id  # Ensure user field is included in the payload
+        serializer = GetJobSerializer(data=request_payload)
+        if not serializer.is_valid():
+            logger.error(f"Serializer validation error for payload {request_payload} with errors: {serializer.errors}")
+            raise ValidationError(serializer.errors)
 
-    def get_by_id(self, job_id):
-        pass
-    
-    def delete(self):
-        pass
-    
-    def get_all_jobs(self):
-        pass
-    
-    def get_job_for_user(self, job_id, user):
-        pass    
-    
+        validated_data = serializer.validated_data
+        
+        try:
+            job = Job.objects.get(job_id=validated_data['job_id'], user=user)
+            return JobSerializer(job).data # Serialize the job object
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist for user {user.id}.")
+
+    def get_all_jobs_for_user(self, user):
+        """
+        Retrieves all jobs for a given user.
+        """
+        jobs = Job.objects.filter(user=user)
+        logger.debug(f"Retrieved {jobs} jobs for user {user.id}")
+        return JobSerializer(jobs, many=True).data # Serialize the job objects

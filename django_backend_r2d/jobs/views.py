@@ -25,9 +25,9 @@ class JobSaveView(APIView):
         Returns the created or updated job_id if the operation is successful.
         """
         user = request.user
-        job_data = request.data["payload"]
-        logger.debug(user, job_data)
-        job = job_service.save_job(user, job_data)
+        request_payload = request.data["payload"]
+        logger.debug(user, request_payload )
+        job = job_service.save_job(user, request_payload )
         
         return SyncAPIReturnObject(
             data={'job_id': job.job_id},
@@ -42,17 +42,58 @@ class UpdateJobStatusView(APIView):
     @BaseView.handle_exceptions
     def post(self, request):
         """
-        Updates a job for the authenticated user. The payload should contain the job_id and the new status.
-        The job_metadata object should contain the job_id and the new status.
+        Updates a job for the authenticated user. 
+        The payload should contain the job_id and the new status.
         """
         user = request.user
-        job_metadata = request.data["payload"]
-        logger.debug(user, job_metadata)
-        job = job_service.update_status(user, job_metadata)
+        request_payload = request.data["payload"]
+        logger.debug(user, request_payload)
+        job = job_service.update_status(user, request_payload)
         
         return SyncAPIReturnObject(
             data={'job_id': job.job_id},
             message="Job updated successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+
+class GetOneJobView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Get a job for the authenticated user. 
+        The payload should contain the job_id.
+        """
+        user = request.user
+        request_payload = request.data["payload"]
+        logger.debug(f"GetOneJobView: {user} {request_payload}")
+        job = job_service.get_job_for_user(user, request_payload)
+        logger.debug(f"Job Retrieved: {job}")
+        
+        return SyncAPIReturnObject(
+            data=job,
+            message="Job retrieved successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+
+class GetAllJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Get all jobs for the authenticated user.
+        """
+        user = request.user
+        logger.debug(f"GetAllJobsView: {user}")
+        jobs = job_service.get_all_jobs_for_user(user)
+        
+        return SyncAPIReturnObject(
+            data={'jobs': jobs},
+            message="Jobs retrieved successfully.",
             success=True,
             status_code=status.HTTP_200_OK
         )

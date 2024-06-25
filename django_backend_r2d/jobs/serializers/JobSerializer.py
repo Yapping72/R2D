@@ -2,6 +2,9 @@ from rest_framework import serializers
 from jobs.models import Job, JobStatus
 
 class JobSerializer(serializers.ModelSerializer):
+    """
+    Serializer for both requests and responses for the Job model.
+    """
     # Define a SlugRelatedField for the job_status field
     job_status = serializers.SlugRelatedField(slug_field='name', queryset=JobStatus.objects.all())
 
