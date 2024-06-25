@@ -4,12 +4,22 @@ User = get_user_model()
 import uuid
 
 class JobStatus(models.Model):
-    """Table to store valid job statuses. 
-    Used to normalize job status in Job model."""
-    
+    """
+    Table to store valid job statuses. 
+    Used to normalize job status in Job model.
+    id | name | code 
+    1 | Draft | 1 
+    2 | Queued | 2 
+    3 | Submitted | 3 
+    4 | Error Failed to Submit | 4
+    5 | Processing | 5
+    6 | Error Failed to Process | 6
+    7 | Job Aborted | 7
+    8 | Completed | 8
+    """
     name = models.CharField(max_length=50, unique=True)
     code = models.PositiveSmallIntegerField(unique=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -38,16 +48,13 @@ class Job(models.Model):
     """
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job_status = models.ForeignKey(JobStatus, on_delete=models.PROTECT)
+    job_status = models.ForeignKey(JobStatus, to_field='code', on_delete=models.PROTECT)
     job_details = models.TextField(max_length=100)
     tokens = models.IntegerField()
     parameters = models.JSONField()
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)
 
-class JobManager(models.Manager):
-    """
-    Manager for Job model.
-    """
-    def for_user(self, user):
-        return self.filter(user=user)
+    def __str__(self):
+        return f"Job Id: {self.job_id}\nCreated By:{self.user}\nStatus:{self.job_status}\nCreated on:{self.created_timestamp}\nUpdated on:{self.last_updated_timestamp}"
+

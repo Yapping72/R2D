@@ -1,7 +1,7 @@
 from django.urls import path
-from jobs.views import JobSaveView
+from jobs.views import JobSaveView, UpdateJobStatusView
 
 urlpatterns = [
-    # Other URL patterns...
-    path('save/', JobSaveView.as_view(), name='save-job'),
+    path('save/', JobSaveView.as_view(), name='save-job'), # URL pattern for saving a job
+    path('update-status/', UpdateJobStatusView.as_view(), name='update-job-status') # URL pattern for updating job status
 ]

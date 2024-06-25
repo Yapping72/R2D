@@ -14,13 +14,15 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 job_service = JobService()
+
 class JobSaveView(APIView):
     permission_classes = [IsAuthenticated]
 
     @BaseView.handle_exceptions
     def post(self, request):
         """
-        Creates a new job for the authenticated user.
+        Creates or updates an existing job for the authenticated user.
+        Returns the created or updated job_id if the operation is successful.
         """
         user = request.user
         job_data = request.data["payload"]
@@ -29,7 +31,28 @@ class JobSaveView(APIView):
         
         return SyncAPIReturnObject(
             data={'job_id': job.job_id},
-            message="Job created successfully.",
+            message="Job parameters saved successfully.",
             success=True,
-            status_code=status.HTTP_201_CREATED
+            status_code=status.HTTP_200_OK
+        )
+
+class UpdateJobStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Updates a job for the authenticated user. The payload should contain the job_id and the new status.
+        The job_metadata object should contain the job_id and the new status.
+        """
+        user = request.user
+        job_metadata = request.data["payload"]
+        logger.debug(user, job_metadata)
+        job = job_service.update_status(user, job_metadata)
+        
+        return SyncAPIReturnObject(
+            data={'job_id': job.job_id},
+            message="Job updated successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
         )
