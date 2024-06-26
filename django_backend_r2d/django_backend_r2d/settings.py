@@ -113,6 +113,7 @@ DATABASES = {
         'PORT': os.environ.get('POSTGRES_DB_PORT'),
     }
 }
+
 logger.info(f"DATABASES: {DATABASES}")
 
 # Password validation
@@ -222,3 +223,11 @@ try:
         SIMPLE_JWT['VERIFYING_KEY'] = f.read()
 except FileNotFoundError:
     print(f"Failed to find {verifying_key}")
+
+# Configure Celery Settings
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
