@@ -59,5 +59,9 @@ jobs:
     - name: Run Authentication Test
       run: |
           docker-compose exec -T django_backend_r2d bash -c "python manage.py test authentication" 
-  
+
+    - name: Run Jobs Test
+      run: |
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test jobs" 
+      
           
