@@ -48,8 +48,9 @@ def add_to_job_queue_on_update(sender, instance, **kwargs):
             previous = Job.objects.get(pk=instance.pk)
         except ObjectDoesNotExist:
             previous = None
-
-        if previous and previous.job_status.code != 3 and instance.job_status.code == 3:  # Check if status changes to Submitted
+            
+        # Check if status changes to Submitted
+        if previous and previous.job_status.code != 3 and instance.job_status.code == 3:  
             try:
                 JobQueue.objects.create(job=instance, status=instance.job_status, consumer='None')
             except IntegrityError as e:
