@@ -15,8 +15,3 @@ class JobQueueInterface(ABC):
     def update_status(self, **kwargs):
         """Updates the status of a job in the queue"""
         pass
-
-    @abstractmethod
-    def update_consumer(self, **kwargs):
-        """Updates the consumer of a job in the queue"""
-        pass

@@ -27,4 +27,8 @@ class AddToJobQueueException(Exception):
     def __init__(self, message="Failed to add job to queue"):
         self.error_message = f"AddToJobQueueException: {message}"
         super().__init__(self.error_message)
-    
+
+class RemoveFromJobQueueException(Exception):
+    def __init__(self, message="Failed to remove job from queue"):
+        self.error_message = f"RemoveFromJobQueueException: {message}"
+        super().__init__(self.error_message)
