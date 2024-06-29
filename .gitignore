@@ -211,3 +211,5 @@ aws_configuration/r2d-cloud-administrator_credentials.csv
 
 rest_endpoint_testing
 rest_endpoint_testing/*
+
+ssh_into_db.sh

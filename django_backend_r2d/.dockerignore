@@ -10,3 +10,4 @@ __pycache__
 .DS_Store
 *.rest
 rest_endpoint_testing
+ssh_into_db.sh
