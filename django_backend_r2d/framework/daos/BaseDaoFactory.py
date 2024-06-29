@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from django.db import models
-from accounts.daos.UserDAO import UserDao
 
 class BaseDaoFactory(ABC):
     @abstractmethod
