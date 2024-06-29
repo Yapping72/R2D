@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'application_logging', # application logging 
     'admin_portal', # contains admin portal
     'jobs', # jobs
-    'model_manager' # model manager 
+    'model_manager', # model manager 
+    'embeddings'
 ]
 
 # White listing the localhost:5143 for React Frontend
