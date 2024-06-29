@@ -213,3 +213,5 @@ rest_endpoint_testing
 rest_endpoint_testing/*
 
 ssh_into_db.sh
+openai_configuration/openai.txt
+openai_configuration

@@ -19,6 +19,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - R2D_OPENAI_API_TOKEN=${R2D_OPENAI_API_TOKEN}
     entrypoint: /app/entrypoint.sh  # bash script will create the database if it doesnt exists
     container_name: django_backend_r2d
     volumes:
@@ -65,6 +66,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - R2D_OPENAI_API_TOKEN=${R2D_OPENAI_API_TOKEN}
     volumes:
       - ./django_backend_r2d:/app
 
