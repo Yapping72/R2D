@@ -1,4 +1,4 @@
-from framework.auditors.BaseAuditorFactory import BaseAuditorFactory
+from framework.factories.interfaces.BaseAuditorFactory import BaseAuditorFactory
 
 class AuditorFactory(BaseAuditorFactory):
     @staticmethod

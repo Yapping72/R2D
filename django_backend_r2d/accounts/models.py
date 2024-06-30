@@ -15,7 +15,7 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=50,
         choices=ROLE_CHOICES,
-        default='NORMAL_USER',  # Set the default value here
+        default='NORMAL_USER', 
     )
     
     # For security purposes we allow users to provide display names
