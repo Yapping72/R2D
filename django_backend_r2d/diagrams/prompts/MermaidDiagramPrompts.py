@@ -8,20 +8,51 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
     """    
     @staticmethod
     def get_prompt(job_parameters: dict, context: dict = None) -> str:
-        output_format = {"feature_X": "class diagram in mermaid syntax"}
         if context is None:
-            template = """You are a systems design expert, create class diagrams based on the given user stories: {job_parameters}. Group the class diagrams by features, your output should be one or more class diagrams expressed using mermaid syntax. Here is an example of the output format: {output_format}."""
+            template = """
+                You are a systems design expert. Your task is to create comprehensive and detailed class diagrams based on the given user stories.
+
+                Here are the user stories grouped by features:
+
+                {job_parameters}
+
+                Instructions:
+                1. Analyze each user story carefully and identify all relevant classes.
+                2. Each class should have logical variables (attributes) and functions (methods) that reflect the requirements in the user stories.
+                3. Group the class diagrams by features, ensuring each feature and sub-feature has one or more associated classes. Functions within these classes should achieve the described features.
+                4. Clearly represent relationships between classes, such as inheritance, composition, and associations.
+                5. Use mermaid syntax to express the class diagrams. Ensure that the diagrams are well-structured and easy to understand.
+                """  
             prompt = PromptTemplate(
                 input_variables=["job_parameters"],
                 template=template
             )
+            
             return prompt.format(job_parameters=job_parameters)
         else:
-            template = """You are a systems design expert, create class diagrams based on the given user stories: {job_parameters}. Here is some additional context: {context}. Group the class diagrams by features, your output should be one or more class diagrams expressed using mermaid syntax. Here is an example of the output format: {output_format}."""
+            # For prompts where context is provided
+            template = """
+                You are a systems design expert. Your task is to create class diagrams based on the given user stories.
+                Here are the user stories:
+                {job_parameters}
+                
+                Instructions:
+                1. Analyze each user story carefully and identify all relevant classes.
+                2. Each class must have logical variables (attributes) and functions (methods) that reflect the requirements in the user stories.
+                3. Group the class diagrams by features, ensuring each feature and sub-feature has one or more associated classes. Functions within these classes should achieve the described features.
+                4. Clearly represent relationships between classes, such as inheritance, composition, and associations.
+                5. Use mermaid syntax to express the class diagrams. Ensure that the diagrams are well-structured and easy to understand.
+                6. Here is some additional context that should be incorporated in your design: 
+                {context}
+
+                All classes created must have logical variables and functions.
+                Group the class diagrams by features. Your output should be one or more class diagrams expressed using mermaid syntax. Ensure that the diagrams are well-structured and clearly represent the relationships between classes.
+                """
             prompt = PromptTemplate(
                 input_variables=["job_parameters", "context"],
                 template=template
             )
+            
             return prompt.format(job_parameters=job_parameters, context=context)
 
 class ERDiagramPromptTemplate(BasePromptTemplate):

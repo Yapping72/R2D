@@ -1,0 +1,3 @@
+
+
+{"feature": "Logging Framework", "diagram": "classDiagram\n    class ApplicationLogging {\n        - id: string\n        - requirement: string\n        - services_to_use: List<string>\n        - acceptance_criteria: string\n        - additional_information: string\n    }\n    class CloudWatch {\n        // attributes and methods\n    }\n    ApplicationLogging -- CloudWatch\n\n    class LogQuery {\n        - id: string\n        - requirement: string\n        - services_to_use: List<string>\n        - acceptance_criteria: string\n        - additional_information: string\n    }\n    class AWS_CloudWatch {\n        // attributes and methods\n    }\n    LogQuery -- AWS_CloudWatch\n"}

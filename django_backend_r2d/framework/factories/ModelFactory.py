@@ -24,7 +24,7 @@ class ModelFactory(BaseModelFactory):
                 logger.debug(f"Initializing model {model_name} from OpenAI.")    
                 model_api_key = ModelFactory._get_api_key("R2D_OPENAI_API_TOKEN")
                 # Create the gpt model using the OpenAI API key and the model name
-                return GPTModel(openai_api_key=model_api_key, model_name=model_name, temperature=0.5, max_tokens=3000, timeout=30, max_retries=3)
+                return GPTModel(openai_api_key=model_api_key, model_name=model_name, temperature=0.5, max_tokens=4096, timeout=30, max_retries=3)
             else:
                 raise ModelNotFoundException(f"No valid model found for {model_name}.")
         except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException) as e:

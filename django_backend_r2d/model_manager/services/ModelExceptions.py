@@ -17,3 +17,8 @@ class ModelInitializationError(Exception):
     def __init__(self, message="Model initialization error"):
         self.error_message = f"ModelInitializationError: {message}"
         super().__init__(self.error_message)
+
+class ModelAnalysisError(Exception):
+    def __init__(self, message="Model initialization error"):
+        self.error_message = f"ModelAnalysisError: {message}"
+        super().__init__(self.error_message)

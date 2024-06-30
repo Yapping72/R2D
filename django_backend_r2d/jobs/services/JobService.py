@@ -13,7 +13,7 @@ logger = logging.getLogger("application_logging") # Instantiate logger class
 
 class JobService(JobServiceInterface):
     """
-    Service class for handling Job-related operations.
+    Service class for handling Jobs model creation, retrieval and updating.
     Expects a valid user object and job_data dictionary as input.
     """
     def save_job(self, user, job_data:dict):

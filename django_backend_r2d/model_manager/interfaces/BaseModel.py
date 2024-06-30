@@ -6,7 +6,7 @@ class BaseModel(ABC):
     Defines the interface for a model that can be used within R2D.
     """
     @abstractmethod
-    def analyze(self, prompt:BasePromptTemplate):
+    def analyze(self, prompt:BasePromptTemplate.get_prompt):
         """
         Analyze the prompt and context and return the generated output.
         Prompt accepts a BasePromptTemplate object. 
