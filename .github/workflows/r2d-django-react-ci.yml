@@ -64,4 +64,7 @@ jobs:
       run: |
           docker-compose exec -T django_backend_r2d bash -c "python manage.py test jobs" 
       
+    - name: Run Diagrams Test
+      run: |
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test diagrams" 
           
