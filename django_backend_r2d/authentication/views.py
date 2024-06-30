@@ -35,7 +35,7 @@ User = get_user_model()
 
 otp_service = OTPService() # To handle OTP generation and user association
 token_service = JWTTokenService() # To generate JWT Tokens
-notification = SendGridEmailService()
+notification = SendGridEmailService() # To send emails 
 otp_authenticator = OTPAuthenticator(otp_service, notification) # To handle OTP authentication
 auth_service = AuthenticationService(serializer_class=UserSerializer, otp_authenticator=otp_authenticator) # To authenticate user
 
