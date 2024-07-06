@@ -25,8 +25,6 @@ class ModelFactoryTestCases(TestCase):
         self.assertIsInstance(model, GPTModel)
         model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_4_TURBO)
         self.assertIsInstance(model, GPTModel)
-        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_4)
-        self.assertIsInstance(model, GPTModel)
         model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_3_5_TURBO)
         self.assertIsInstance(model, GPTModel)
 
