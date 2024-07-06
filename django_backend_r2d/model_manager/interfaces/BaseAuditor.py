@@ -7,11 +7,12 @@ class BaseAuditor(ABC):
     Auditors are LLMs that audits the response from an earlier model.
     """
     @abstractmethod
-    def audit(self, prompt: BasePromptTemplate, model_response:dict):
+    def audit(self, prompt: str, response_schema:dict, model_response:dict):
         """
         Audit the results of the model and return the audit results.
-        The prompt should be a BasePromptTemplate object. 
-        The BasePromptTemplate object will contain the prompt and any (optional) context that needs to be passed to the model.
-        model_response will be the response from the model that needs to be audited.
+        args:
+            prompt (str): The prompt to be audited.
+            response_schema (dict): Optional schema for structured response.
+            model_response (dict): The response from the model that needs to be audited.
         """
         pass

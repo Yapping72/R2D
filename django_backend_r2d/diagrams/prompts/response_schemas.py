@@ -1,4 +1,5 @@
-# response_schemas.py
+# Define new response schemas here. 
+# A response schema is a dictionary that defines the structure of the response that is expected from the model.
 
 """
 Response Schema for the structured output of the class diagram service.
@@ -21,6 +22,10 @@ MERMAID_CLASS_DIAGRAM_SCHEMA = {
                         "type": "string",
                         "description": "The class diagram in Mermaid syntax",
                     },
+                    "description": {    
+                        "type": "string",
+                        "description": "The description of the classes, their relationships and which user stories they cover."    
+                    }
                 },
                 "required": ["feature", "diagram"],
             },

@@ -1,6 +1,8 @@
 from model_manager.interfaces.BasePromptTemplate import BasePromptTemplate
 from langchain.prompts import PromptTemplate
 
+# Add all analysis prompts related to mermaid diagram generation here
+
 class ClassDiagramPromptTemplate(BasePromptTemplate):
     """
     Prompt used to generate a class diagram based on job_parameters.
@@ -9,7 +11,7 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
     @staticmethod
     def get_prompt(job_parameters: dict, context: dict = None) -> str:
         if context is None:
-            template = """
+            template = r"""
                 You are a systems design expert. Your task is to create comprehensive and detailed class diagrams based on the given user stories.
 
                 Here are the user stories grouped by features:
@@ -22,6 +24,32 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                 3. Group the class diagrams by features, ensuring each feature and sub-feature has one or more associated classes. Functions within these classes should achieve the described features.
                 4. Clearly represent relationships between classes, such as inheritance, composition, and associations.
                 5. Use mermaid syntax to express the class diagrams. Ensure that the diagrams are well-structured and easy to understand.
+                6. Each class should have a description that explains its purpose, and the user story id it corresponds to.
+                
+                Syntax for defining classes and attributes:
+                classDiagram
+                class Square~Shape~{{
+                    int id
+                    List~int~ position
+                    setPoints(List~int~ points)
+                    getPoints() List~int~
+                }}
+
+                Square : -List~string~ messages
+                Square : +setMessages(List~string~ messages)
+                Square : +getMessages() List~string~
+                Square : +getDistanceMatrix() List~List~int~~
+
+                Syntax for relationships:
+                classDiagram
+                classA --|> classB : Inheritance
+                classC --* classD : Composition
+                classE --o classF : Aggregation
+                classG --> classH : Association
+                classI -- classJ : Link(Solid)
+                classK ..> classL : Dependency
+                classM ..|> classN : Realization
+                classO .. classP : Link(Dashed)
                 """  
             prompt = PromptTemplate(
                 input_variables=["job_parameters"],
@@ -42,7 +70,8 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                 3. Group the class diagrams by features, ensuring each feature and sub-feature has one or more associated classes. Functions within these classes should achieve the described features.
                 4. Clearly represent relationships between classes, such as inheritance, composition, and associations.
                 5. Use mermaid syntax to express the class diagrams. Ensure that the diagrams are well-structured and easy to understand.
-                6. Here is some additional context that should be incorporated in your design: 
+                6. Adapt software design principles and best practices to improve the diagram if necessary.
+                7. Here is some additional context that should be incorporated in your design: 
                 {context}
 
                 All classes created must have logical variables and functions.
