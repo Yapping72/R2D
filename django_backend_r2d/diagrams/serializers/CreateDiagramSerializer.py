@@ -4,7 +4,7 @@ from jobs.services.JobExceptions import JobNotFoundException
 
 class CreateDiagramSerializer(serializers.Serializer):
     """
-    The serializer class for updating the job status.
+    This serializer is used to validate the input for the create_diagram view.
     Expects a job_id (uuid) and a diagram_type (str) as input.
     """
     job_id = serializers.UUIDField()
@@ -21,7 +21,7 @@ class CreateDiagramSerializer(serializers.Serializer):
             logger.error(f"Invalid job id provided - {job_id}")
             raise JobNotFoundException(f"Invalid job id provided - {job_id}")
         
-    def diagram_diagram_type(self, job_status):
+    def validate_diagram_type(self, job_status):
         """
         Validates the job status. Raises an exception if the status is invalid.
         """

@@ -32,7 +32,7 @@ class AnalyzeAndAuditChain(BaseChain):
         try:
             logger.debug("Running AnalyzeAndAuditChain")
             # Build Model Prompt 
-            analysis_prompt = self.prompt_builder.generate_model_prompt(chain_input.get_model_prompt_template(), chain_input.get_analysis_context())
+            analysis_prompt = self.prompt_builder.generate_model_prompt(chain_input.get_model_prompt_template(), chain_input.get_job_parameters(), chain_input.get_analysis_context())
             logger.debug(f"Model Prompt: {analysis_prompt}")
             # Run analysis 
             analysis_results = self.model.analyze(analysis_prompt, chain_input.get_model_response_schema())
@@ -43,7 +43,11 @@ class AnalyzeAndAuditChain(BaseChain):
             # Audit the results
             audited_results = self.auditor.audit(audit_prompt, chain_input.get_auditor_response_schema())
             logger.debug(f"Audited Results: {audited_results}")
-            return {"analysis_results": analysis_results, "audited_results": audited_results}
+            # Store both analysis and audit results in a dictionary
+            results = {"analysis_results": analysis_results, "audited_results": audited_results}
+            # Append additional information to the results dictionary
+            results = self.append_additional_information(results)
+            return results
         except ModelPromptBuildingError as e:
             raise AnalyzeAndAuditChainException(f"Error while building model prompt - {str(e)}")
         except AuditPromptBuildingError as e:
@@ -57,3 +61,20 @@ class AnalyzeAndAuditChain(BaseChain):
         except Exception as e:
             logger.error(f"Error in AnalyzeAndAuditChain: {str(e)}")
             raise e
+
+    def append_additional_information(self, results:dict) -> dict:
+        """
+        Appends additional information to the results dictionary
+        args:
+            results (dict): The results dictionary to be appended with additional information.
+        returns:
+            results (dict): The updated results dictionary.
+        """
+        # Appends additional information to the results dictionary
+        results["analysis_results"]["is_audited"] = False
+        results["analysis_results"]["model_name"] = self.model.model_name
+        results["audited_results"]["is_audited"] = True
+        results["audited_results"]["model_name"] = self.auditor.model_name
+        return results
+    
+    

@@ -1,9 +1,7 @@
 # Define new response schemas here. 
 # A response schema is a dictionary that defines the structure of the response that is expected from the model.
 
-"""
-Response Schema for the structured output of the class diagram service.
-"""
+# Response schema for the ClassDiagramService
 MERMAID_CLASS_DIAGRAM_SCHEMA = {
     "title": "ClassDiagramResponse",
     "description": "Response containing class diagrams grouped by features.",
@@ -15,21 +13,38 @@ MERMAID_CLASS_DIAGRAM_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "feature": {
-                        "type": "string",
-                        "description": "The feature name",
+                        "type": "array",
+                        "description": "The feature that the class diagram is generated for",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "diagram": {
                         "type": "string",
-                        "description": "The class diagram in Mermaid syntax",
+                        "description": "The class diagram in Mermaid syntax"
                     },
-                    "description": {    
+                    "description": {
                         "type": "string",
-                        "description": "The description of the classes, their relationships and which user stories they cover."    
+                        "description": "The description of the classes, relationships, and attributes in the diagram"
+                    },
+                    "classes": {
+                        "type": "array",
+                        "description": "The classes in the diagram",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 },
-                "required": ["feature", "diagram"],
-            },
-        },
+                "required": [
+                    "feature",
+                    "diagram",
+                    "description",
+                    "classes"
+                ]
+            }
+        }
     },
-    "required": ["diagrams"],
+    "required": [
+        "diagrams"
+    ]
 }

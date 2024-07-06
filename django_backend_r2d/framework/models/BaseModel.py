@@ -17,3 +17,4 @@ class BaseModel(ABC):
         dict: The result of the analysis performed by the LLM.
         """
         raise NotImplementedError("Subclasses of BaseResponse must implement transform().")
+    

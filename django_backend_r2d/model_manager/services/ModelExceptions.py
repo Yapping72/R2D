@@ -3,6 +3,11 @@ class ModelAPIKeyError(Exception):
         self.error_message = f"ModelAPIKeyError: {message}"
         super().__init__(self.error_message)
 
+class InvalidModelType(Exception):
+    def __init__(self, message="Model name was not provided"):
+        self.error_message = f"InvalidModelType: {message}"
+        super().__init__(self.error_message)
+
 class ModelProviderNotFoundException(Exception):
     def __init__(self, message="Model provider was not found"):
         self.error_message = f"ModelProviderNotFoundException: {message}"

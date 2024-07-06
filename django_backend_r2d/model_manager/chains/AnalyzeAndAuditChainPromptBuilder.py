@@ -7,7 +7,7 @@ class AnalyzeAndAuditChainPromptBuilder(BasePromptBuilder):
     Prompt builder for the Analyze and Audit chain.
     """
     @staticmethod
-    def generate_model_prompt(prompt_template:BasePromptTemplate, context:dict=None) -> str:
+    def generate_model_prompt(prompt_template:BasePromptTemplate, job_parameters:dict=None, context:dict=None) -> str:
         """
         Generate a model prompt based on the context.
         args:
@@ -18,7 +18,7 @@ class AnalyzeAndAuditChainPromptBuilder(BasePromptBuilder):
         """
         if not isinstance(prompt_template, BasePromptTemplate):
             raise ModelPromptBuildingError("Model prompt template must inherit from BasePromptTemplate.")
-        return prompt_template.get_prompt(context)
+        return prompt_template.get_prompt(job_parameters, context)
     
     @staticmethod
     def generate_audit_prompt(prompt_template:BasePromptTemplate, results:dict=None, context:dict=None) -> str:
