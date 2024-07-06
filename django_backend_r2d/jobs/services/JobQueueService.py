@@ -48,6 +48,10 @@ class JobQueueService(JobQueueInterface):
             raise RemoveFromJobQueueException("Unexpected error: " + str(e))
 
     def update_status(self, job, status):
+        """
+        Updates status of a job in job queue
+        Raises UpdateJobQueueException if an error occurs.
+        """
         try:
             job_queue = JobQueue.objects.get(job=job)
             job_queue.status = status

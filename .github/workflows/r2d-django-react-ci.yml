@@ -16,7 +16,7 @@ jobs:
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
       POSTGRES_R2D_HOST: ${{ secrets.POSTGRES_R2D_HOST }}
-      
+      R2D_OPENAI_API_TOKEN: ${{ secrets.R2D_OPENAI_API_TOKEN }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -64,4 +64,7 @@ jobs:
       run: |
           docker-compose exec -T django_backend_r2d bash -c "python manage.py test jobs" 
       
+    - name: Run Diagrams Test
+      run: |
+          docker-compose exec -T django_backend_r2d bash -c "python manage.py test diagrams" 
           
