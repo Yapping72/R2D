@@ -1,6 +1,6 @@
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
-from jobs.serializers.UMLDiagramSerializer import UMLDiagramSerializer
+from diagrams.serializers.UMLDiagramSerializer import UMLDiagramSerializer
 import inspect
 
 class UMLDiagramSerializerTests(TestCase):
