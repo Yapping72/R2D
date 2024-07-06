@@ -6,6 +6,9 @@ class BaseAuditor(ABC):
     Defines the interface for an auditor that can be used within R2D.
     Auditors are LLMs that audits the response from an earlier model.
     """
+    def __init__(self, model_name:str=""):
+        self.model_name = model_name
+        
     @abstractmethod
     def audit(self, prompt: str, response_schema:dict, model_response:dict):
         """

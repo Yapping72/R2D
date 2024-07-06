@@ -1,6 +1,5 @@
 from django.test import TestCase
 from model_manager.interfaces.BasePromptTemplate import BasePromptTemplate
-from langchain.prompts import PromptTemplate
 from diagrams.prompts.MermaidDiagramPrompts import ClassDiagramPromptTemplate, ERDiagramPromptTemplate, StateDiagramPromptTemplate, SequenceDiagramPromptTemplate
 import inspect
 

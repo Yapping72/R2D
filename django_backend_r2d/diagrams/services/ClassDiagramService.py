@@ -3,7 +3,6 @@ from enum import Enum
 
 from framework.factories.ModelFactory import ModelFactory
 from framework.factories.AuditorFactory import AuditorFactory   
-
 from model_manager.interfaces.BaseModel import BaseModel
 from model_manager.interfaces.BaseAuditor import BaseAuditor  
 from model_manager.constants import * # Contains the ModelProvider and OpenAIModels enums
@@ -11,7 +10,6 @@ from model_manager.services.ModelExceptions import * # Contains the exceptions f
 from model_manager.chains.AnalyzeAndAuditChain import AnalyzeAndAuditChain 
 from model_manager.chains.AnalyzeAndAuditChainPromptBuilder import AnalyzeAndAuditChainPromptBuilder
 from diagrams.chain_inputs.ClassDiagramAuditAnalyzeChainInputs import ClassDiagramAuditAnalyzeChainInputs
-
 from diagrams.interfaces.BaseDiagramService import BaseDiagramService
 from diagrams.prompts.MermaidDiagramPrompts import * # Contains the prompt templates for the UML diagrams
 from diagrams.prompts.MermaidDiagramAuditorPrompts import *  # Contains the prompt templates for the auditing UML diagrams
@@ -37,11 +35,14 @@ class ClassDiagramService(BaseDiagramService):
     
     def generate_diagram(self, job_id:str, job_parameters: dict, analysis_context: dict = None) -> dict:
         """
-        Generate user stories based on the model name and prompt.
-        job_id: str - The job id for that stores the job_parameters.
-        job_parameters: dict - The job parameters to be used in the prompt - concrete BaseJobService classes should return this.
-        analysis_context: dict - Additional context to be used in the prompt - concrete BaseEmbeddingService classes should return this.
-        Raises: UMLDiagramCreationError - If there is an error in creating the UML diagram.
+        Generate user stories based on the model name and prompt. 
+        Diagrams are generated using the model and auditors provided in the constructor.
+        Args:
+            job_id: str - The job id for that stores the job_parameters.
+            job_parameters: dict - The job parameters to be used in the prompt - concrete BaseJobService classes should return this.
+            analysis_context: dict - Additional context to be used in the prompt - concrete BaseEmbeddingService classes should return this.
+        Raises: 
+            UMLDiagramCreationError - If there is an error in creating the UML diagram.
         """
         try:
             # Validate and deserialize the job_payload using UMLDiagramSerializer
@@ -59,16 +60,16 @@ class ClassDiagramService(BaseDiagramService):
             audit_criteria = {"audit_criteria_1": "All classes includes base classes to adhere to SOLID principles."}
             
             # Initialize the chain inputs
-            chain_inputs = ClassDiagramAuditAnalyzeChainInputs(analysis_context=analysis_context, audit_criteria=audit_criteria)
+            chain_inputs = ClassDiagramAuditAnalyzeChainInputs(job_parameters = job_parameters, analysis_context=analysis_context, audit_criteria=audit_criteria)
             
             # Initialize the chain
             chain = AnalyzeAndAuditChain(model, auditor, AnalyzeAndAuditChainPromptBuilder())
             
             # Execute the chain 
             response = chain.execute_chain(chain_inputs)
-            logger.debug(f"Response:{response}")
+            logger.debug(f"{response}")
+             
             return response
-        
         except ModelInitializationError as e:
             logger.error(f"Failed to initialize Model {e}")
             raise UMLDiagramCreationError(f"Failed to create class diagram for job_id: {job_id}: {e}")
@@ -81,4 +82,4 @@ class ClassDiagramService(BaseDiagramService):
         except Exception as e:
             logger.error(f"Unhandled exception encountered: {job_id}: {e}")
             raise UMLDiagramCreationError(f"Unhandled exception encountered: {job_id}: {e}")
-        
+    
