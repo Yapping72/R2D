@@ -39,12 +39,12 @@ class GPTModel(BaseModel):
         """
         try:
             if response_schema and isinstance(response_schema, PydanticModel):
-                logger.debug(f"Using Pydantic model for structured response: {response_schema}")
+                logger.debug(f"Using Pydantic model for structured response")
                 # If a Pydantic model is defined, use it to parse the output
                 parser = PydanticOutputParser(pydantic_object=response_schema)
                 response = self.llm.invoke({"role": "user", "content": prompt}, output_parser=parser)
             elif response_schema:
-                logger.debug(f"Using JSON schema for structured response: {response_schema}")
+                logger.debug(f"Using JSON schema for structured response")
                 # If a JSON schema is defined, use it to parse the output
                 structured_llm = self.llm.with_structured_output(response_schema)
                 response = structured_llm.invoke([{"role": "user", "content": prompt}])

@@ -8,6 +8,9 @@ from model_manager.interfaces.BaseModel import BaseModel
 from model_manager.interfaces.BaseAuditor import BaseAuditor  
 from model_manager.constants import * # Contains the ModelProvider and OpenAIModels enums
 from model_manager.services.ModelExceptions import * # Contains the exceptions for the model service
+from model_manager.chains.AnalyzeAndAuditChain import AnalyzeAndAuditChain 
+from model_manager.chains.AnalyzeAndAuditChainPromptBuilder import AnalyzeAndAuditChainPromptBuilder
+from diagrams.chain_inputs.ClassDiagramAuditAnalyzeChainInputs import ClassDiagramAuditAnalyzeChainInputs
 
 from diagrams.interfaces.BaseDiagramService import BaseDiagramService
 from diagrams.prompts.MermaidDiagramPrompts import * # Contains the prompt templates for the UML diagrams
@@ -23,39 +26,46 @@ logger = logging.getLogger('application_logging')
 
 class ClassDiagramService(BaseDiagramService):
     """
-    Service that is responsible for creating class diagrams using the OpenAI models.
+    Service that is responsible for creating class diagrams using models and auditing them using auditors.
     """
-    def __init__(self, model_factory:ModelFactory, auditor_factory:AuditorFactory):
+    def __init__(self, model_factory:ModelFactory, auditor_factory:AuditorFactory, model_provider:ModelProvider, model_name: Enum, auditor_name:Enum):
         self.model_factory = ModelFactory()
-        #self.auditor_factory = AuditorFactory()
+        self.auditor_factory = AuditorFactory()
+        self.model_provider = model_provider
+        self.model_name = model_name
+        self.auditor_name = auditor_name
     
-    def generate_diagram(self, model_provider:ModelProvider, model_name: Enum, job_id:str, job_parameters: dict, context: dict = None) -> dict:
+    def generate_diagram(self, job_id:str, job_parameters: dict, analysis_context: dict = None) -> dict:
         """
         Generate user stories based on the model name and prompt.
-        model_provider: ModelProvider - The model provider to be used - defined in constants.py.
-        model_name: Enum - Enum representation of the model name to be used - defined in constants.py.
         job_id: str - The job id for that stores the job_parameters.
         job_parameters: dict - The job parameters to be used in the prompt - concrete BaseJobService classes should return this.
-        context: dict - Additional context to be used in the prompt - concrete BaseEmbeddingService classes should return this.
+        analysis_context: dict - Additional context to be used in the prompt - concrete BaseEmbeddingService classes should return this.
         Raises: UMLDiagramCreationError - If there is an error in creating the UML diagram.
         """
         try:
-            logger.debug(f"Generating class diagrams for job_id: {job_id} using model: {model_name}")
             # Validate and deserialize the job_payload using UMLDiagramSerializer
             serializer = UMLDiagramSerializer(data=job_parameters)
             if serializer.is_valid():
                 job_parameters = serializer.validated_data['job_parameters']
             else:
                 raise ValidationError(serializer.errors)
-
-            # Build the prompt using the ClassDiagramPromptTemplate
-            prompt = ClassDiagramPromptTemplate.get_prompt(job_parameters, context)
-            logger.debug(f"Prompt: {prompt}")
-            # Retrieve the model from the model factory
-            model = self.model_factory.get_model(model_provider,model_name)
-            # Analyze the prompt, and return the response as defined in the schema
-            response = model.analyze(prompt, MERMAID_CLASS_DIAGRAM_SCHEMA)
-         
+            
+            # Initialize Models
+            model = self.model_factory.get_model(self.model_provider, self.model_name)
+            auditor = self.auditor_factory.get_auditor(self.model_provider, self.auditor_name)
+            
+            # Set Audit Criteria here
+            audit_criteria = {"audit_criteria_1": "All classes includes base classes to adhere to SOLID principles."}
+            
+            # Initialize the chain inputs
+            chain_inputs = ClassDiagramAuditAnalyzeChainInputs(analysis_context=analysis_context, audit_criteria=audit_criteria)
+            
+            # Initialize the chain
+            chain = AnalyzeAndAuditChain(model, auditor, AnalyzeAndAuditChainPromptBuilder())
+            
+            # Execute the chain 
+            response = chain.execute_chain(chain_inputs)
             logger.debug(f"Response:{response}")
             return response
         

@@ -1,5 +1,4 @@
 import os
-from django.db import models
 from framework.factories.interfaces.BaseModelFactory import BaseModelFactory
 from model_manager.constants import ModelProvider, OpenAIModels
 from model_manager.llms.GPTModel import GPTModel
