@@ -3,7 +3,18 @@ from diagrams.models import ClassDiagram
 from model_manager.models import ModelName
 
 class ClassDiagramSerializer(serializers.ModelSerializer):
-    model_name_str = serializers.CharField(write_only=True)  # Use different name to avoid conflict
+    """
+    Define the serializer for the ClassDiagram model.
+    fields:
+        job: str - The job of the class diagram.
+        model_name_str: str - The name of the model.
+        feature: str - The feature of the class diagram.
+        diagram: str - The mermaid representation of the class diagram.
+        description: str - The description of the class diagram.
+        classes: str - The classes of the class diagram.
+        is_audited: bool - Whether the class diagram has
+    """
+    model_name_str = serializers.CharField(write_only=True)  
 
     class Meta:
         model = ClassDiagram

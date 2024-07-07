@@ -1,20 +1,24 @@
 from abc import ABC
 from model_manager.interfaces.BasePromptTemplate import BasePromptTemplate
+from typing import Optional, Union, Type 
+from pydantic import BaseModel as PydanticModel
 
 class BaseChainInput(ABC):
     """
-    Stores all the input required for a Analyze-Audit Chain.
-    Concrete classes can inherit from this class and add additional fields as required.    
+    Base class for storing all the input required for an Analyze-Audit Chain.
+    
     args:
-        job_parameters (dict): The job parameters to be used in the prompt.
+        job_id (str): The job ID, used to retrieve the job parameters.
         model_prompt_template (BasePromptTemplate): Prompt template for the model.
         audit_prompt_template (BasePromptTemplate): Prompt template for the auditor.
-        analysis_context (dict): Optional Context for the model.
-        audit_criteria (dict): Optional Criteria for the audit.
-        model_response_schema (Pydantic Model, dict): Optional Schema for the model response.
-        auditor_response_schema (Pydantic Model, dict): Optional Schema for the auditor response.
+        job_parameters (dict): The job parameters to be used in the prompt.
+        analysis_context (dict, optional): Optional context for the model.
+        audit_criteria (dict, optional): Optional criteria for the audit.
+        model_response_schema (Union[Type[PydanticModel], dict], optional): Optional schema for the model response.
+        auditor_response_schema (Union[Type[PydanticModel], dict], optional): Optional schema for the auditor response.
     functions:
         get_job_parameters: Returns the job parameters.
+        set_job_parameters: Sets the job parameters.
         get_model_prompt_template: Returns the model prompt template.
         get_audit_prompt_template: Returns the audit prompt template.
         get_analysis_context: Returns the model context.
@@ -22,21 +26,41 @@ class BaseChainInput(ABC):
         get_model_response_schema: Returns the model response schema.
         get_auditor_response_schema: Returns the auditor response schema.
     """
-    def __init__(self, job_parameters:dict, model_prompt_template:BasePromptTemplate, audit_prompt_template:BasePromptTemplate, analysis_context=None, audit_criteria=None, model_response_schema=None, auditor_response_schema=None):
-        self.job_parameters = job_parameters # The job parameters to be used in the prompt
-        self.model_prompt_template = model_prompt_template # Concrete class that inherits from BasePromptTemplate
-        self.audit_prompt_template = audit_prompt_template # Concrete class that inherits from BasePromptTemplate 
-        self.analysis_context = analysis_context # Optional context for the model
-        self.audit_criteria = audit_criteria or {} # Optional criteria for the audit
-        self.model_response_schema = model_response_schema # Optional schema for the model response
-        self.auditor_response_schema = auditor_response_schema # Optional schema for the auditor response
-    
+    def __init__(self, job_id: str, 
+                 model_prompt_template: BasePromptTemplate, 
+                 audit_prompt_template: BasePromptTemplate, 
+                 job_parameters: dict,
+                 analysis_context: Optional[dict] = None, 
+                 audit_criteria: Optional[dict] = None, 
+                 model_response_schema: Optional[Union[Type[PydanticModel], dict]] = None, 
+                 auditor_response_schema: Optional[Union[Type[PydanticModel], dict]] = None):
+        
+        self.job_id = job_id
+        self.model_prompt_template = model_prompt_template
+        self.audit_prompt_template = audit_prompt_template
+        self.job_parameters = job_parameters
+        self.analysis_context = analysis_context or {}
+        self.audit_criteria = audit_criteria or {}
+        self.model_response_schema = model_response_schema
+        self.auditor_response_schema = auditor_response_schema
+        
+    def get_job_id(self) -> str:
+        """
+        Returns the job ID.
+        """
+        return self.job_id
     def get_job_parameters(self) -> dict:
         """
         Returns the job parameters.
         """
         return self.job_parameters
     
+    def set_job_parameters(self, job_parameters:dict):
+        """
+        Sets the job parameters.
+        """
+        self.job_parameters = job_parameters
+        
     def get_model_prompt_template(self) -> BasePromptTemplate:
         """
         Returns the model prompt template.
@@ -72,3 +96,4 @@ class BaseChainInput(ABC):
         Returns the auditor response schema.
         """
         return self.auditor_response_schema
+    
