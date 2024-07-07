@@ -13,13 +13,23 @@ logger = logging.getLogger("application_logging") # Instantiate logger class
 
 class JobService(JobServiceInterface):
     """
-    Service class for handling Jobs model creation, retrieval and updating.
-    Expects a valid user object and job_data dictionary as input.
+    JobService class that implements the JobServiceInterface.
+    Provides methods to create, update and retrieve jobs.
     """
     def save_job(self, user, job_data:dict):
         """
-        Saves a job for the authenticated user. 
+        Saves a job for the authenticated user.
         Creates a new job if job_id does not already exist, else updates the existing job.
+
+        Args:
+            user: The authenticated user.
+            job_data (dict): The job data to save.
+
+        Returns:
+            Job: The saved or updated job object.
+
+        Raises:
+            JobCreationException: If there is an error creating or updating the job.
         """
         job_id = job_data.get('job_id')
         logger.debug(f"{'Creating' if not job_id else 'Updating'} job - {job_data} for user - {user.id}")
@@ -56,7 +66,19 @@ class JobService(JobServiceInterface):
         
     def update_status(self, user, job_data):
         """
-        Service class for handling Job-related operations.
+        Updates the status of a job.
+
+        Args:
+            user: The authenticated user.
+            job_data (dict): The job data with the new status.
+
+        Returns:
+            Job: The updated job object.
+
+        Raises:
+            ValidationError: If the job data is invalid.
+            JobNotFoundException: If the job does not exist.
+            InvalidJobStatus: If the job status is invalid.
         """
         serializer = UpdateJobStatusSerializer(data=job_data)
         # Raise an error if serializer is not valid
@@ -78,11 +100,26 @@ class JobService(JobServiceInterface):
             raise JobNotFoundException(f"Job with id {job_id} does not exist for user {user.id}.")
         except JobStatus.DoesNotExist:
             raise InvalidJobStatus(f"Invalid job status: {job_status}")
+        except Exception as e:
+            logger.error(f"Error updating job status for job_id {job_id} for user {user.id}: {e}")
+            raise JobUpdateException(str(e))
         
     def get_job_for_user(self, user, request_payload):
         """
         Retrieves a specific job for a user by job_id.
+
+        Args:
+            user: The authenticated user.
+            request_payload (dict): The request payload containing the job_id.
+
+        Returns:
+            dict: The job data.
+
+        Raises:
+            ValidationError: If the request payload is invalid.
+            JobNotFoundException: If the job does not exist.
         """
+        
         request_payload['user'] = user.id  # Ensure user field is included in the payload
         serializer = GetJobSerializer(data=request_payload)
         if not serializer.is_valid():
@@ -100,7 +137,34 @@ class JobService(JobServiceInterface):
     def get_all_jobs_for_user(self, user):
         """
         Retrieves all jobs for a given user.
+
+        Args:
+            user: The authenticated user.
+
+        Returns:
+            list: A list of all jobs for the user.
         """
         jobs = Job.objects.filter(user=user)
         logger.debug(f"Retrieved {jobs} jobs for user {user.id}")
         return JobSerializer(jobs, many=True).data # Serialize the job objects
+
+    def get_job_by_id(self, job_id):
+        """
+        Retrieves a job by its job_id.
+
+        Args:
+            job_id (str): The job ID.
+
+        Returns:
+            dict: The job data.
+
+        Raises:
+            JobNotFoundException: If the job does not exist.
+        """
+        try:
+            job = Job.objects.get(job_id = job_id)
+            return JobSerializer(job).data # Serialize the job object
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist for user {user.id}.")
+
+        
