@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from ..models import OTP
 from ..services.OTPService import OTPService
 import inspect
-
+import logging
 from django.contrib.auth import get_user_model
 
 class AuthenticationAPIEndpointTests(APITestCase):
@@ -21,6 +21,13 @@ class AuthenticationAPIEndpointTests(APITestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
         
     def setUp(self):
         User = get_user_model()

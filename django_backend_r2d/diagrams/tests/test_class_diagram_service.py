@@ -6,12 +6,14 @@ from diagrams.services.ClassDiagramService import ClassDiagramService
 from framework.factories.ModelFactory import ModelFactory
 from framework.factories.AuditorFactory import AuditorFactory
 from model_manager.constants import ModelProvider, OpenAIModels
+from model_manager.models import ModelName
 from diagrams.services.DiagramExceptions import UMLDiagramCreationError
 from jobs.models import Job, JobStatus
 from jobs.services.JobService import JobService
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from uuid import uuid4
+import logging
 
 class ClassDiagramServiceTests(TestCase):
     @classmethod
@@ -27,10 +29,13 @@ class ClassDiagramServiceTests(TestCase):
         cls.user = User.objects.create_user(username='testuser', password='testpassword', email='testuser@example.com')
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         cls.job_uuid = str(uuid4())
+        cls.model = ModelName.objects.get(name='gpt-4-turbo')
+       
         cls.job = Job.objects.create(
             job_id= cls.job_uuid,
             user=cls.user,
             job_status=cls.job_status_submitted,
+            model=cls.model,
             job_details="Job Submitted",
             tokens=100,
             parameters = {
@@ -87,6 +92,13 @@ class ClassDiagramServiceTests(TestCase):
                 "tokens": 248
             },
         )
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
         
     def setUp(self):
         self.model_provider = ModelProvider.OPEN_AI
