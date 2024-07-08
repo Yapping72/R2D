@@ -16,6 +16,12 @@ User = get_user_model()
 # Class responsible for updating JobQueue when a Job is created or updated 
 job_queue_service = JobQueueService()
 
+"""
+A Job will be added to JobQueue if:
+1. It is created with status Submitted
+2. It is updated to status Submitted
+"""
+
 @receiver(post_save, sender=Job)
 def add_to_job_queue_on_create(sender, instance, created, **kwargs):
     """
@@ -23,7 +29,7 @@ def add_to_job_queue_on_create(sender, instance, created, **kwargs):
     Raises AddToJobQueueException if an error occurs.
     """
     if created and instance.job_status.code == 3:  # Check if the job is created and status is Submitted
-        job_queue_service.enqueue(job=instance, status=instance.job_status)
+        job_queue_service.enqueue(job=instance)
 
 @receiver(pre_save, sender=Job)
 def add_to_job_queue_on_update(sender, instance, **kwargs):
@@ -39,4 +45,4 @@ def add_to_job_queue_on_update(sender, instance, **kwargs):
             
         # Check if status changes to Submitted
         if previous and previous.job_status.code != 3 and instance.job_status.code == 3:  
-            job_queue_service.enqueue(job=instance, status=instance.job_status)
+            job_queue_service.enqueue(job=instance)

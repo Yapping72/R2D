@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from jobs.models import Job, JobStatus
+from model_manager.models import ModelName
 
 class JobSerializer(serializers.ModelSerializer):
     """
@@ -7,7 +8,8 @@ class JobSerializer(serializers.ModelSerializer):
     """
     # Define a SlugRelatedField for the job_status field
     job_status = serializers.SlugRelatedField(slug_field='name', queryset=JobStatus.objects.all())
-
+    model = serializers.SlugRelatedField(slug_field='name', queryset=ModelName.objects.all())
+    
     class Meta:
         model = Job
         fields = '__all__'

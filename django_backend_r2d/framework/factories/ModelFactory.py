@@ -26,7 +26,7 @@ class ModelFactory(BaseModelFactory):
                 return GPTModel(openai_api_key=model_api_key, model_name=model_name, temperature=0.5, max_tokens=4096, timeout=30, max_retries=3)
             else:
                 raise ModelNotFoundException(f"No valid model found for {model_name}.")
-        except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException) as e:
+        except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException, InvalidModelType) as e:
             raise ModelInitializationError(f"Model could not be initialized. {e}")
         
     @staticmethod

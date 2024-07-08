@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.test import TestCase
 from jobs.serializers.UserStorySerializer import UserStorySerializer
 import inspect
+import logging 
 
 class UserStorySerializerTest(TestCase):
     @classmethod
@@ -15,14 +16,21 @@ class UserStorySerializerTest(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-    
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def setUp(self):
         self.valid_data = {
             "id": "Apollo-11",
             "requirement": "As a user, I want all my actions to be logged, so that I can trace back my activities for auditing and debugging purposes.",
             "services_to_use": ["CloudWatch"],
             "acceptance_criteria": "All user actions should be logged with a timestamp, user ID, and action details. Logs should be searchable.",
-            "additional_information": "Consider GDPR and other legal implications when logging user data."
+            "additional_information": "Consider GDPR and other legal implications when logging user data.",
         }
         
         self.invalid_data = {
@@ -30,13 +38,13 @@ class UserStorySerializerTest(TestCase):
             "requirement": "",
             "services_to_use": [],
             "acceptance_criteria": "",
-            "additional_information": ""
+            "additional_information": "",
         }
 
     def test_user_story_serializer_with_valid_data(self):
         serializer = UserStorySerializer(data=self.valid_data)
         self.assertTrue(serializer.is_valid())
-        self.assertEqual(serializer.validated_data, self.valid_data)
+        self.assertEqual(dict(serializer.validated_data), self.valid_data)
 
     def test_user_story_serializer_with_invalid_data(self):
         serializer = UserStorySerializer(data=self.invalid_data)
@@ -54,4 +62,4 @@ class UserStorySerializerTest(TestCase):
         data['additional_information'] = ''
         serializer = UserStorySerializer(data=data)
         self.assertTrue(serializer.is_valid())
-        self.assertEqual(serializer.validated_data, data)
+        self.assertEqual(dict(serializer.validated_data), data)

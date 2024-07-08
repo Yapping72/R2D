@@ -2,6 +2,7 @@ import inspect
 from django.test import TestCase
 from framework.daos.DjangoPostgresDaoFactory import DjangoPostgresDaoFactory
 from accounts.daos.UserDAO import UserDao
+import logging 
 
 class DjangoPostgresDaoFactoryTestCase(TestCase):
     @classmethod
@@ -14,7 +15,14 @@ class DjangoPostgresDaoFactoryTestCase(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def test_create_user_dao(self):
         """
         Test that the factory returns an instance of UserDao when requested.

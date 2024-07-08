@@ -1,7 +1,10 @@
 from django.db import models, IntegrityError
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 import uuid
+
+from model_manager.models import ModelName
 
 class JobStatus(models.Model):
     """
@@ -37,15 +40,28 @@ class JobStatus(models.Model):
 class Job(models.Model):
     """
     Job object that represents a user uploaded job
-    job_id: UUID of the job
-    user: User who uploaded the job
-    job_status: Status of the job - Draft, Queued, Submission Error, Processing, Job Aborted, Completed, Processing Error
-    job_details: Details of the job
-    tokens: Number of tokens in parameters 
-    parameters: Parameters that are sent to LLM for processing
-    created_timestamp: Timestamp when the job was created
-    last_updated_timestamp: Timestamp when the job was last updated
+    attributes:
+        job_id: UUID of the job
+        user: User who uploaded the job
+        job_status: Status of the job - Draft, Queued, Submission Error, Processing, Job Aborted, Completed, Processing Error
+        job_details: Details of the job 
+        tokens: Number of tokens in parameters 
+        parameters: Parameters that are sent to LLM for processing
+        created_timestamp: Timestamp when the job was created
+        last_updated_timestamp: Timestamp when the job was last updated
+        parent_job: link to the parent job if the job is a child job, else None
+        job_type: Type of the job e.g., user_story, class_diagram, er_diagram, sequence_diagram, state_diagram
+        model: ModelName object that the job is associated with
     """
+    
+    JOB_TYPES = (
+        ('user_story', 'User Story'), 
+        ('class_diagram', 'Class Diagram'), 
+        ('er_diagram', 'ER Diagram'),
+        ('sequence_diagram', 'Sequence Diagram'),
+        ('state_diagram', 'State Diagram')
+    )
+    
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job_status = models.ForeignKey(JobStatus, to_field='code', on_delete=models.PROTECT)
@@ -54,17 +70,56 @@ class Job(models.Model):
     parameters = models.JSONField()
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)
-
+    job_type = models.CharField(max_length=50, choices=JOB_TYPES)
+    parent_job = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_jobs', null=True, blank=True)
+    model = models.ForeignKey(ModelName, on_delete=models.PROTECT)
+    
     def __str__(self):
         return f"Job Id: {self.job_id}\nCreated By:{self.user}\nStatus:{self.job_status}\nCreated on:{self.created_timestamp}\nUpdated on:{self.last_updated_timestamp}"
 
+    def save(self, *args, **kwargs):
+        """
+        Job save method to ensure that the job is considered a parent job if it has no parent job.
+        """
+        if not self.parent_job:
+            self.parent_job = None  # Ensures that the job is considered a parent job
+        super(Job, self).save(*args, **kwargs)
+        
+    def get_job_type_display(self):
+        """
+        Returns human readable job types:
+        user_story -> User Story
+        class_diagram -> Class Diagram
+        er_diagram -> ER Diagram
+        sequence_diagram -> Sequence Diagram
+        state_diagram -> State Diagram
+        """
+        return dict(self.JOB_TYPES).get(self.job_type, self.job_type)
+    
+    def is_parent_job(self):
+        """
+        Check if the job is a parent job.
+        return: True if the job is a parent job, False otherwise.
+        """
+        return self.parent_job is None
+    
 class JobQueue(models.Model):
     """
     JobQueue table will be referenced by Consumers e.g., LLM Service(s) to fetch jobs for processing.
+    attributes:
+        job: Job object that is in the queue
+        status: Status of the job in the queue e.g., Queued, Processing, Completed, Failed
+        job_type: Type of the job e.g., user_story, class_diagram, er_diagram, sequence_diagram, state_diagram
+        consumer: Name of the consumer that is processing the job
+        model_name: ModelName object that the job is associated with
+        created_timestamp: Timestamp when the job was created
+        last_updated_timestamp: Timestamp when the job was last updated
     """
     job = models.OneToOneField(Job, on_delete=models.CASCADE, primary_key=True)
     status = models.ForeignKey(JobStatus, to_field='code', on_delete=models.CASCADE)
+    job_type = models.CharField(max_length=50)
     consumer = models.CharField(max_length=50, default="None") # Consumer name 
+    model = models.ForeignKey(ModelName, on_delete=models.PROTECT)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)
     

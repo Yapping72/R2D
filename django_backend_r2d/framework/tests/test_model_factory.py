@@ -4,7 +4,7 @@ from framework.factories.ModelFactory import ModelFactory
 from model_manager.constants import ModelProvider, OpenAIModels
 from model_manager.llms.GPTModel import GPTModel
 from model_manager.services.ModelExceptions import ModelInitializationError
-
+import logging 
 class ModelFactoryTestCases(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -16,7 +16,14 @@ class ModelFactoryTestCases(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-    
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def test_create_openai_models(self):
         """
         Test factory can create openai text models.

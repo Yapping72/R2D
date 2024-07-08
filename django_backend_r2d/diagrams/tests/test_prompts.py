@@ -1,7 +1,8 @@
 from django.test import TestCase
 from model_manager.interfaces.BasePromptTemplate import BasePromptTemplate
-from diagrams.prompts.MermaidDiagramPrompts import ClassDiagramPromptTemplate, ERDiagramPromptTemplate, StateDiagramPromptTemplate, SequenceDiagramPromptTemplate
+from diagrams.prompts.ClassDiagramPrompts import ClassDiagramPromptTemplate, AuditClassDiagramPromptTemplate
 import inspect
+import logging
 
 class PromptTemplateTests(TestCase):
     @classmethod
@@ -14,7 +15,14 @@ class PromptTemplateTests(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def setUp(self):
         self.job_parameters = {
             "Authorization Framework": {
@@ -35,22 +43,31 @@ class PromptTemplateTests(TestCase):
         """
         Test ClassDiagramPromptTemplate without context.
         """
+        # Create prompt without context
         prompt = ClassDiagramPromptTemplate.get_prompt(self.job_parameters)
-        self.assertIsInstance(prompt, str)
-        self.assertIn("You are a systems design expert.", prompt)
+        self.assertIsInstance(prompt, str) # Verify prompt is a string
+        # Verify prompt contains expected strings
+        self.assertIn("You are a systems design expert.", prompt) 
         self.assertIn("Your task is to create comprehensive and detailed class diagrams based on the given user stories.", prompt)
         self.assertIn("Here are the user stories grouped by features:", prompt)
-        self.assertIn(str(self.job_parameters), prompt)
-        self.assertNotIn("Here is some additional context", prompt)
+        # Verify prompt contains job_parameters and not context
+        self.assertIn(str(self.job_parameters), prompt) 
+        self.assertNotIn(f"{self.context}", prompt)
 
     def test_class_diagram_prompt_with_context(self):
         """
         Test ClassDiagramPromptTemplate with context.
         """
+        # Create prompt with context
         prompt = ClassDiagramPromptTemplate.get_prompt(self.job_parameters, self.context)
-        self.assertIsInstance(prompt, str)
+        # Verify prompt is a string
+        self.assertIsInstance(prompt, str) 
+        # Verify prompt contains expected strings
         self.assertIn("You are a systems design expert.", prompt)
-        self.assertIn("Your task is to create class diagrams based on the given user stories.", prompt)
-        self.assertIn("Here is some additional context that should be incorporated in your design:", prompt)
+        self.assertIn("Your task is to create comprehensive and detailed class diagrams based on the given user stories.", prompt)
+        self.assertIn("Here are the user stories grouped by features:", prompt)
+        # Verify prompt contains job_parameters and context
         self.assertIn(str(self.job_parameters), prompt)
+        self.assertIn(f"{self.context}", prompt)
+
 

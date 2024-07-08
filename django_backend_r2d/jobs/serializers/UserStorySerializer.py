@@ -12,7 +12,7 @@ class UserStorySerializer(serializers.Serializer):
     id = serializers.CharField()
     requirement = serializers.CharField()
     services_to_use = serializers.ListField(
-        child=serializers.CharField(), 
+        child=serializers.CharField(allow_blank=True), # This allows empty strings
         allow_empty=True  # This allows empty lists
     )
     acceptance_criteria = serializers.CharField()

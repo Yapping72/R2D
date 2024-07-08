@@ -1,0 +1,18 @@
+{
+	"diagrams": [
+		{
+			"feature": [
+				"Logging Framework",
+				"Application Logging"
+			],
+			"diagram": "classDiagram\nclass UserActionLog {\n    +int id\n    +String timestamp\n    +String userId\n    +String actionDetails\n    +void logAction(String userId, String actionDetails)\n    +List~UserActionLog~ searchLogs(String query)\n}\n\nclass APIActionLog {\n    +int id\n    +String timestamp\n    +String apiEndpoint\n    +String requestPayload\n    +String responsePayload\n    +int statusCode\n    +void logAPICall(String apiEndpoint, String requestPayload, String responsePayload, int statusCode)\n    +List~APIActionLog~ searchLogs(String query)\n}\n\nclass CloudWatch {\n    +void sendLog(String log)\n}\n\nclass SIT_CAPSTONE_YP {\n    +void monitorLogs()\n}\n\nUserActionLog --|> CloudWatch : Association\nAPIActionLog --|> CloudWatch : Association\nCloudWatch --o SIT_CAPSTONE_YP : Aggregation\n",
+			"description": "1. UserActionLog: Logs user actions with timestamp, user ID, and action details. (Apollo-11)\n2. APIActionLog: Logs API calls with timestamp, endpoint, request and response payloads, and status code. (Apollo-12)\n3. CloudWatch: Service to send logs to AWS CloudWatch.\n4. SIT_CAPSTONE_YP: Monitors logs sent to CloudWatch.",
+			"classes": [
+				"UserActionLog",
+				"APIActionLog",
+				"CloudWatch",
+				"SIT_CAPSTONE_YP"
+			]
+		}
+	]
+}

@@ -7,6 +7,9 @@ from framework.responses.BaseReturnObject import BaseReturnObject
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from authentication.services.AuthenticationExceptions import *
 from jobs.services.JobExceptions import *
+from model_manager.services.ModelExceptions import *
+from diagrams.services.DiagramExceptions import *
+from rest_framework.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger('application_logging')
@@ -68,9 +71,33 @@ class BaseView(APIView):
             except JobCreationException as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "Failed to create Job Record", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except JobUpdateException as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to update Job Record", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except JobNotFoundException as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Job not found", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except InvalidJobStatus as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Invalid Job Status", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except AddToJobQueueException as e:
                 logger.error(repr(e), exc_info=True)
                 return JSONResponse(data = {"error": str(e)}, message = "Failed to add Job to Job Queue", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except AuditorInitializationError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to initialize Auditor", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except ModelInitializationError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to initialize Model", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except UMLDiagramCreationError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to create UML Diagram", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except ClassDiagramSavingError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to save Class Diagram", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()            
+            except ValidationError as e:
+                logger.error(repr(e), exc_info=True)
+                return JSONResponse(data = {"error": str(e)}, message = "Validation error occurred during Serialization", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             except Exception as e:
                 # Log the unexpected error
                 logger.error(f"Unhandled exception: {str(e)}", exc_info=True)
