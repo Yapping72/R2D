@@ -42,8 +42,12 @@ class BaseDiagramService(ABC):
         Diagrams are generated using the model and auditors provided in the constructor.
         To add new diagram types create a new service that extends this class, a new chain input class, prompt builder and serializer.
         
-        Raises: 
+        returns:
+            chain_response: dict - The response from the chain execution. 
+            {"analysis_results": {}, "audited_results": {}}
+        raises: 
             UMLDiagramCreationError - If there is an error in creating the UML diagram.
+        
         """
         job_id = self.chain_input.get_job_id()
         try:
@@ -66,8 +70,9 @@ class BaseDiagramService(ABC):
             chain = AnalyzeAndAuditChain(model, auditor, self.chain_input, self.prompt_builder)
             
             # Execute the chain 
-            response = chain.execute_chain()
-            return response
+            chain_response = chain.execute_chain()
+            logger.debug(f"Chain response: {chain_response}")
+            return chain_response
         except ModelInitializationError as e:
             logger.error(f"Failed to initialize Model {e}")
             raise UMLDiagramCreationError(f"Failed to create class diagram for job_id: {job_id}: {e}")

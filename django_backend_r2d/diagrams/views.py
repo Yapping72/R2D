@@ -5,9 +5,11 @@ from rest_framework import status
 
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from framework.views.BaseView import BaseView
+
+from jobs.services.JobService import JobService
 from diagrams.services.ClassDiagramService import ClassDiagramService
-from diagrams.services.ClassDiagramExceptions import *
-from diagrams.services.ClassDiagramSavingService import ClassDiagramSavingService
+from diagrams.services.ClassDiagramRepository import ClassDiagramRepository
+from model_manager.constants import ModelProvider, OpenAIModels
 
 # Initialize logging class and retrieve the custom user model
 import logging
@@ -15,24 +17,25 @@ logger = logging.getLogger('application_logging')
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
-class_diagram_service = ClassDiagramService()
-
 class CreateClassDiagram(APIView):
+    """
+    API Endpoint for creating class diagrams.
+    Payload: 
+        job_id (uuid) - The job id to retrieve job parameters.
+        diagram_type (str) - The type of diagram to create.
+    """
     permission_classes = [IsAuthenticated]
 
+    # Create the class responsible for creating class diagrams
+    class_diagram_service = ClassDiagramService()
+    
+    # Create the class responsible for saving class diagrams
+    class_diagram_repository = ClassDiagramRepository()
+    
     @BaseView.handle_exceptions
     def post(self, request):
         """
         Expects a payload containing job_id to retrieve job parameters.
         Endpoint for creating or resubmitting a job.
         """
-        user = request.user
-        request_payload = request.data["payload"]
-
-        return SyncAPIReturnObject(
-            data={'class_diagram_id': class_diagram.class_diagram_id},
-            message="Class diagram created successfully.",
-            success=True,
-            status_code=status.HTTP_200_OK
-        )
+        pass 

@@ -65,7 +65,8 @@ class ClassDiagramService(BaseDiagramService):
             dict: The analysis context for the class diagram chain.
         
         Use job_id to retrieve user stories, additional information and pass them into embeddings service to retrieve the analysis context.
-        Placeholder for now
+
+        Placeholder for now, but in the future this can be replaced with a call to the embeddings service.
         """
         return {"context": "AWS CloudWatch strongly recommends adding a separate SIT_CAPSTONE_YP class alongside CloudWatch class to monitor the logs. This MUST be incorporated within the diagram."}
     
@@ -79,6 +80,11 @@ class ClassDiagramService(BaseDiagramService):
         
         For now the audit criteria is hardcoded, but in the future it can be retrieved from a database or a configuration file.
         """
-        return {"audit_criteria_1": "All classes must adhere to SOLID principles, and have a single responsibility.",
-                 "audit_criteria_2": "All classes must have abstract classes or interface classes, controllers and views."}
-    
+        return {
+        "audit_criteria_1": "If needed, update the diagram so that each class adheres to the Single Responsibility Principle by having only one reason to change.",
+        "audit_criteria_2": "If needed, update the diagram so that classes adhere to the Open/Closed Principle by allowing them to be extended without modifying their existing code.",
+        "audit_criteria_3": "If needed, update the diagram so that classes adhere to the Liskov Substitution Principle by being substitutable for their base types without altering the correctness of the program.",
+        "audit_criteria_4": "If needed, update the diagram so that Interface Segregation Principle is followed by breaking down large interfaces into smaller, more specific ones.",
+        "audit_criteria_5": "If needed, update the diagram so that Dependency Inversion Principle is adhered to by using dependency injection where necessary and ensuring high-level modules do not depend on low-level modules.",
+        "audit_criteria_6": "If needed, update the diagram so that classes have their corresponding Views and Controllers when applicable."
+        }

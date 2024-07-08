@@ -66,7 +66,7 @@ class JobService(JobServiceInterface):
         
     def update_status(self, user, job_data):
         """
-        Updates the status of a job.
+        Updates the status of a job. Requires a valid User model to perform updating.
 
         Args:
             user: The authenticated user.
@@ -119,7 +119,7 @@ class JobService(JobServiceInterface):
             ValidationError: If the request payload is invalid.
             JobNotFoundException: If the job does not exist.
         """
-        
+
         request_payload['user'] = user.id  # Ensure user field is included in the payload
         serializer = GetJobSerializer(data=request_payload)
         if not serializer.is_valid():
@@ -165,6 +165,43 @@ class JobService(JobServiceInterface):
             job = Job.objects.get(job_id = job_id)
             return JobSerializer(job).data # Serialize the job object
         except Job.DoesNotExist:
-            raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist for user {user.id}.")
+            raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist.")
 
-        
+    def update_status_by_id(self, job_data):
+        """
+        Updates the status of a job, does not require a valid User model to perform updating.
+
+        Args:
+            job_data (dict): The job data with the new status.
+
+        Returns:
+            Job: The updated job object.
+
+        Raises:
+            ValidationError: If the job data is invalid.
+            JobNotFoundException: If the job does not exist.
+            InvalidJobStatus: If the job status is invalid.
+        """
+        serializer = UpdateJobStatusSerializer(data=job_data)
+        # Raise an error if serializer is not valid
+        if not serializer.is_valid():
+            logger.error(f"Serializer validation error for job data {job_data} with errors: {serializer.errors}")
+            raise ValidationError(serializer.errors)
+
+        # Retrieve the validated job_id and job_status from the serializer
+        job_id = serializer.validated_data.get('job_id')
+        job_status = serializer.validated_data.get('job_status')
+
+        try:
+            job = Job.objects.get(job_id=job_id)
+            job_status_instance = JobStatus.objects.get(name=job_status)
+            job.job_status = job_status_instance
+            job.save() 
+            return job
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Job with id {job_id} does not exist")
+        except JobStatus.DoesNotExist:
+            raise InvalidJobStatus(f"Invalid job status: {job_status}")
+        except Exception as e:
+            logger.error(f"Error updating job status for job_id {job_id}")
+            raise JobUpdateException(str(e))

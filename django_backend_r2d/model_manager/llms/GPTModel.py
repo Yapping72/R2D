@@ -45,6 +45,7 @@ class GPTModel(BaseModel):
         Raises:
             ModelAnalysisError: If there is an error in analyzing the prompt.
         """
+        
         try:
             if response_schema and isinstance(response_schema, PydanticModel):
                 logger.debug(f"Using Pydantic model for structured response")

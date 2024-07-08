@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from jobs.models import Job, JobStatus
-from jobs.services.JobExceptions import InvalidJobStatus, JobNotFoundException
 
 class UpdateJobStatusSerializer(serializers.Serializer):
     """
@@ -18,18 +17,16 @@ class UpdateJobStatusSerializer(serializers.Serializer):
             Job.objects.get(job_id=job_id)
             return job_id
         except Job.DoesNotExist:
-            logger.error(f"Invalid job id provided - {job_id}")
-            raise JobNotFoundException(f"Invalid job id provided - {job_id}")
-        
+            raise serializers.ValidationError("Invalid job id provided - {job_id}", code='invalid_job_id')      
+          
     def validate_job_status(self, job_status):
         """
         Validates the job status. Raises an exception if the status is invalid.
+        Not invoking a call to db to make the validation more efficient.
+        Allowed values are: Draft, Queued, Submitted, Error Failed to Submit, Processing, Error Failed to Process, Job Aborted, Completed
         """
-        try:
-            JobStatus.objects.get(name=job_status)
+        if job_status in ['Draft', 'Queued', 'Submitted', 'Error Failed to Submit', 'Processing', 'Error Failed to Process', 'Job Aborted', 'Completed']:
             return job_status
-        except JobStatus.DoesNotExist:
-            logger.error(f"Invalid job status {job_status}")
-            raise InvalidJobStatus(f"Invalid job status provided - {job_status}")
+        raise serializers.ValidationError(f"Invalid job status provided - {job_status}", code='invalid_job_status')
 
     

@@ -2,6 +2,7 @@ import inspect
 from django.test import TestCase
 from framework.responses.JSONResponse import JSONResponse
 from rest_framework import status
+import logging
 
 class JSONResponseTestCases(TestCase):
     @classmethod
@@ -14,7 +15,14 @@ class JSONResponseTestCases(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-    
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def test_transform_method(self):
         # Test data
         data = {"key1": "value1", "key2": "value2"}

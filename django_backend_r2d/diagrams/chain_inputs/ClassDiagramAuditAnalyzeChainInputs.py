@@ -1,7 +1,6 @@
 from model_manager.interfaces.BaseChainInput import BaseChainInput
-from diagrams.prompts.MermaidDiagramPrompts import ClassDiagramPromptTemplate
-from diagrams.prompts.MermaidDiagramAuditorPrompts import AuditClassDiagramPromptTemplate
-from diagrams.prompts.response_schemas import MERMAID_CLASS_DIAGRAM_SCHEMA
+from diagrams.prompts.ClassDiagramPrompts import ClassDiagramPromptTemplate, AuditClassDiagramPromptTemplate
+from diagrams.response_schemas.mermaid_class_diagram_schema import MERMAID_CLASS_DIAGRAM_SCHEMA
 from jobs.services.JobService import JobService
 
 class ClassDiagramAuditAnalyzeChainInputs(BaseChainInput): 

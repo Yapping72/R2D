@@ -1,17 +1,18 @@
-import uuid
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.urls import reverse
-from django.contrib.auth import get_user_model
-from jobs.models import Job, JobStatus, JobQueue
-from jobs.services.JobQueueService import JobQueueService
-import inspect
-
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.urls import reverse
+import uuid
+import inspect
 
+from django.contrib.auth import get_user_model
 User = get_user_model()
+from jobs.models import Job, JobStatus, JobQueue
+from jobs.services.JobQueueService import JobQueueService
+from model_manager.models import ModelName
+import logging 
 
 class JobAPIEndpointTests(APITestCase):
     @classmethod
@@ -21,7 +22,7 @@ class JobAPIEndpointTests(APITestCase):
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         cls.job_status_processing = JobStatus.objects.get(name='Processing')
         cls.job_status_draft = JobStatus.objects.get(name='Draft')
-
+        cls.model = ModelName.objects.get(name='gpt-4-turbo')
         # Use inspect to get all methods of the class
         methods = inspect.getmembers(cls, predicate=inspect.isfunction)
         # Filter methods to only include those that start with 'test'
@@ -29,7 +30,14 @@ class JobAPIEndpointTests(APITestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-    
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def setUp(self):
         refresh = RefreshToken.for_user(self.user)
         self.access_token = str(refresh.access_token)
@@ -48,6 +56,8 @@ class JobAPIEndpointTests(APITestCase):
             "user_id": "1234567",
             "job_status": "Submitted",
             "job_details": "Failed to submit job",
+            "job_type": "class_diagram",
+            "model": "gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -97,6 +107,8 @@ class JobAPIEndpointTests(APITestCase):
             job_details="Initial job details",
             tokens=100,
             parameters={},
+            job_type='user_story',
+            model= self.model,
         )
 
         payload = {
@@ -123,8 +135,9 @@ class JobAPIEndpointTests(APITestCase):
             job_details="Details for single job retrieval",
             tokens=150,
             parameters={},
+            job_type="user_story",
+            model= self.model
         )
-
         payload = {
             "job_id": str(job.job_id)
         }
@@ -143,6 +156,8 @@ class JobAPIEndpointTests(APITestCase):
             job_details="First job details",
             tokens=100,
             parameters={},
+            model= self.model
+
         )
         job2 = Job.objects.create(
             job_id=uuid.uuid4(),
@@ -151,6 +166,8 @@ class JobAPIEndpointTests(APITestCase):
             job_details="Second job details",
             tokens=150,
             parameters={},
+            model= self.model
+
         )
 
         # Make authenticated request to get all jobs
@@ -171,6 +188,8 @@ class JobAPIEndpointTests(APITestCase):
             "user_id": str(self.user.id),
             "job_status": "Submitted",
             "job_details": "Failed to submit job",
+            "job_type":"user_story",
+            "model":"gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -223,6 +242,8 @@ class JobAPIEndpointTests(APITestCase):
             "user_id": str(self.user.id),
             "job_status": "Draft",
             "job_details": "Failed to submit job",
+            "job_type":"user_story", 
+            "model":"gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -276,6 +297,8 @@ class JobAPIEndpointTests(APITestCase):
             job_details="Initial job details",
             tokens=100,
             parameters={},
+            job_type="user_story",
+            model=self.model
         )
 
         # Verify that the job is not in the JobQueue initially

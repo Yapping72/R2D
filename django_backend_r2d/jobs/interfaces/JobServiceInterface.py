@@ -29,3 +29,8 @@ class JobServiceInterface(ABC):
     def get_job_by_id(self, job_id):
         """Get a job by its ID"""
         pass    
+    
+    @abstractmethod
+    def update_status_by_id(self, job_id, job_status):
+        """Update the status of a job by its ID"""
+        pass

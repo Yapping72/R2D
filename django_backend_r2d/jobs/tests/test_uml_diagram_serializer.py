@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 from diagrams.serializers.UMLDiagramSerializer import UMLDiagramSerializer
 import inspect
+import logging 
 
 class UMLDiagramSerializerTests(TestCase):
     @classmethod
@@ -14,7 +15,14 @@ class UMLDiagramSerializerTests(TestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-    
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        
+    @classmethod
+    def tearDownClass(cls):
+        # Reset the log level after tests
+        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        super().tearDownClass()
+        
     def setUp(self):
         self.valid_data = {
             "features": ["Logging Framework", "Authorization Framework"],
