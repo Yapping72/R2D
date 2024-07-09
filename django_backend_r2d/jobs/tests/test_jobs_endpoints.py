@@ -186,7 +186,7 @@ class JobAPIEndpointTests(APITestCase):
             "job_id": "c1ddb856-70b1-4c87-8111-2fd8fb8b4abd",
             "user_id": str(self.user.id),
             "job_status": "Submitted",
-            "job_details": "Failed to submit job",
+            "job_details": "Submit job to queue",
             "job_type":"user_story",
             "model_name":"gpt-4-turbo",
             "tokens": 248,

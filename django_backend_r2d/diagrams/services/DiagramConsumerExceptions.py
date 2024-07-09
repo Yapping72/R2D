@@ -7,3 +7,8 @@ class ClassDiagramConsumerError(Exception):
     def __init__(self, message="Error occurred in ClassDiagramConsumer"):
         self.error_message = f"ClassDiagramConsumerError: {message}"
         super().__init__(self.error_message)
+        
+class ClassDiagramSignalError(Exception):
+    def __init__(self, message="Error occurred in ClassDiagramSignal"):
+        self.error_message = f"ClassDiagramSignalError: {message}"
+        super().__init__(self.error_message)    

@@ -32,31 +32,30 @@ class JobService(JobServiceInterface):
             JobCreationException: If there is an error creating or updating the job.
         """
         job_id = job_data.get('job_id')
-        logger.debug(f"{'Creating' if not job_id else 'Updating'} job - {job_data} for user - {user.id}")
         job_data['user'] = user.id  # Add user id to job_data
 
         try:
-            if job_id:
-                try:
-                    job = Job.objects.get(job_id=job_id, user=user)
-                    serializer = JobSerializer(job, data=job_data)
-                except Job.DoesNotExist:
-                    serializer = JobSerializer(data=job_data)
-            else:
+            try:
+                # Try to retrieve the job if it already exists -- Update Case
+                job = Job.objects.get(job_id=job_id, user=user)
+                serializer = JobSerializer(job, data=job_data)
+            except Job.DoesNotExist:
+                # Create a new job if it does not exist -- Create Case
                 serializer = JobSerializer(data=job_data)
-
+            
             if serializer.is_valid():
+                # Save the job if the serializer is valid
                 job = serializer.save()
                 return job
             else:
-                logger.error(f"Serializer validation error for job data {job_data} with errors: {serializer.errors}")
+                logger.error(f"Invalid job data - {serializer.errors} for job_id {job_id} for user {user.id}")
                 raise ValidationError(serializer.errors)
             
         except ValidationError as e:
-            logger.error(f"Validation error {'updating' if job_id else 'creating'} job for user {user.id}: {e}")
-            raise JobCreationException(e.detail)
+            logger.error(f"Validation error while saving job for user {user.id}: {e}")
+            raise JobCreationException(str(e))
         except Exception as e:
-            logger.error(f"Error {'updating' if job_id else 'creating'} job for user {user.id}: {e}")
+            logger.error(f"Error saving job for user {user.id}: {e}")
             raise JobCreationException(str(e))
 
     def update_status(self, user, job_data):
@@ -162,13 +161,14 @@ class JobService(JobServiceInterface):
         except Job.DoesNotExist:
             raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist.")
 
-    def update_status_by_id(self, job_data):
+    def update_status_by_id(self, job_id:str, job_status:str):
         """
         Updates the status of a job, does not require a valid User model to perform updating.
 
         Args:
-            job_data (dict): The job data with the new status.
-
+            job_id (str): The job id to update.
+            job_status (str): The name of the status to update.
+            
         Returns:
             Job: The updated job object.
 
@@ -177,10 +177,12 @@ class JobService(JobServiceInterface):
             JobNotFoundException: If the job does not exist.
             InvalidJobStatus: If the job status is invalid.
         """
-        serializer = UpdateJobStatusSerializer(data=job_data)
+        data = {'job_id': job_id, 'job_status': job_status}
+
+        serializer = UpdateJobStatusSerializer(data=data)
         # Raise an error if serializer is not valid
         if not serializer.is_valid():
-            logger.error(f"Serializer validation error for job data {job_data} with errors: {serializer.errors}")
+            logger.error(f"UpdateJobStatusSerializer error: {serializer.errors}")
             raise ValidationError(serializer.errors)
 
         # Retrieve the validated job_id and job_status from the serializer
@@ -188,6 +190,7 @@ class JobService(JobServiceInterface):
         job_status = serializer.validated_data.get('job_status')
 
         try:
+            # Retrieve the job and update its job_status
             job = Job.objects.get(job_id=job_id)
             job_status_instance = JobStatus.objects.get(name=job_status)
             job.job_status = job_status_instance

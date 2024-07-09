@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from jobs.models import JobQueue
+from jobs.models import JobQueue, JobStatus
 from jobs.constants import ValidJobStatus
 
 class UpdateJobQueueStatusSerializer(serializers.Serializer):
@@ -31,7 +31,7 @@ class UpdateJobQueueStatusSerializer(serializers.Serializer):
         Valid job status: Submitted, Processing, Error Failed to Process, Job Aborted, Completed
         """
         if job_status in [status.value for status in ValidJobStatus]:
-            return job_status
+            return JobStatus.objects.get(name=job_status)
         raise serializers.ValidationError(f"Invalid job status provided - {job_status}", code='invalid_job_status')
 
     
