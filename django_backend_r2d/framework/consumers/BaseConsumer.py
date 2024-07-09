@@ -68,11 +68,11 @@ class BaseConsumer(ABC):
         try: 
             self.job_service.update_status_by_id(job_id, job_status)
         except (JobUpdateException, JobNotFoundException, InvalidJobStatus) as e:
-            logger.error(f"Error updating job status: {e}")
-            raise BaseConsumerException(f"Error updating job status: {e}")
+            logger.error(f"Error updating job status: {str(e)}")
+            raise BaseConsumerException(f"Error updating job status: {str(e)}")
         except Exception as e:
-            logger.error(f"Unhandled exception occurred while trying updating job status: {e}")
-            raise BaseConsumerException(f"Unhandled exception occurred while trying updating job status: {e}")
+            logger.error(f"Unhandled exception occurred while trying to update job status: {str(e)}")
+            raise BaseConsumerException(f"Unhandled exception occurred while trying updating job status: {str(e)}")
         
     def update_job_queue_status(self, job_id:str, job_status:str):
         """
@@ -86,13 +86,13 @@ class BaseConsumer(ABC):
         valid job_status: Submitted, Processing, Error Failed to Process, Job Aborted, Completed
         """
         try:
-            self.job_queue_service.update_status(job, job_status)
+            self.job_queue_service.update_status(job_id, job_status)
         except UpdateJobQueueException as e:
-            logger.error(f"Error updating job queue status: {e}")
-            raise BaseConsumerException(f"Error updating job queue status: {e}")
+            logger.error(f"Error updating job queue status: {str(e)}")
+            raise BaseConsumerException(f"Error updating job queue status: {str(e)}")
         except Exception as e:
-            logger.error(f"Unhandled exception occurred while trying updating job queue status: {e}")
-            raise BaseConsumerException(f"Unhandled exception occurred while trying updating job queue status: {e}")
+            logger.error(f"Unhandled exception occurred while trying updating job queue status: {str(e)}")
+            raise BaseConsumerException(f"Unhandled exception occurred while trying updating job queue status: {str(e)}")
         
     def handle_error(self, job_id):
         """
@@ -107,16 +107,16 @@ class BaseConsumer(ABC):
             # Try to update the job status to Error Failed to Process
             self.update_job_status(job_id, ValidJobStatus.ERROR_FAILED_TO_PROCESS.value)
         except BaseConsumerException as e:
-            logger.error(f"Failed to update job status to Error Failed to Process: {e}")
-            raise BaseConsumerException(f"Failed to update job status to Error Failed to Process: {e}")
+            logger.error(f"Failed to update job status to Error Failed to Process: {str(e)}")
+            raise BaseConsumerException(f"Failed to update job status to Error Failed to Process: {str(e)}")
         except Exception as e:
-            raise BaseConsumerException(f"Unhandled exception occurred while trying to update job status to Error Failed to Process: {e}")
+            raise BaseConsumerException(f"Unhandled exception occurred while trying to update job status to Error Failed to Process: {str(e)}")
 
         try:
             # Try to update the job status to Error Failed to Process
             self.update_job_queue_status(job_id, ValidJobStatus.ERROR_FAILED_TO_PROCESS.value)
         except BaseConsumerException as e:
-            logger.error(f"Failed to update job queue status to Error Failed to Process: {e}")
-            raise BaseConsumerException(f"Failed to update job queue status to Error Failed to Process: {e}")
+            logger.error(f"Failed to update job queue status to Error Failed to Process: {str(e)}")
+            raise BaseConsumerException(f"Failed to update job queue status to Error Failed to Process: {str(e)}")
         except Exception as e:
-            raise BaseConsumerException(f"Unhandled exception occurred while trying to update job queue status to Error Failed to Process: {e}")
+            raise BaseConsumerException(f"Unhandled exception occurred while trying to update job queue status to Error Failed to Process: {str(e)}")

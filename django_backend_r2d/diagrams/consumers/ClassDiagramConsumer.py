@@ -47,7 +47,9 @@ class ClassDiagramConsumer(BaseConsumer):
         
     def process_record(self, job_id) -> dict:
         """
-        Process a record and return the result.
+        Processes the record from the JobQueue and generates class diagrams.
+        Saves the class diagrams using the ClassDiagramRepository.
+        Returns the class diagrams that were saved
         args: 
             job_id (str): The job ID.
         raises:
@@ -55,7 +57,7 @@ class ClassDiagramConsumer(BaseConsumer):
             ClassDiagramConsumerError: If error encountered while creating the class diagram.
         
         returns:
-            dict: The results of the class diagram creation.
+            dict: The class diagrams that were saved.
             Updates the job status and job queue status to Processing or Error Failed to Process.
         """
         try:
@@ -72,6 +74,7 @@ class ClassDiagramConsumer(BaseConsumer):
             # Update the job status and job queue status to Completed
             self.update_job_status(job_id, ValidJobStatus.COMPLETED.value)
             self.update_job_queue_status(job_id, ValidJobStatus.COMPLETED.value)
+            
             return class_diagrams
         except BaseConsumerException as e:
             logger.error(f"Error processing record: {e}")
