@@ -4,6 +4,8 @@
 import os
 from notification.services.EmailNotificationInterface import EmailNotificationInterface
 from notification.services.NotificationExceptions import *
+import logging
+logger = logging.getLogger("application_logging") # Instantiate logger class
 
 class SendGridEmailService(EmailNotificationInterface):
     def __init__(self):
@@ -16,6 +18,6 @@ class SendGridEmailService(EmailNotificationInterface):
             # message = Mail(from_email=sender,to_emails=receiver,subject=header,html_content=body)
             # sg = SendGridAPIClient(self.api_key)
             # sg.send(message)
-            print(f"Email Sent to: {receiver}, {header}, {body}")
+            logger.debug(f"Email Sent to: {receiver}, {header}, {body}")
         except Exception as e:
             raise SendEmailNotificationError()

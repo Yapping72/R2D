@@ -13,25 +13,25 @@ import logging
 logger = logging.getLogger('application_logging')
 
 class GPTModel(BaseModel):
-    def __init__(self, openai_api_key: str, model_name: OpenAIModels, **kwargs):
+    def __init__(self, openai_api_key: str, model_name: str, **kwargs):
         """
         GPTModel that can be used to perform text generation or embeddings.
         The list of supported models are defined in constants.py
         args:
             openai_api_key: str
-            model_name: OpenAIModels (Enum), when initializing the model, the model_name.value will be used to get the model name.
+            model_name: str 
             **kwargs: Additional keyword arguments - temperature, max_tokens, timeout, max_retries.
         Raises:
             ModelAPIKeyError if no valid api key is provided
-            InvalidModelType if the model_name is not an instance of OpenAIModels enum
         """
         if not openai_api_key:
             raise ModelAPIKeyError("OpenAI API key is required.")
-        if not isinstance(model_name, OpenAIModels):
-            raise InvalidModelType("model_name should be an instance of OpenAIModels enum")
         
-        super().__init__(model_name=model_name.value)
-        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name.value, **kwargs)
+        if isinstance(model_name, OpenAIModels):
+            model_name = model_name.value
+
+        super().__init__(model_name=model_name)
+        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name, **kwargs)
         
     def analyze(self, prompt: str, response_schema:(Optional[Union[Type[PydanticModel], dict]]) = None) -> str:
         """

@@ -28,7 +28,7 @@ class SaveClassDiagramsTests(TestCase):
         cls.job_status = JobStatus.objects.get(name='Draft', code=1) 
         cls.model_name = ModelName.objects.get(name='gpt-3.5-turbo', code=3, provider='OpenAI')
         cls.job = Job.objects.create(job_id=str(uuid4()), user=cls.user, job_status=cls.job_status, job_details="Test Job",tokens=100, parameters={},model=cls.model_name)
-        logging.getLogger('application_logging').setLevel(logging.DEBUG)
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
         
     @classmethod
     def tearDownClass(cls):

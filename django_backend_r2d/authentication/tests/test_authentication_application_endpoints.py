@@ -21,7 +21,7 @@ class AuthenticationAPIEndpointTests(APITestCase):
         # Count the test methods
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
-        logging.getLogger('application_logging').setLevel(logging.ERROR)
+        logging.getLogger('application_logging').setLevel(logging.CRITICAL)
         
     @classmethod
     def tearDownClass(cls):
@@ -90,7 +90,6 @@ class AuthenticationAPIEndpointTests(APITestCase):
         self.assertEqual(response.data['message'], 'Please verify your OTP')
         self.assertTrue(response.data['success'], "Response success flag should be True")
         self.assertEqual(response.data['status_code'], 200, "The body response status code should be 200")
-        
         
     def test_login_with_wrong_password(self):
         data = {
@@ -165,7 +164,7 @@ class AuthenticationAPIEndpointTests(APITestCase):
         self.assertTrue(otp_response.data['success'], "Response success flag should be True") # success status check
         self.assertEqual(otp_response.data['status_code'], 200, "The body response status code should be 200") # status code check
     
-    def test_login_correct_credentials_correct_otp(self):
+    def test_login_correct_credentials_incorrect_otp(self):
         data = {
             'username': 'auth-test-mock-user',
             'password': '1234'

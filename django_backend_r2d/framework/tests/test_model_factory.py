@@ -5,6 +5,7 @@ from model_manager.constants import ModelProvider, OpenAIModels
 from model_manager.llms.GPTModel import GPTModel
 from model_manager.services.ModelExceptions import ModelInitializationError
 import logging 
+
 class ModelFactoryTestCases(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -49,3 +50,7 @@ class ModelFactoryTestCases(TestCase):
             model = ModelFactory.get_model("NonExistentProvider", OpenAIModels.GPT_3_5_TURBO)
         with self.assertRaises(ModelInitializationError):
             model = ModelFactory.get_model(ModelProvider.OPEN_AI, "NonExistentModel")  
+
+    def test_create_from_string(self):
+        model = ModelFactory.get_model("openai", "gpt-4-turbo")
+        self.assertIsInstance(model, GPTModel)

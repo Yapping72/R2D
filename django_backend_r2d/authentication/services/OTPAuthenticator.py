@@ -21,7 +21,7 @@ class OTPAuthenticator(AuthenticationInterface):
         otp = self.otp_service.generate_otp(8)  # creates an 8-digit otp
         self.otp_service.store_otp(user, otp)
         self.notification.send_email(user.email, "Secure Login - method: OTP.", f"This is your OTP: {otp}. Please enter it within 3 minutes.")
-        print(f"OTP: Your OTP is: {otp} Sent to {user.email}-- FROM OTPAuthenticator.py")
+        logger.debug(f"OTP: Your OTP is: {otp} Sent to {user.email}-- FROM OTPAuthenticator.py")
         return otp
 
     def authenticate(self, user_id:str, provided_otp:str) -> bool:
