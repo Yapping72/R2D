@@ -26,7 +26,7 @@ A Job will be added to JobQueue if:
 1. It is created with status Submitted
 2. It is updated to status Submitted
 """
-
+# Add Job to JobQueue when a Job is created with status Submitted
 @receiver(post_save, sender=Job)
 def add_to_job_queue_on_create(sender, instance, created, **kwargs):
     """
@@ -35,7 +35,8 @@ def add_to_job_queue_on_create(sender, instance, created, **kwargs):
     """
     if created and instance.job_status.code == 3:  # Check if the job is created and status is Submitted
         job_queue_service.enqueue(job=instance)
-
+        
+# add Job to JobQueue when a Job is updated to Submitted
 @receiver(pre_save, sender=Job)
 def add_to_job_queue_on_update(sender, instance, **kwargs):
     """
@@ -52,6 +53,11 @@ def add_to_job_queue_on_update(sender, instance, **kwargs):
         if previous and previous.job_status.code != 3 and instance.job_status.code == 3:  
             job_queue_service.enqueue(job=instance)
 
+"""
+Class diagram generation will be triggered when a JobQueue is created with:
+1. status Submitted and job_type is class_diagram
+"""
+# Create class diagram when a JobQueue is created with status Submitted and job_type is class_diagram
 @receiver(post_save, sender=JobQueue)
 def trigger_class_diagram(sender, instance, created, **kwargs):
     if created and instance.job.job_status.code == 3 and instance.job_type == "class_diagram":
