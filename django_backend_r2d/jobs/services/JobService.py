@@ -36,21 +36,16 @@ class JobService(JobServiceInterface):
         job_data['user'] = user.id  # Add user id to job_data
 
         try:
-            # Check if job_id exists for the user
             if job_id:
                 try:
-                    # Retrieve job with the provided job_id and user
                     job = Job.objects.get(job_id=job_id, user=user)
                     serializer = JobSerializer(job, data=job_data)
                 except Job.DoesNotExist:
-                    # If a job with the provided job_id does not exist, create a new job
                     serializer = JobSerializer(data=job_data)
             else:
-                # If job_id is not provided, create a new job
                 serializer = JobSerializer(data=job_data)
 
             if serializer.is_valid():
-                # Return the job object if the serializer is valid
                 job = serializer.save()
                 return job
             else:
@@ -63,7 +58,7 @@ class JobService(JobServiceInterface):
         except Exception as e:
             logger.error(f"Error {'updating' if job_id else 'creating'} job for user {user.id}: {e}")
             raise JobCreationException(str(e))
-        
+
     def update_status(self, user, job_data):
         """
         Updates the status of a job. Requires a valid User model to perform updating.

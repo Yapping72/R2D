@@ -22,16 +22,16 @@ class GPTAuditor(BaseAuditor):
             **kwargs: Additional keyword arguments - temperature, max_tokens, timeout, max_retries.
         Raises:
             ModelAPIKeyError if no valid api key is provided
-            InvalidModelType if the model_name is not an instance of OpenAIModels enum
         """
         if not openai_api_key:
             raise ModelAPIKeyError("OpenAI API key is required.")
-        if not isinstance(model_name, OpenAIModels):
-            raise InvalidModelType("model_name should be an instance of OpenAIModels enum")
         
-        super().__init__(model_name=model_name.value)
-        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name.value, **kwargs)
+        if isinstance(model_name, OpenAIModels):
+            model_name = model_name.value
 
+        super().__init__(model_name=model_name)
+        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name, **kwargs)
+        
     def audit(self, prompt: str, response_schema:(Optional[Union[Type[PydanticModel], dict]]) = None) -> str:
         """
         Audits the results of the LLM analysis on the given prompt.

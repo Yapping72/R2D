@@ -54,10 +54,10 @@ class JobAPIEndpointTests(APITestCase):
         payload = {
             "job_id": "c1ddb856-70b1-4c87-8111-2fd8fb8b4abd",
             "user_id": "1234567",
-            "job_status": "Submitted",
+            "job_status": "Draft",
             "job_details": "Failed to submit job",
             "job_type": "class_diagram",
-            "model": "gpt-4-turbo",
+            "model_name": "gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -97,7 +97,7 @@ class JobAPIEndpointTests(APITestCase):
 
         job = Job.objects.get(job_id=payload['job_id'])
         self.assertEqual(job.job_details, payload['job_details'])
-        self.assertEqual(job.job_status.name, 'Submitted')
+        self.assertEqual(job.job_status.name, 'Draft')
 
     def test_update_job_status(self):
         job = Job.objects.create(
@@ -108,7 +108,7 @@ class JobAPIEndpointTests(APITestCase):
             tokens=100,
             parameters={},
             job_type='user_story',
-            model= self.model,
+            model= self.model
         )
 
         payload = {
@@ -167,7 +167,6 @@ class JobAPIEndpointTests(APITestCase):
             tokens=150,
             parameters={},
             model= self.model
-
         )
 
         # Make authenticated request to get all jobs
@@ -189,7 +188,7 @@ class JobAPIEndpointTests(APITestCase):
             "job_status": "Submitted",
             "job_details": "Failed to submit job",
             "job_type":"user_story",
-            "model":"gpt-4-turbo",
+            "model_name":"gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -243,7 +242,7 @@ class JobAPIEndpointTests(APITestCase):
             "job_status": "Draft",
             "job_details": "Failed to submit job",
             "job_type":"user_story", 
-            "model":"gpt-4-turbo",
+            "model_name":"gpt-4-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [

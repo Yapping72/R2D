@@ -10,25 +10,35 @@ logger = logging.getLogger('application_logging')
 
 class ModelFactory(BaseModelFactory):
     @staticmethod
-    def get_model(provider: ModelProvider, model_name: OpenAIModels):
+    def get_model(provider, model_name):
         """
         Returns a model instance based on the provider and model name.
-        @params: provider: ModelProvider
-        @params: model_name: OpenAIModels
-        Raises ModelInitializiationError if the model cannot be initialized.
+        @params: provider: ModelProvider or str
+        @params: model_name: OpenAIModels or str
+        Raises ModelInitializationError if the model cannot be initialized.
         """
         try:
+            # Convert provider and model_name to enums if they are strings
+            if isinstance(provider, str):
+                provider = ModelProvider(provider.lower())
+                
+            # Convert model_name to enum if it's a string
+            if isinstance(model_name, str):
+                model_name_enum = OpenAIModels[model_name.upper().replace("-", "_")]
+            else:
+                model_name_enum = model_name
+            
             # Check if the model provider is OpenAI and the model name is valid (part of OpenAIModels enum)
-            if provider == ModelProvider.OPEN_AI and model_name in [model for model in OpenAIModels]:
+            if provider == ModelProvider.OPEN_AI and model_name_enum in OpenAIModels:
                 logger.debug(f"Initializing model {model_name} from OpenAI.")    
                 model_api_key = ModelFactory._get_api_key("R2D_OPENAI_API_TOKEN")
                 # Create the gpt model using the OpenAI API key and the model name
-                return GPTModel(openai_api_key=model_api_key, model_name=model_name, temperature=0.5, max_tokens=4096, timeout=30, max_retries=3)
+                return GPTModel(openai_api_key=model_api_key,model_name=model_name_enum.value, temperature=0.5, max_tokens=4096, timeout=30, max_retries=3)
             else:
                 raise ModelNotFoundException(f"No valid model found for {model_name}.")
-        except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException, InvalidModelType) as e:
+        except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException, ValueError, AttributeError, KeyError) as e:
             raise ModelInitializationError(f"Model could not be initialized. {e}")
-        
+
     @staticmethod
     def _get_api_key(api_key_id:str):
         """Retrieve the API key from the environment variables."""
