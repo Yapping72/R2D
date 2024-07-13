@@ -37,11 +37,11 @@ class ERDiagramService(BaseDiagramService):
     
     def retrieve_job_parameters(self, job_id) -> dict:
         """
-        Retrieves the job parameters for the class diagram chain.
+        Retrieves the job parameters for the er diagram chain.
         args:
             job_id (str): The job ID to use.
         returns:
-            dict: The job parameters for the class diagram chain.
+            dict: The job parameters for the er diagram chain.
         """
         if job_id is None:
             raise ValidationError("job_id must be provided.")
@@ -60,28 +60,27 @@ class ERDiagramService(BaseDiagramService):
     
     def retrieve_analysis_context(self, job_id) -> dict:
         """
-        Retrieves the analysis context for the class diagram chain.
+        Retrieves the analysis context for the er diagram chain.
         
         args:
             job_id (str): The job ID to use.
         returns:
-            dict: The analysis context for the class diagram chain.
+            dict: The analysis context for the er diagram chain.
         
         Use job_id to retrieve user stories, additional information and pass them into embeddings service to retrieve the analysis context.
         Placeholder for now
         """
-        return {"context": "AWS CloudWatch strongly recommends adding a separate SIT_CAPSTONE_YP class alongside CloudWatch class to monitor the logs. This MUST be incorporated within the diagram."}
+        return {"context": "AWS CloudWatch strongly recommends adding a separate SIT_CAPSTONE_YP entity alongside CloudWatch class to monitor the logs. This MUST be incorporated within the diagram."}
     
     def retrieve_audit_criteria(self, job_id) -> dict:
         """
-        Retrieves the auditing criteria for the class diagram chain.
+        Retrieves the auditing criteria for the er diagram chain.
         args:
             job_id (str): The job ID to use.
         returns:
-            dict: The audit criteria for the class diagram chain.
+            dict: The audit criteria for the er diagram chain.
         
         For now the audit criteria is hardcoded, but in the future it can be retrieved from a database or a configuration file.
         """
-        return {"audit_criteria_1": "All classes must adhere to SOLID principles, and have a single responsibility.",
-                "audit_criteria_2": "All classes must have abstract classes or interface classes, controllers and views."}
+        return {"audit_criteria_1: ER Diagrams must be normalized whenever possible."}
     

@@ -10,15 +10,20 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
     def get_prompt(job_parameters: dict, context: dict = None) -> str:
         if context is None:
             template = r"""
-            You are a database design expert. Your task is to create comprehensive and detailed entity-relationship (ER) diagrams based on the given features (EPICs), classes, and descriptions.
-
-            Here are the features (EPICs), a description that includes their associations, and classes identified:
-
+            You are a database design expert, your task is to create comprehensive and detailed entity-relationship (ER) diagrams. 
+            
+            You will be provided with job parameters that can be either: 
+            1. User stories grouped according to their features. OR
+            2. A list of classes, the feature they belong to, and an accompanying description of what each class does.
+            
+            Regardless of the input provided, you are to identify all relevant entities and their relationships, ensuring that each class is translated into an entity with appropriate attributes.
+            
+            Here are the job parameters: 
             {job_parameters}
 
             Instructions:
-            1. Analyze each class diagram carefully and identify all relevant entities and their relationships.
-            2. Each class should be translated into an entity with appropriate attributes.
+            1. Analyze the job parameters provided and identify all relevant entities and their relationships.
+            2. Each class or story should be translated into an entity with appropriate attributes.
             3. Ensure that relationships between entities are clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
             4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
             5. Use mermaid syntax to express the ER diagrams.
@@ -42,6 +47,7 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
 
             Your output should look similar to the example above, with entities and relationships clearly defined.
             """
+            # Create the prompt template without context
             prompt = PromptTemplate(
                 input_variables=["job_parameters"],
                 template=template
@@ -49,16 +55,22 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
             
             return prompt.format(job_parameters=job_parameters)
         else: 
+            # Create the prompt template with context
             template = r"""
-            You are a database design expert. Your task is to create comprehensive and detailed entity-relationship (ER) diagrams based on the given features (EPICs), classes, and descriptions.
-
-            Here are the features (EPICs), a description that includes their associations, and classes identified:
-
+            You are a database design expert, your task is to create comprehensive and detailed entity-relationship (ER) diagrams. 
+            
+            You will be provided with job parameters that can be either: 
+            1. User stories grouped according to their features. OR
+            2. A list of classes, the feature they belong to, and an accompanying description of what each class does.
+            
+            Regardless of the input provided, you are to identify all relevant entities and their relationships, ensuring that each class is translated into an entity with appropriate attributes.
+            
+            Here are the job parameters: 
             {job_parameters}
 
             Instructions:
-            1. Analyze each class diagram carefully and identify all relevant entities and their relationships.
-            2. Each class should be translated into an entity with appropriate attributes.
+            1. Analyze the job parameters provided and identify all relevant entities and their relationships.
+            2. Each class or story should be translated into an entity with appropriate attributes.
             3. Ensure that relationships between entities are clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
             4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
             5. Use mermaid syntax to express the ER diagrams.
@@ -82,6 +94,9 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
             ENTITY7 }|--|{ ENTITY8 : One More Relationship Description
 
             Your output should look similar to the example above, with entities and relationships clearly defined.
+            
+            Here is some additional context for the job:
+            {context}
             """
             prompt = PromptTemplate(
                 input_variables=["job_parameters", "context"],

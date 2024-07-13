@@ -30,13 +30,14 @@ class ClassDiagramServiceTests(TestCase):
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         cls.job_uuid = str(uuid4())
         cls.model = ModelName.objects.get(name='gpt-4-turbo')
-       
+        
         cls.job = Job.objects.create(
             job_id= cls.job_uuid,
             user=cls.user,
             job_status=cls.job_status_submitted,
             model=cls.model,
             job_details="Job Submitted",
+            job_type="class_diagram",
             tokens=100,
             parameters = {
                 "features": [
@@ -102,7 +103,7 @@ class ClassDiagramServiceTests(TestCase):
         
     def setUp(self):
         self.model_provider = ModelProvider.OPEN_AI
-        self.model_name = OpenAIModels.GPT_4_O
+        self.model_name = OpenAIModels.GPT_3_5_TURBO
         self.auditor_name = OpenAIModels.GPT_3_5_TURBO
         
         # Initialize the class diagram service

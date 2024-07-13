@@ -8,7 +8,7 @@ from framework.views.BaseView import BaseView
 
 from jobs.services.JobService import JobService
 from diagrams.services.ClassDiagramService import ClassDiagramService
-from diagrams.services.ClassDiagramRepository import ClassDiagramRepository
+from diagrams.repository.ClassDiagramRepository import ClassDiagramRepository
 from model_manager.constants import ModelProvider, OpenAIModels
 
 # Initialize logging class and retrieve the custom user model

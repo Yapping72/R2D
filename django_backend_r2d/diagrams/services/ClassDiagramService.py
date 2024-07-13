@@ -5,6 +5,7 @@ from diagrams.chain_inputs.ClassDiagramAuditAnalyzeChainInputs import ClassDiagr
 from diagrams.interfaces.BaseDiagramService import BaseDiagramService
 from diagrams.serializers.UMLDiagramSerializer import UMLDiagramSerializer
 from jobs.services.JobService import JobService
+from jobs.services.JobExceptions import JobNotFoundException
 
 import logging 
 # Initialize the logger

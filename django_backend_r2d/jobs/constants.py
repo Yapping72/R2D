@@ -22,4 +22,21 @@ class ValidJobStatus(Enum):
     ERROR_FAILED_TO_PROCESS = "Error Failed to Process"
     JOB_ABORTED = "Job Aborted"
     COMPLETED = "Completed"
+
+class ValidJobTypes(Enum):
+    """
+    List of valid job types allowed.
     
+    Enum Key         | Value
+    USER_STORY       | user_story
+    CLASS_DIAGRAM    | class_diagram
+    ER_DIAGRAM       | er_diagram
+    SEQUENCE_DIAGRAM | sequence_diagram
+    STATE_DIAGRAM    | state_diagram
+    """
+    USER_STORY = "user_story"
+    CLASS_DIAGRAM = "class_diagram"
+    ER_DIAGRAM = "er_diagram"
+    SEQUENCE_DIAGRAM = "sequence_diagram"
+    STATE_DIAGRAM = "state_diagram"
+

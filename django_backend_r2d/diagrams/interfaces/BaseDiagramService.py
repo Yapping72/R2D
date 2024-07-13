@@ -8,6 +8,7 @@ from model_manager.interfaces.BasePromptBuilder import BasePromptBuilder
 from model_manager.constants import ModelProvider, OpenAIModels
 from model_manager.services.ModelExceptions import ModelInitializationError, ModelAnalysisError, AnalyzeAndAuditChainException
 from model_manager.chains.AnalyzeAndAuditChain import AnalyzeAndAuditChain 
+from jobs.models import Job
 from diagrams.services.DiagramExceptions import UMLDiagramCreationError
 import logging
  
@@ -17,6 +18,13 @@ logger = logging.getLogger('application_logging')
 class BaseDiagramService(ABC):
     """
     Interface that all diagram generating services must implement.
+    args:
+        model_provider (Enum): The model provider to use.
+        model_name (Enum): The model name to use.
+        auditor_name (Enum): The auditor name to use.
+        chain_input (BaseChainInput): The chain input to use.
+        prompt_builder (BasePromptBuilder): The prompt builder to use.
+        serializer_class: The serializer class to use.
     """
     def __init__(self, model_provider:Enum, model_name:Enum, auditor_name:Enum, 
                  chain_input:BaseChainInput, prompt_builder:BasePromptBuilder, serializer_class):
@@ -72,6 +80,7 @@ class BaseDiagramService(ABC):
             # Execute the chain 
             chain_response = chain.execute_chain()
             logger.debug(f"Chain response: {chain_response}")
+            
             return chain_response
         except ModelInitializationError as e:
             logger.error(f"Failed to initialize Model {e}")
@@ -88,3 +97,5 @@ class BaseDiagramService(ABC):
         except Exception as e:
             logger.error(f"Unhandled exception encountered: {job_id}: {e}")
             raise UMLDiagramCreationError(f"Unhandled exception encountered: {job_id}: {e}")
+    
+

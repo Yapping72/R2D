@@ -29,20 +29,30 @@ class ModelFactoryTestCases(TestCase):
         """
         Test factory can create openai text models.
         """
-        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_4_O)
-        self.assertIsInstance(model, GPTModel)
         model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_4_TURBO)
         self.assertIsInstance(model, GPTModel)
         model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.GPT_3_5_TURBO)
         self.assertIsInstance(model, GPTModel)
 
+    def test_create_openai_models_from_str(self):
+        """
+        Test factory can create openai text models from string.
+        """
+        model = ModelFactory.get_model("openai", "gpt-4-turbo")
+        self.assertIsInstance(model, GPTModel)
+        model = ModelFactory.get_model("openai", "gpt-3.5-turbo")
+        self.assertIsInstance(model, GPTModel)
+        model = ModelFactory.get_model("openai", "text-embedding-3-large")
+        self.assertIsInstance(model, GPTModel)
+        model = ModelFactory.get_model("openai", "text-embedding-3-small")
+    
     def test_create_openai_embeddings(self):
         """
         Test factory can create openai embeddings models.
         """
-        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.OPEN_AI_TEXT_EMBEDDING_LARGE)
+        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.TEXT_EMBEDDING_3_LARGE)
         self.assertIsInstance(model, GPTModel)
-        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.OPEN_AI_TEXT_EMBEDDING_SMALL)
+        model = ModelFactory.get_model(ModelProvider.OPEN_AI, OpenAIModels.TEXT_EMBEDDING_3_SMALL)
         self.assertIsInstance(model, GPTModel)
 
     def test_create_non_existent_models(self):

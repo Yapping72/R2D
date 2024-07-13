@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from jobs.models import Job, JobStatus
 
+
 class UpdateJobStatusSerializer(serializers.Serializer):
     """
     The serializer class for updating the job status.

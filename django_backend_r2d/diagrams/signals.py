@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from diagrams.tasks import generate_class_diagram_from_user_stories
 from diagrams.services.DiagramConsumerExceptions import ClassDiagramConsumerError, ClassDiagramSignalError
 from jobs.models import JobQueue
+from jobs.constants import ValidJobTypes
 from model_manager.models import ModelName
 import logging
 logger = logging.getLogger('application_logging')
@@ -42,15 +43,29 @@ def trigger_diagram_creation(sender, instance, created, **kwargs):
         job_id = instance.job_id
         model_information = ModelName.objects.get(pk=instance.model_id)
         
-        if instance.job_type == "class_diagram":
-            # Generate class diagram using the models defined in the JobQueue
+        if instance.job_type == ValidJobTypes.USER_STORY.value:
+            # Add user story generation task here
+            pass
+        elif instance.job_type == ValidJobTypes.CLASS_DIAGRAM.value:
+        # Generate class diagram using the models defined in the JobQueue
             generate_class_diagram_from_user_stories.delay(
                 model_provider=model_information.provider,
                 model_name=model_information.name,
                 auditor_name=model_information.name,
                 job_id=job_id,
             )
-        # Add other job types here
+        elif instance.job_type == ValidJobTypes.ER_DIAGRAM.value:
+            # Add ER diagram generation task here
+            pass
+        elif instance.job_type == ValidJobTypes.SEQUENCE_DIAGRAM.value:
+            # Add sequence diagram generation task here
+            pass
+        elif instance.job_type == ValidJobTypes.STATE_DIAGRAM.value:
+            # Add flowchart generation task here
+            pass
+        else:
+            logger.error(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.")
+            raise ClassDiagramSignalError(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.")
     except ModelName.DoesNotExist:
         logger.error(f"Model information for Job {instance.job_id} does not exist.")
         raise ClassDiagramSignalError(f"Model information: {instance.model_id} not valid for Job: {instance.job_id}")

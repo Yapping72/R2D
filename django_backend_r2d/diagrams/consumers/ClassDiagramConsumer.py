@@ -8,10 +8,10 @@ from jobs.interfaces.JobQueueInterface import JobQueueInterface
 from jobs.services.JobService import JobService
 from jobs.services.JobQueueService import JobQueueService
 from jobs.services.JobExceptions import JobNotFoundException
-from jobs.constants import ValidJobStatus
+from jobs.constants import ValidJobStatus, ValidJobTypes
 from model_manager.constants import ModelProvider, OpenAIModels
 from diagrams.services.ClassDiagramService import ClassDiagramService
-from diagrams.services.ClassDiagramRepository import ClassDiagramRepository
+from diagrams.repository.ClassDiagramRepository import ClassDiagramRepository
 from diagrams.services.DiagramExceptions import UMLDiagramCreationError, ClassDiagramSavingError
 from diagrams.services.DiagramConsumerExceptions import ClassDiagramConsumerError
 
@@ -39,13 +39,15 @@ class ClassDiagramConsumer(BaseConsumer):
     def __init__(self, model_provider:ModelProvider, model_name:Enum, 
                  auditor_name:Enum, job_id:str, job_service:JobServiceInterface = JobService(), 
                  job_queue_service:JobServiceInterface = JobQueueService()):    
+        
         super().__init__(consumer_name="ClassDiagramConsumer", job_service=job_service, job_queue_service=job_queue_service)
         # Initialize the diagram service
         self.diagram_service = ClassDiagramService(model_provider=model_provider, model_name=model_name, 
                                                    auditor_name=auditor_name, job_id=job_id)
         self.repository = ClassDiagramRepository()
+        self.class_diagrams = []
         
-    def process_record(self, job_id) -> dict:
+    def process_record(self, job_id) -> list[dict]:
         """
         Processes the record from the JobQueue and generates class diagrams.
         Saves the class diagrams using the ClassDiagramRepository.
@@ -57,7 +59,7 @@ class ClassDiagramConsumer(BaseConsumer):
             ClassDiagramConsumerError: If error encountered while creating the class diagram.
         
         returns:
-            dict: The class diagrams that were saved.
+            List: List of dictionaries containing the class diagrams that were saved.
             Updates the job status and job queue status to Processing or Error Failed to Process.
         """
         try:
@@ -68,14 +70,15 @@ class ClassDiagramConsumer(BaseConsumer):
 
             # Generate the class diagram using the diagram service
             chain_response = self.diagram_service.generate_diagram()
+            
             # Save the class diagrams using the diagram repository
-            class_diagrams = self.repository.save_diagram(job_id, chain_response)
+            self.class_diagrams = self.repository.save_diagram(job_id, chain_response)
             
             # Update the job status and job queue status to Completed
             self.update_job_status(job_id, ValidJobStatus.COMPLETED.value)
             self.update_job_queue_status(job_id, ValidJobStatus.COMPLETED.value)
             
-            return class_diagrams
+            return self.class_diagrams
         except BaseConsumerException as e:
             logger.error(f"Error processing record: {e}")
             self.handle_error(job_id)
@@ -88,4 +91,50 @@ class ClassDiagramConsumer(BaseConsumer):
             self.handle_error(job_id)
             logger.error(f"Unhandled Error processing record: {e}")
             raise ClassDiagramConsumerError(f"Unhandled Error encountered while processing record: {e}")    
-
+    
+    def create_next_record(self, parent_id:str, class_diagrams:list[dict], 
+                           job_type:str=ValidJobTypes.ER_DIAGRAM.value, job_status:str=ValidJobStatus.SUBMITTED.value) -> str:
+        """
+        Creates a new job record for ER diagram processing.
+        Passes in the job_id as the parent_id, job_parameters as a list of features, classes and descriptions created and job_type as 'er_diagram'.
+        args:  
+            parent_id (str): The parent job ID.
+            class_diagrams (list[dict]): The class diagrams to use.
+            job_type (str): The job type. Default is 'er_diagram'.
+            job_status (str): The job status. Default is 'Submitted'.
+        returns:
+            str: The job ID of the new job record.
+        """
+        
+        logger.debug(f"Creating next job record for ER diagram processing")
+        
+        # Initialize empty lists to collect the aggregated values
+        features = []
+        classes = []
+        descriptions = []
+            
+        # Iterate over self.class_diagrams and collect values for each key
+        for diagram in class_diagrams:
+            if not diagram.get('is_audited'):
+                # only retrieve audited diagrams
+                continue
+            
+            if 'feature' in diagram:
+                features.extend(diagram['feature'])
+            if 'classes' in diagram:
+                classes.extend(diagram['classes'])
+            if 'description' in diagram:
+                descriptions.append(diagram['description'])
+            
+            job_parameters = {
+                'features': features,
+                'classes': classes,
+                'descriptions': descriptions
+            }
+            
+        logger.debug(f"Job parameters for ER diagram processing: {job_parameters}")
+        
+        # Create a new job record with parent_id as the job_id, with status as 'Submitted' and type as 'er_diagram'
+        job = self.create_new_job(parent_job_id=parent_id, job_parameters=job_parameters, 
+                                  job_type=job_type, job_status=job_status)
+        return job.job_id

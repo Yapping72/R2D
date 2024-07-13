@@ -85,17 +85,6 @@ class Job(models.Model):
             self.parent_job = None  # Ensures that the job is considered a parent job
         super(Job, self).save(*args, **kwargs)
         
-    def get_job_type_display(self):
-        """
-        Returns human readable job types:
-        user_story -> User Story
-        class_diagram -> Class Diagram
-        er_diagram -> ER Diagram
-        sequence_diagram -> Sequence Diagram
-        state_diagram -> State Diagram
-        """
-        return dict(self.JOB_TYPES).get(self.job_type, self.job_type)
-    
     def is_parent_job(self):
         """
         Check if the job is a parent job.

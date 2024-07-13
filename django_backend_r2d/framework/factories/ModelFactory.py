@@ -24,7 +24,7 @@ class ModelFactory(BaseModelFactory):
                 
             # Convert model_name to enum if it's a string
             if isinstance(model_name, str):
-                model_name_enum = OpenAIModels[model_name.upper().replace("-", "_")]
+                model_name_enum = OpenAIModels[model_name.upper().replace("-", "_").replace(".", "_")]
             else:
                 model_name_enum = model_name
             
@@ -37,7 +37,7 @@ class ModelFactory(BaseModelFactory):
             else:
                 raise ModelNotFoundException(f"No valid model found for {model_name}.")
         except (ModelAPIKeyError, ModelNotFoundException, ModelProviderNotFoundException, ValueError, AttributeError, KeyError) as e:
-            raise ModelInitializationError(f"Model could not be initialized. {e}")
+            raise ModelInitializationError(f"Model could not be initialized. {str(e)}")
 
     @staticmethod
     def _get_api_key(api_key_id:str):

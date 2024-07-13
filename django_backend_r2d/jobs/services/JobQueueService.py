@@ -64,7 +64,7 @@ class JobQueueService(JobQueueInterface):
             logger.error(f"Unexpected error removing job from queue: {e}")
             raise RemoveFromJobQueueException("Unexpected error: " + str(e))
 
-    def update_status(self, job_id:str, status:str):
+    def update_status(self, job_id:str, status:str, consumer:str='None'):
         """
         Updates status of a job in job queue
         
@@ -75,13 +75,14 @@ class JobQueueService(JobQueueInterface):
         raises:
             UpdateJobQueueException if an error occurs.
         """
-        data = {'job_id': job_id, 'job_status': status}
-
+        data = {'job_id': job_id, 'job_status': status, 'consumer': consumer}
+        
         try:
             serializer = UpdateJobQueueStatusSerializer(data=data)
             if serializer.is_valid():
                 job_queue = JobQueue.objects.get(job_id=job_id)
                 job_queue.status = serializer.validated_data['job_status']
+                job_queue.consumer = serializer.validated_data['consumer']  
                 job_queue.save()
             else:
                 raise ValidationError(serializer.errors)

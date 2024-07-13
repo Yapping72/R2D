@@ -4,11 +4,15 @@ from jobs.interfaces.JobQueueInterface import JobQueueInterface
 from jobs.interfaces.JobServiceInterface import JobServiceInterface
 from jobs.services.JobService import JobService
 from jobs.services.JobQueueService import JobQueueService
+from jobs.services.JobExceptions import JobUpdateException, JobNotFoundException, InvalidJobStatus, UpdateJobQueueException, JobCreationException
 from jobs.serializers.UpdateJobStatusSerializer import UpdateJobStatusSerializer
-from jobs.services.JobExceptions import JobUpdateException, JobNotFoundException, InvalidJobStatus, UpdateJobQueueException
+from jobs.models import Job
 from jobs.constants import ValidJobStatus
-
+from uuid import uuid4
 from framework.consumers.BaseConsumerExceptions import BaseConsumerException, BaseConsumerInitializationException
+
+from django.contrib.auth import get_user_model
+User = get_user_model() # Use custom User model instead of Django default user model
 
 import logging
 logger = logging.getLogger('application_logging')
@@ -30,15 +34,24 @@ class BaseConsumer(ABC):
     raises:
         BaseConsumerException: if error encountered while updating the job status or job queue status.
     """
-    def __init__(self, consumer_name: str, job_service:JobServiceInterface = JobService(), job_queue_service:JobQueueInterface = JobQueueService()):
+    def __init__(self, consumer_name: str, job_service:JobServiceInterface = JobService(), 
+                 job_queue_service:JobQueueInterface = JobQueueService()):
         # Defines the list of valid consumers
-        
-        self.valid_consumers = ["UserStoryConsumer", "ClassDiagramConsumer", "ERDiagramConsumer"]
+        """
+        args:
+            consumer_name (str): The name of the consumer. Valid consumers are UserStoryConsumer, ClassDiagramConsumer, ERDiagramConsumer, SequenceDiagramConsumer, StateDiagramConsumer.
+            job_service (JobServiceInterface): The job service to use. Uses JobService by default.
+            job_queue_service (JobQueueInterface): The job queue service to use. Uses JobQueueService by default.
+        raises:
+            BaseConsumerInitializationException: if invalid job service or job queue service provided.
+            BaseConsumerInitializationException: if invalid consumer name provided.
+        """
+        self.valid_consumers = ["UserStoryConsumer", "ClassDiagramConsumer", "ERDiagramConsumer", "SequenceDiagramConsumer", "StateDiagramConsumer"]
         if not isinstance(job_service, JobServiceInterface) or not isinstance(job_queue_service, JobQueueInterface):
             raise BaseConsumerInitializationException("Invalid job service or job queue service provided.")
         
         if consumer_name not in self.valid_consumers:
-            raise BaseConsumerInitializationException("{consumer_name} is not a valid consumer.")
+            raise BaseConsumerInitializationException(f"{consumer_name} is not a valid consumer.")
         
         self.consumer_name = consumer_name
         self.job_service = job_service
@@ -49,11 +62,74 @@ class BaseConsumer(ABC):
         """
         Process a record and return the result.
         
-        :param record: The record to process
-        :return: The result of processing the record
+        args:
+            record (dict): The record to process
+        returns: 
+            The result of processing the record
         """
         pass
     
+    @abstractmethod
+    def create_next_record(self) -> Job:
+        """
+        Create the next record to process.
+        Concrete classes should implement this method to create the next record to process. 
+        Concrete classes should invoke the create_new_job method to create a new job record.
+        """
+        pass 
+
+    def create_new_job(self, parent_job_id: str, job_parameters:dict, job_type:str, job_status:str) -> Job:
+        """
+        Creates a new job record with parent_id as the job_id, status as 'Submitted' and the given job type.
+        Stores the newly created job record in the Jobs table, a corresponding JobQueue record will be created via Signals.
+        Concrete classes should invoke this method in their create_next_record method.
+        If a job is successfully created with status submitted, the parent_job's status will be set to 'Processing'.
+        
+        args:
+            parent_job_id (str): The job ID.
+            job_parameters (dict): The job parameters.
+            job_type (str): The job type.
+            job_status (str): The job status.
+        returns:
+            Job: The created job record.
+        """
+        
+        # Retrieve user and model for the associated parent job
+        parent_job = self.job_service.get_job_by_id(parent_job_id)
+        logger.debug(f"fetched parent job {parent_job} for creating new job")
+       
+        # Extract necessary fields from serialized data
+        user_id = parent_job['user']
+        model_name = parent_job['model_name']
+
+        # Retrieve the actual user instance
+        user = User.objects.get(id=user_id)
+        
+        new_job_data = {
+            'job_id': str(uuid4()),
+            'user': user, 
+            'parent_job': parent_job_id, # Set the newly created job's parent_id to the parent job_id provided
+            'parameters': job_parameters,
+            'job_type': job_type,
+            'job_status': job_status,
+            'job_details': f"{job_type} job created by {parent_job_id}",
+            'model_name': model_name
+        }
+        try:
+            # Try to save the a new job record
+            job = self.job_service.save_job(user, new_job_data)
+            # If a child job is successfully created with status submitted, set the parent_job's status to 'Processing'
+            if job is not None:
+                # Update the parent job status to Processing
+                self.update_job_status(parent_job_id, ValidJobStatus.PROCESSING.value)
+            return job
+        except JobCreationException as e:
+            raise BaseConsumerException(f"Error creating new job record for {job_type}: {str(e)}")
+        except BaseConsumerException as e:  
+            raise BaseConsumerException(f"Failed to update parent job to processing {parent_job_id}: {str(e)}")
+        except Exception as e:
+            raise BaseConsumerException(f"Unhandled exception occurred while trying to create new job record: {str(e)}")
+     
     def update_job_status(self, job_id:str, job_status:str):
         """
         Update the status of a job.
@@ -67,6 +143,7 @@ class BaseConsumer(ABC):
         """ 
         try: 
             self.job_service.update_status_by_id(job_id, job_status)
+            logger.debug(f"Job status for job {job_id} updated to {job_status}")
         except (JobUpdateException, JobNotFoundException, InvalidJobStatus) as e:
             logger.error(f"Error updating job status: {str(e)}")
             raise BaseConsumerException(f"Error updating job status: {str(e)}")
@@ -86,7 +163,8 @@ class BaseConsumer(ABC):
         valid job_status: Submitted, Processing, Error Failed to Process, Job Aborted, Completed
         """
         try:
-            self.job_queue_service.update_status(job_id, job_status)
+            self.job_queue_service.update_status(job_id=job_id, status=job_status, consumer=self.consumer_name)
+            logger.debug(f"Job queue status for job {job_id} updated to {job_status} for consumer {self.consumer_name}")
         except UpdateJobQueueException as e:
             logger.error(f"Error updating job queue status: {str(e)}")
             raise BaseConsumerException(f"Error updating job queue status: {str(e)}")
@@ -120,3 +198,4 @@ class BaseConsumer(ABC):
             raise BaseConsumerException(f"Failed to update job queue status to Error Failed to Process: {str(e)}")
         except Exception as e:
             raise BaseConsumerException(f"Unhandled exception occurred while trying to update job queue status to Error Failed to Process: {str(e)}")
+    

@@ -26,8 +26,8 @@ class JobSaveView(APIView):
         """
         user = request.user
         request_payload = request.data["payload"]
-        logger.debug(user, request_payload )
-        job = job_service.save_job(user, request_payload )
+        logger.debug(user, request_payload)
+        job = job_service.save_job(user, request_payload)
         
         return SyncAPIReturnObject(
             data={'job_id': job.job_id},
