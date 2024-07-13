@@ -49,6 +49,7 @@ class BaseChainInput(ABC):
         Returns the job ID.
         """
         return self.job_id
+    
     def get_job_parameters(self) -> dict:
         """
         Returns the job parameters.

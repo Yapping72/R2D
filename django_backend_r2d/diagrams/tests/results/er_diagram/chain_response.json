@@ -1,0 +1,38 @@
+{
+  "analysis_results": {
+    "diagrams": [
+      {
+        "feature": ["Logging Framework"],
+        "diagram": "erDiagram\nUserLogger {\n    int user_id PK\n    datetime timestamp\n    string action_details\n}\nLogQuery {\n    int query_id PK\n    string request\n}\nERD_SIT_CAPSTONE_YP {\n    // Entity for monitoring logs in AWS CloudWatch\n}",
+        "description": "Entities and relationships for Logging Framework:\n\nUserLogger: Represents logging user actions with user ID, timestamp, and action details.\nLogQuery: Represents querying and retrieving logs related to a request.\nERD_SIT_CAPSTONE_YP: Entity recommended for monitoring logs in AWS CloudWatch.",
+        "entities": ["UserLogger", "LogQuery", "ERD_SIT_CAPSTONE_YP"]
+      },
+      {
+        "feature": ["Application Logging"],
+        "diagram": "erDiagram\n",
+        "description": "No classes provided for Application Logging.",
+        "entities": []
+      },
+      {
+        "feature": ["Authorization Framework"],
+        "diagram": "erDiagram\nGmailLogin {\n    int user_id PK\n}\nCompanyEmailLogin {\n    int admin_id PK\n}\nJWT {\n    string token_id PK\n}",
+        "description": "Entities and relationships for Authorization Framework:\n\nGmailLogin: Represents allowing users to login using Gmail account.\nCompanyEmailLogin: Represents allowing IT administrators to login using company email account.\nJWT: Represents the token ID for authorization.",
+        "entities": ["GmailLogin", "CompanyEmailLogin", "JWT"]
+      }
+    ],
+    "is_audited": false,
+    "model_name": "gpt-3.5-turbo"
+  },
+  "audited_results": {
+    "diagrams": [
+      {
+        "feature": ["Logging Framework"],
+        "diagram": "erDiagram\nUserLogger {\n    int user_id PK\n    datetime timestamp\n    string action_details\n}\nLogQuery {\n    int query_id PK\n    string request\n}\nERD_SIT_CAPSTONE_YP {\n    // Entity for monitoring logs in AWS CloudWatch\n}",
+        "description": "Entities and relationships for Logging Framework:\n\nUserLogger: Represents logging user actions with user ID, timestamp, and action details.\nLogQuery: Represents querying and retrieving logs related to a request.\nERD_SIT_CAPSTONE_YP: Entity recommended for monitoring logs in AWS CloudWatch.",
+        "entities": ["UserLogger", "LogQuery", "ERD_SIT_CAPSTONE_YP"]
+      }
+    ],
+    "is_audited": true,
+    "model_name": "gpt-3.5-turbo"
+  }
+}

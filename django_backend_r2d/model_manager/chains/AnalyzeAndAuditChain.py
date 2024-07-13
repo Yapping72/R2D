@@ -65,7 +65,6 @@ class AnalyzeAndAuditChain(BaseChain):
             logger.error(f"Error in AnalyzeAndAuditChain: {str(e)}")
             raise AnalyzeAndAuditChainException(f"Unhandled Error while auditing response - {str(e)}")
 
-
     def append_additional_information(self, results:dict) -> dict:
         """
         Appends additional information to the results dictionary
