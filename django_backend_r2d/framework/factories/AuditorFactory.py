@@ -25,7 +25,7 @@ class AuditorFactory(BaseAuditorFactory):
                 
             # Convert model_name to enum if it's a string (Added for backward compatibility)
             if isinstance(model_name, str):
-                model_name_enum = OpenAIModels[model_name.upper().replace("-", "_")]
+                model_name_enum = OpenAIModels[model_name.upper().replace("-", "_").replace(".","_")]
             else:
                 model_name_enum = model_name
                 

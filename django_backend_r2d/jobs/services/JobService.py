@@ -16,7 +16,7 @@ class JobService(JobServiceInterface):
     JobService class that implements the JobServiceInterface.
     Provides methods to create, update and retrieve jobs.
     """
-    def save_job(self, user, job_data:dict):
+    def save_job(self, user, job_data:dict) -> Job:
         """
         Saves a job for the authenticated user.
         Creates a new job if job_id does not already exist, else updates the existing job.
@@ -46,10 +46,12 @@ class JobService(JobServiceInterface):
             if serializer.is_valid():
                 # Save the job if the serializer is valid
                 job = serializer.save()
+                logger.debug(f"Job record Successfully saved for user {user.id}")
                 return job
-            else:
-                logger.error(f"Invalid job data - {serializer.errors} for job_id {job_id} for user {user.id}")
-                raise ValidationError(serializer.errors)
+            
+            # Log and raise validation error if serializer is invalid
+            logger.error(f"Failed to save job due to invalid job data - {serializer.errors} for job_id {job_id} for user {user.id}")
+            raise ValidationError(serializer.errors)
             
         except ValidationError as e:
             logger.error(f"Validation error while saving job for user {user.id}: {e}")
@@ -159,7 +161,7 @@ class JobService(JobServiceInterface):
             job = Job.objects.get(job_id = job_id)
             return JobSerializer(job).data # Serialize the job object
         except Job.DoesNotExist:
-            raise JobNotFoundException(f"Job with id {validated_data['job_id']} does not exist.")
+            raise JobNotFoundException(f"Job with {job_id} does not exist.")
 
     def update_status_by_id(self, job_id:str, job_status:str):
         """

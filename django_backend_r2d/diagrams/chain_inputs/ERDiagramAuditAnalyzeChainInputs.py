@@ -36,7 +36,7 @@ class ERDiagramAuditAnalyzeChainInputs(BaseChainInput):
                  model_response_schema: dict = MERMAID_ER_DIAGRAM_SCHEMA,
                  auditor_response_schema: dict = MERMAID_ER_DIAGRAM_SCHEMA):
         """
-        Initialize the chain inputs for the class diagram chain.
+        Initialize the chain inputs for the ER diagram analysis and audit.
         """
         super().__init__(job_id=job_id,
                          model_prompt_template=model_prompt_template,

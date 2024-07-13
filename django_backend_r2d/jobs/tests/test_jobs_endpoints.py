@@ -22,7 +22,7 @@ class JobAPIEndpointTests(APITestCase):
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         cls.job_status_processing = JobStatus.objects.get(name='Processing')
         cls.job_status_draft = JobStatus.objects.get(name='Draft')
-        cls.model = ModelName.objects.get(name='gpt-4-turbo')
+        cls.model = ModelName.objects.get(name='gpt-3.5-turbo')
         # Use inspect to get all methods of the class
         methods = inspect.getmembers(cls, predicate=inspect.isfunction)
         # Filter methods to only include those that start with 'test'
@@ -57,7 +57,7 @@ class JobAPIEndpointTests(APITestCase):
             "job_status": "Draft",
             "job_details": "Failed to submit job",
             "job_type": "class_diagram",
-            "model_name": "gpt-4-turbo",
+            "model_name": "gpt-3.5-turbo",
             "tokens": 248,
             "parameters": {
                 "features": [
@@ -157,8 +157,8 @@ class JobAPIEndpointTests(APITestCase):
             tokens=100,
             parameters={},
             model= self.model
-
         )
+        
         job2 = Job.objects.create(
             job_id=uuid.uuid4(),
             user=self.user,

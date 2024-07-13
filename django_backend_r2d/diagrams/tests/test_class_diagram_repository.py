@@ -9,7 +9,7 @@ from uuid import uuid4
 from model_manager.models import ModelName
 from diagrams.models import ClassDiagram    
 from diagrams.serializers.ClassDiagramSerializer import ClassDiagramSerializer
-from diagrams.services.ClassDiagramRepository import ClassDiagramRepository
+from diagrams.repository.ClassDiagramRepository import ClassDiagramRepository
 from diagrams.services.DiagramExceptions import *
 import logging 
 

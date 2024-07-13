@@ -5,6 +5,7 @@ from diagrams.chain_inputs.ClassDiagramAuditAnalyzeChainInputs import ClassDiagr
 from diagrams.interfaces.BaseDiagramService import BaseDiagramService
 from diagrams.serializers.UMLDiagramSerializer import UMLDiagramSerializer
 from jobs.services.JobService import JobService
+from jobs.services.JobExceptions import JobNotFoundException
 
 import logging 
 # Initialize the logger
@@ -21,6 +22,8 @@ class ClassDiagramService(BaseDiagramService):
         model_name (Enum): The model name to use.
         auditor_name (Enum): The auditor name to use.
         job_id (str): The job ID to use.
+        
+    override the retrieve_job_parameters, retrieve_analysis_context and retrieve_audit_criteria functions to customize the ER diagram chain.
     """
     def __init__(self, model_provider:ModelProvider, model_name: Enum, auditor_name:Enum, job_id:str):
         # Retrieve the job parameters, analysis context and audit criteria
@@ -31,30 +34,10 @@ class ClassDiagramService(BaseDiagramService):
         # Initialize the chain input, prompt builder and serializer class
         chain_input = ClassDiagramAuditAnalyzeChainInputs(job_id=job_id, job_parameters=job_parameters, analysis_context=analysis_context, audit_criteria=audit_criteria)
         prompt_builder = AnalyzeAndAuditChainPromptBuilder() # Prompt builder for the Analyze and Audit chain
-        serializer_class = UMLDiagramSerializer # Pass the serializer class to use
+        serializer_class = UMLDiagramSerializer # Pass the primary serializer class to use
     
         super().__init__(model_provider, model_name, auditor_name, chain_input, prompt_builder, serializer_class)
-    
-    def retrieve_job_parameters(self, job_id) -> dict:
-        """
-        Retrieves the job parameters for the class diagram chain.
-        args:
-            job_id (str): The job ID to use.
-        returns:
-            dict: The job parameters for the class diagram chain.
-        """
-        if job_id is None:
-            raise ValidationError("job_id must be provided.")
-        try:
-            job_service = JobService()
-            job = job_service.get_job_by_id(job_id)
-            job_parameters = job.get('parameters', {})
-            logger.debug(f"Retrieved job parameters for job_id: {job_id}: {job_parameters}")
-            return job_parameters
-        except JobNotFoundException as e:
-            logger.error(f"Failed to retrieve job parameters for job_id: {job_id}: {e}")
-            return {}
-    
+
     def retrieve_analysis_context(self, job_id) -> dict:
         """
         Retrieves the analysis context for the class diagram chain.
