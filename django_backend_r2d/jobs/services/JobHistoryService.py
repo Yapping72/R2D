@@ -25,7 +25,7 @@ class JobHistoryService(JobHistoryInterface):
         try:
             job_history = JobHistory.objects.filter(user=user).order_by('-created_timestamp')
             if not job_history.exists():
-                logger.info(f"No job history found for user {user}")
+                logger.debug(f"No job history found for user {user}")
                 return []
             logger.debug(f"Retrieved {job_history.count()} job history entries for user {user}")
             # Serialize the job history data
@@ -47,7 +47,7 @@ class JobHistoryService(JobHistoryInterface):
                 current_status=current_status,
                 job_type=job.job_type
             )
-            logger.info(f"Job history logged for Job ID {job.job_id} from {previous_status} to {current_status}")
+            logger.debug(f"Job history logged for Job ID {job.job_id} from {previous_status} to {current_status}")
         except Exception as e:
             logger.error(f"Failed to log job history for Job ID {job.job_id}: {str(e)}")
             # Do not raise exception so that the job is not affected by history logging failure
