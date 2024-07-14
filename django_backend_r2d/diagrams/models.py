@@ -76,8 +76,8 @@ class SequenceDiagram(models.Model):
     last_updated_timestamp: datetime - The timestamp when the sequence diagram was last updated.
     """
     
-    job = models.ForeignKey('Job', on_delete=models.CASCADE)
-    model = models.ForeignKey('ModelName', on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    model = models.ForeignKey(ModelName, on_delete=models.CASCADE)  # Correct field name
     feature = models.CharField(max_length=255)
     diagram = models.TextField()
     description = models.TextField()
