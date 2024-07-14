@@ -115,13 +115,21 @@ class JobQueue(models.Model):
 class JobHistory(models.Model):
     """
     JobHistory table will store the history of job status changes.
-    Used for tracking the status changes of a job. 
+    
+    attributes:
+        job: Job object that is being updated
+        user: User who updated the job
+        previous_status: Previous status of the job
+        current_status: Current status of the job
+        job_type: Type of the job e.g., user_story, class_diagram, er_diagram, sequence_diagram, state_diagram
+        created_timestamp: Timestamp when the history entry was created
+        last_updated_timestamp: Timestamp when the history entry was last
     """
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    previous_status = models.ForeignKey(JobStatus, related_name='previous_status_histories', to_field='code', on_delete=models.CASCADE)
+    previous_status = models.ForeignKey(JobStatus, related_name='previous_status_histories', to_field='code', on_delete=models.CASCADE, null=True, blank=True)
     current_status = models.ForeignKey(JobStatus, related_name='current_status_histories', to_field='code', on_delete=models.CASCADE) 
-    reason = models.TextField(max_length=100, default="Status changed by user.")
+    job_type = models.CharField(max_length=50)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)
 
