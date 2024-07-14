@@ -23,6 +23,11 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - APP_ENVIRONMENT=${APP_ENVIRONMENT}
+      - CLOUDWATCH_LOG_GROUP_NAME=${CLOUDWATCH_LOG_GROUP_NAME}
+      - CLOUDWATCH_LOG_STREAM_NAME=${CLOUDWATCH_LOG_STREAM_NAME}
+
     entrypoint: /app/entrypoint.sh  # bash script will create the database if it doesnt exists
     container_name: django_backend_r2d
     volumes:
@@ -73,6 +78,10 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - APP_ENVIRONMENT=${APP_ENVIRONMENT}
+      - CLOUDWATCH_LOG_GROUP_NAME=${CLOUDWATCH_LOG_GROUP_NAME}
+      - CLOUDWATCH_LOG_STREAM_NAME=${CLOUDWATCH_LOG_STREAM_NAME}
     volumes:
       - ./django_backend_r2d:/app
 

@@ -17,6 +17,14 @@ jobs:
       POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
       POSTGRES_R2D_HOST: ${{ secrets.POSTGRES_R2D_HOST }}
       R2D_OPENAI_API_TOKEN: ${{ secrets.R2D_OPENAI_API_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+      APP_ENVIRONMENT: ${{ secrets.APP_ENVIRONMENT }}
+      CLOUDWATCH_LOG_GROUP_NAME: ${{ secrets.CLOUDWATCH_LOG_GROUP_NAME }}
+      CLOUDWATCH_LOG_STREAM_NAME: ${{ secrets.CLOUDWATCH_LOG_STREAM_NAME }}
+      
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2

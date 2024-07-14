@@ -19,7 +19,6 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-
-
 setup_logging() # Set up the application logging framework for entire django project 
 logger = logging.getLogger('application_logging')
+# logger.debug("Celery application initialized and ready to serve tasks.")
