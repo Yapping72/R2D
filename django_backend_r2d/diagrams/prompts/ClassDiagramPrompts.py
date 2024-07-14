@@ -28,8 +28,11 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                     - Open/Closed Principle
                     - Liskov Substitution Principle
                     - Interface Segregation Principle
-                8. All relationships MUST BE labelled
-                9. All classes should have accompanying controller or interface or views classes where necessary.
+                8. All relationships MUST BE labelled.
+                9. For each main class, ensure to create associated controller, interface, or view classes as needed:
+                    - Controller classes should handle user input and interact with the main classes.
+                    - Interface classes should define contracts that the main classes implement.
+                    - View classes should represent the user interface components, where applicable.
 
                 Syntax for defining classes and attributes:
                 classDiagram
@@ -83,9 +86,12 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                     - Open/Closed Principle
                     - Liskov Substitution Principle
                     - Interface Segregation Principle
-                8. All relationships MUST BE labelled
-                9. All classes should have accompanying controller or interface or views classes where necessary.
-
+                8. All relationships MUST BE labelled.
+                9. For each main class, ensure to create associated controller, interface, or view classes as needed:
+                    - Controller classes should handle user input and interact with the main classes.
+                    - Interface classes should define contracts that the main classes implement.
+                    - View classes should represent the user interface components, where applicable.
+                    
                 Syntax for defining classes and attributes:
                 classDiagram
                 class Square~Shape~{{
@@ -144,11 +150,14 @@ class AuditClassDiagramPromptTemplate(BasePromptTemplate):
             6. Check that the Mermaid syntax is used correctly and the diagrams are well-structured and easy to understand.
             7. Make sure that any additional context or specific instructions provided are incorporated correctly.
             8. Adapt software design principles and best practices to improve the diagrams if necessary.
-            9. Each diagram has a description that explains its purpose and the user story ID (Do not modify this user story ID) it corresponds to.
+            9. Each diagram should have a description that explains its purpose and the user story ID (Do not modify this user story ID) it corresponds to.
             10. Output an improved version of each class diagram, ensuring the original structure is preserved.
-            11. All relationships MUST BE labelled
-            12. All classes should have accompanying controller or interface or views classes where necessary.
-            
+            11. All relationships MUST BE labelled.
+            12. Ensure all classes have accompanying controller, interface, or view classes where necessary:
+                - Controller classes should handle user input and interact with the main classes.
+                - Interface classes should define contracts that the main classes implement.
+                - View classes should represent the user interface components, where applicable.
+
             Here are the audit criteria that must be met:
             {context}
 

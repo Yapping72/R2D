@@ -1,6 +1,3 @@
-# A response schema is a dictionary that defines the structure of the response that is expected from the model.
-
-# Response schema for the SequenceDiagramService
 MERMAID_SEQUENCE_DIAGRAM_SCHEMA = {
     "title": "SequenceDiagramResponse",
     "description": "Response containing sequence diagrams grouped by features.",
