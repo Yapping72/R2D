@@ -14,6 +14,7 @@ class ClassDiagram(models.Model):
     diagram: str - The class diagram in text format
     description: str - The description of the class diagram
     classes: list - The classes in the diagram
+    helper_classes: list - The views, controllers and/or interface classes in the diagram
     is_audited: bool - Determines if the diagram has been audited
     created_timestamp: datetime - The timestamp when the class diagram was created
     last_updated_timestamp: datetime - The timestamp when the class diagram was last updated
@@ -24,6 +25,7 @@ class ClassDiagram(models.Model):
     diagram = models.TextField()
     description = models.TextField()
     classes = models.JSONField()  
+    helper_classes = models.JSONField()
     is_audited = models.BooleanField(default=False) # Determines if the diagram has been audited
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)

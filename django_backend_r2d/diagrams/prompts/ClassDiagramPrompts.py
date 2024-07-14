@@ -29,7 +29,8 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                     - Liskov Substitution Principle
                     - Interface Segregation Principle
                 8. All relationships MUST BE labelled
-                
+                9. All classes should have accompanying controller or interface or views classes where necessary.
+
                 Syntax for defining classes and attributes:
                 classDiagram
                 class Square~Shape~{{
@@ -83,7 +84,8 @@ class ClassDiagramPromptTemplate(BasePromptTemplate):
                     - Liskov Substitution Principle
                     - Interface Segregation Principle
                 8. All relationships MUST BE labelled
-                
+                9. All classes should have accompanying controller or interface or views classes where necessary.
+
                 Syntax for defining classes and attributes:
                 classDiagram
                 class Square~Shape~{{
@@ -145,6 +147,7 @@ class AuditClassDiagramPromptTemplate(BasePromptTemplate):
             9. Each diagram has a description that explains its purpose and the user story ID (Do not modify this user story ID) it corresponds to.
             10. Output an improved version of each class diagram, ensuring the original structure is preserved.
             11. All relationships MUST BE labelled
+            12. All classes should have accompanying controller or interface or views classes where necessary.
             
             Here are the audit criteria that must be met:
             {context}
