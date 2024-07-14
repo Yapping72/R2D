@@ -10,7 +10,7 @@ from jobs.services.JobExceptions import *
 from model_manager.services.ModelExceptions import *
 from diagrams.services.DiagramExceptions import *
 from diagrams.services.DiagramConsumerExceptions import *
-from notifications.services.NotificationExceptions import *
+from notification.services.NotificationExceptions import *
 from rest_framework.exceptions import ValidationError
 
 import logging
