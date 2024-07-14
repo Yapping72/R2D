@@ -28,8 +28,9 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
             4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
             5. Use mermaid syntax to express the ER diagrams.
             6. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
-            7. Each entity should have a description that explains what the entity represents and its purpose.
+            7. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
             8. Tables should be normalized and relationships should be well-defined.
+            9. Ensure the entities and attributes are named meaningfully and consistently.
 
             Example of Mermaid Syntax for ER Diagrams:
             erDiagram
@@ -73,9 +74,10 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
             4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
             5. Use mermaid syntax to express the ER diagrams.
             6. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
-            7. Each entity should have a description that explains what the entity represents and its purpose.
+            7. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
             8. Tables should be normalized and relationships should be well-defined.
-            
+            9. Ensure the entities and attributes are named meaningfully and consistently.
+  
             Example of Mermaid Syntax for ER Diagrams:
             erDiagram
             ENTITY_NAME {{
@@ -124,7 +126,7 @@ class AuditERDiagramPromptTemplate(BasePromptTemplate):
         5. Check that the Mermaid syntax is used correctly and the diagram is well-structured and easy to understand.
         6. Make sure that any additional context or specific instructions provided are incorporated correctly.
         7. Adapt database design principles and best practices to improve the diagram if necessary.
-        8. Ensure that each entity has a description that explains its purpose and the user story ID it corresponds to.
+        8. Ensure that each entity has a comprehensive description that explains its purpose and the user story or feature it corresponds to.
         9. Tables should be normalized and relationships should be well-defined.
         10. All accompanying descriptions must be comprehensive and add value in understanding the diagram.
 
