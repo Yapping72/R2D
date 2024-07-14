@@ -43,6 +43,7 @@ class SaveClassDiagramsTests(TestCase):
             "diagram": "classDiagram\nclass Logger {\n    +logAction(userID: String, actionDetails: String)\n    +logAPICall(requestPayload: String, responsePayload: String, status: int)\n}\n\nclass CloudWatch {\n    +sendLog(logData: String)\n}\n\nclass SIT_CAPSTONE_YP {\n    +monitorLogs(logData: String)\n}\n\nLogger --> CloudWatch : Association\nLogger --> SIT_CAPSTONE_YP : Association\n\nclass UserActionLog {\n    -timestamp: Date\n    -userID: String\n    -actionDetails: String\n    +getTimestamp(): Date\n    +getUserID(): String\n    +getActionDetails(): String\n}\n\nclass APICallLog {\n    -timestamp: Date\n    -requestPayload: String\n    -responsePayload: String\n    -status: int\n    +getTimestamp(): Date\n    +getRequestPayload(): String\n    +getResponsePayload(): String\n    +getStatus(): int\n}\n\nLogger --> UserActionLog : Composition\nLogger --> APICallLog : Composition",
             "description": "The Logger class is responsible for logging user actions and API calls. It associates with CloudWatch and SIT_CAPSTONE_YP for sending and monitoring logs respectively. UserActionLog and APICallLog are composed within Logger to store log details.",
             "classes": ["Logger", "CloudWatch", "SIT_CAPSTONE_YP", "UserActionLog", "APICallLog"],
+            "helper_classes": ["LogBack"],
             "is_audited": False,
             "model_name": "gpt-4-turbo"
         }
@@ -100,13 +101,15 @@ class SaveClassDiagramsTests(TestCase):
                 "feature": ["Logging Framework", "Application Logging"],
                 "diagram": "classDiagram\nclass Logger {\n    +logAction(userID: String, actionDetails: String)\n    +logAPICall(requestPayload: String, responsePayload: String, status: int)\n}\n\nclass CloudWatch {\n    +sendLog(logData: String)\n}\n\nclass SIT_CAPSTONE_YP {\n    +monitorLogs(logData: String)\n}\n\nLogger --> CloudWatch : Association\nLogger --> SIT_CAPSTONE_YP : Association\n\nclass UserActionLog {\n    -timestamp: Date\n    -userID: String\n    -actionDetails: String\n    +getTimestamp(): Date\n    +getUserID(): String\n    +getActionDetails(): String\n}\n\nclass APICallLog {\n    -timestamp: Date\n    -requestPayload: String\n    -responsePayload: String\n    -status: int\n    +getTimestamp(): Date\n    +getRequestPayload(): String\n    +getResponsePayload(): String\n    +getStatus(): int\n}\n\nLogger --> UserActionLog : Composition\nLogger --> APICallLog : Composition",
                 "description": "The Logger class is responsible for logging user actions and API calls. It associates with CloudWatch and SIT_CAPSTONE_YP for sending and monitoring logs respectively. UserActionLog and APICallLog are composed within Logger to store log details.",
-                "classes": ["Logger", "CloudWatch", "SIT_CAPSTONE_YP", "UserActionLog", "APICallLog"]
+                "classes": ["Logger", "CloudWatch", "SIT_CAPSTONE_YP", "UserActionLog", "APICallLog"],
+                "helper_classes": ["LogBack"]
                 },
                 {
                 "feature": ["Authorization Framework", "Application Logging"],
                 "diagram": "classDiagram\nclass User {\n    -email: String\n    -failedLoginAttempts: int\n    +loginWithGoogle(email: String)\n    +incrementFailedLoginAttempts()\n    +resetFailedLoginAttempts()\n    +disableAccount()\n}\n\nclass GoogleOAuth2 {\n    +authenticate(email: String)\n}\n\nclass ITAdministrator {\n    +reenableAccount(user: User)\n}\n\nUser --> GoogleOAuth2 : Association\nUser --> ITAdministrator : Association",
                 "description": "The User class handles login functionalities and tracks failed login attempts. It associates with GoogleOAuth2 for authentication and ITAdministrator for re-enabling disabled accounts.",
-                "classes": ["User", "GoogleOAuth2", "ITAdministrator"]
+                "classes": ["User", "GoogleOAuth2", "ITAdministrator"],
+                "helper_classes": ["UserView", "UserInterface", "UserRepository"]
                 }
             ],
             "is_audited": False,
@@ -118,13 +121,15 @@ class SaveClassDiagramsTests(TestCase):
                 "feature": ["Logging Framework", "Application Logging"],
                 "diagram": "classDiagram\nclass Logger {\n    -logAction(userID: String, actionDetails: String)\n    -logAPICall(requestPayload: String, responsePayload: String, status: int)\n}\n\nclass CloudWatch {\n    -sendLog(logData: String)\n}\n\nclass SIT_CAPSTONE_YP {\n    -monitorLogs(logData: String)\n}\n\nclass UserActionLog {\n    -timestamp: Date\n    -userID: String\n    -actionDetails: String\n    +getTimestamp(): Date\n    +getUserID(): String\n    +getActionDetails(): String\n}\n\nclass APICallLog {\n    -timestamp: Date\n    -requestPayload: String\n    -responsePayload: String\n    -status: int\n    +getTimestamp(): Date\n    +getRequestPayload(): String\n    +getResponsePayload(): String\n    +getStatus(): int\n}\n\nLogger --|> CloudWatch : Association\nLogger --|> SIT_CAPSTONE_YP : Association\n\nLogger o-- UserActionLog : Composition\nLogger o-- APICallLog : Composition",
                 "description": "The Logger class is responsible for logging user actions and API calls. It associates with CloudWatch and SIT_CAPSTONE_YP for sending and monitoring logs respectively. UserActionLog and APICallLog are composed within Logger to store log details.",
-                "classes": ["Logger", "CloudWatch", "SIT_CAPSTONE_YP", "UserActionLog", "APICallLog"]
+                "classes": ["Logger", "CloudWatch", "SIT_CAPSTONE_YP", "UserActionLog", "APICallLog"],
+                "helper_classes": ["LogBack"]
                 },
                 {
                 "feature": ["Authorization Framework", "Application Logging"],
                 "diagram": "classDiagram\nclass User {\n    -email: String\n    -failedLoginAttempts: int\n    +loginWithGoogle(email: String)\n    +incrementFailedLoginAttempts()\n    +resetFailedLoginAttempts()\n    +disableAccount()\n}\n\nclass GoogleOAuth2 {\n    +authenticate(email: String)\n}\n\nclass ITAdministrator {\n    +reenableAccount(user: User)\n}\n\nUser --> GoogleOAuth2 : Association\nUser --> ITAdministrator : Association",
                 "description": "The User class handles login functionalities and tracks failed login attempts. It associates with GoogleOAuth2 for authentication and ITAdministrator for re-enabling disabled accounts.",
-                "classes": ["User", "GoogleOAuth2", "ITAdministrator"]
+                "classes": ["User", "GoogleOAuth2", "ITAdministrator"],
+                "helper_classes": ["UserView", "UserInterface", "UserRepository"]
                 }
             ],
             "is_audited": True,

@@ -12,13 +12,14 @@ class ClassDiagramSerializer(serializers.ModelSerializer):
         diagram: str - The mermaid representation of the class diagram.
         description: str - The description of the class diagram.
         classes: list - The classes of the class diagram.
+        helper_classes: list - The helper classes of the class diagram.
         is_audited: bool - Whether the class diagram has
     """
     model_name = serializers.CharField(write_only=True)  
     
     class Meta:
         model = ClassDiagram
-        fields = ['job', 'model_name', 'feature', 'diagram', 'description', 'classes', 'is_audited', 'created_timestamp', 'last_updated_timestamp']
+        fields = ['job', 'model_name', 'feature', 'diagram', 'description', "helper_classes",'classes', 'is_audited', 'created_timestamp', 'last_updated_timestamp']
 
     def create(self, validated_data):
         model_name = validated_data.pop('model_name')

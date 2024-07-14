@@ -79,7 +79,8 @@ class ClassDiagramConsumer(BaseConsumer):
         features = []
         classes = []
         descriptions = []
-            
+        helper_classes = []
+                    
         # Iterate over self.class_diagrams and collect values for each key
         for diagram in class_diagrams:
             if not diagram.get('is_audited'):
@@ -92,11 +93,14 @@ class ClassDiagramConsumer(BaseConsumer):
                 classes.extend(diagram['classes'])
             if 'description' in diagram:
                 descriptions.append(diagram['description'])
-            
+            if 'helper_classes' in diagram:
+                helper_classes.extend(diagram['helper_classes'])
+                
         job_parameters = {
             'features': list(set(features)),
             'classes': classes,
-            'descriptions': descriptions
+            'descriptions': descriptions,
+            'helper_classes': helper_classes
         }
             
         logger.debug(f"Job parameters for creating ER Diagram Jobs: {job_parameters}")

@@ -32,13 +32,21 @@ MERMAID_CLASS_DIAGRAM_SCHEMA = {
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "helper_classes": {
+                        "type": "array",
+                        "description": "The views, controllers and/or interface classes in the diagram",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 },
                 "required": [
                     "feature",
                     "diagram",
                     "description",
-                    "classes"
+                    "classes",
+                    "helper_classes"
                 ]
             }
         }

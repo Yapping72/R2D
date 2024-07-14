@@ -27,6 +27,7 @@ class ClassDiagramRepository:
         for model in chain_response:
             # Process analysis_results diagrams
             for diagram in chain_response[model]["diagrams"]:
+                logger.debug(f"Saving class diagram {diagram}.")
                 # Add the job_id and model_name to the diagram
                 diagram = {
                     "job": job_id,
@@ -35,6 +36,7 @@ class ClassDiagramRepository:
                     "diagram": diagram["diagram"],
                     "description": diagram["description"],
                     "classes": diagram["classes"],
+                    "helper_classes": diagram["helper_classes"], # Correct field name
                     "is_audited": chain_response[model].get("is_audited")
                 }
                 try:
