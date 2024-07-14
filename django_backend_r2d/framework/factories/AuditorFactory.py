@@ -16,7 +16,7 @@ class AuditorFactory(BaseAuditorFactory):
         Returns a model instance based on the provider and model name.
         @params: provider: ModelProvider or str
         @params: model_name: OpenAIModels or str
-        Raises ModelInitializationError if the model cannot be initialized.
+        Raises AuditorInitializationError if the model cannot be initialized.
         """
         try:
             # Convert provider and model_name to enums if they are strings (Added for backward compatibility)
