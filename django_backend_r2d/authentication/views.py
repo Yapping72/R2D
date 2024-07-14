@@ -29,7 +29,10 @@ from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from framework.utils.EmailHandler import EmailHandler
 
 import logging
+
 logger = logging.getLogger('application_logging')
+
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 

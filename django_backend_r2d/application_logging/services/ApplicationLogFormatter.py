@@ -8,6 +8,11 @@ class ApplicationLogFormatter(jsonlogger.JsonFormatter):
     """
     A custom log formatter that formats logging messages into a structured JSON format.
     
+    Usage: 
+        import logging
+        logger = logging.getLogger('application_logging')
+        logger.info("Message") 
+        logger.info("Message", extra={"key": "value"}) # To add custom fields to the log record
     Attributes:
         None explicitly declared beyond superclass.
 
@@ -29,7 +34,8 @@ class ApplicationLogFormatter(jsonlogger.JsonFormatter):
         # Define custom date format: YYYY-MM-DD HH:MM:SS followed by microseconds
         datefmt = "%Y-%m-%d %H:%M:%S.%f"
         return super().formatTime(record, datefmt=datefmt)[:-3]  # Removing the last three digits to exclude partial microseconds
-   
+
+    
     def add_fields(self, log_record, record, message_dict):
         """
         Add custom fields to the log record before it is output.
@@ -51,17 +57,18 @@ class ApplicationLogFormatter(jsonlogger.JsonFormatter):
         while frame:
             code = frame.f_code
             filename = code.co_filename
-            if 'logging' not in filename and 'jsonlogger' not in filename and __file__ not in filename:
+            function_name = code.co_name
+            # Skip frames related to logging, jsonlogger, celery, watchtower, and __init__
+            if 'logging' not in filename and 'jsonlogger' not in filename and 'celery' not in filename and 'watchtower' not in filename and function_name not in ['emit', '__init__']:
                 module = inspect.getmodule(frame)
 
-                # Attempt to fetch the module name and class details correctly
                 if module and hasattr(module, '__name__'):
                     if 'django' in module.__name__:
                         log_record['application_name'] = module.__name__.split('.')[0]
                     else:
                         log_record['application_name'] = os.path.basename(filename).replace('.py', '')
                 
-                log_record['function'] = code.co_name
+                log_record['function'] = function_name
                 log_record['file_name'] = os.path.basename(filename)
                 
                 if "<module>" in log_record['function']:
@@ -69,9 +76,24 @@ class ApplicationLogFormatter(jsonlogger.JsonFormatter):
                 break
             frame = frame.f_back
 
+        if 'application_name' not in log_record:
+            log_record['application_name'] = '__unknown__'
+        if 'function' not in log_record:
+            log_record['function'] = '__unknown_function__'
+        if 'file_name' not in log_record:
+            log_record['file_name'] = '__unknown_file__'
+
         if record.exc_info:
             log_record['stack_trace'] = self.formatException(record.exc_info)
             log_record.pop('exc_info', None)
         else:
             log_record.pop('stack_trace', None)
-            
+
+        # Add custom fields from the log record, excluding internal attributes
+        for key, value in record.__dict__.items():
+            if key not in log_record and key not in [
+                'args', 'asctime', 'created', 'exc_info', 'exc_text', 'filename', 'funcName', 'levelname', 
+                'levelno', 'lineno', 'module', 'msecs', 'msecs', 'msg', 'name', 'pathname', 'process', 
+                'processName', 'relativeCreated', 'thread', 'threadName', 'stack_info'
+            ]:
+                log_record[key] = value
