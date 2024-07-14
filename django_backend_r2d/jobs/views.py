@@ -6,10 +6,12 @@ from jobs.services.JobService import JobService
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from framework.views.BaseView import BaseView
 from jobs.services.JobExceptions import *
+from jobs.services.JobHistoryService import JobHistoryService
 
 # Initialize logging class and retrieve the custom user model
 import logging
 logger = logging.getLogger('application_logging')
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -94,6 +96,25 @@ class GetAllJobsView(APIView):
         return SyncAPIReturnObject(
             data={'jobs': jobs},
             message="Jobs retrieved successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+
+class GetJobHistory(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Get job history for the authenticated user.
+        """
+        user = request.user
+        logger.debug(f"GetJobHistory: {user}")
+        job_history = JobHistoryService.get_job_history(user)
+        
+        return SyncAPIReturnObject(
+            data={'job_history': job_history},
+            message="Job history retrieved successfully.",
             success=True,
             status_code=status.HTTP_200_OK
         )

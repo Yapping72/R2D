@@ -17,7 +17,6 @@ class GetJobSerializer(serializers.ModelSerializer):
             Job.objects.get(job_id=job_id)
             return job_id
         except Job.DoesNotExist:
-            logger.error(f"Invalid job id provided - {job_id}")
             raise JobNotFoundException(f"Invalid job id provided - {job_id}")
 
     class Meta:

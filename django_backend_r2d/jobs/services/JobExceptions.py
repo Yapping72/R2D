@@ -37,3 +37,8 @@ class RemoveFromJobQueueException(Exception):
     def __init__(self, message="Failed to remove job from queue"):
         self.error_message = f"RemoveFromJobQueueException: {message}"
         super().__init__(self.error_message)
+
+class RetrieveJobHistoryException(Exception):
+    def __init__(self, message="Failed to retrieve job history"):
+        self.error_message = f"RetrieveJobHistoryException: {message}"
+        super().__init__(self.error_message)
