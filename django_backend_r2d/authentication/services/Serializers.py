@@ -31,7 +31,6 @@ class CustomTokenPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['preferred_name'] = user.preferred_name
         token['email'] = EmailHandler.mask_email(user.email)
-        token['role'] = user.role
         return token
 
     @staticmethod
