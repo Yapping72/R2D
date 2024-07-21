@@ -58,8 +58,10 @@ cloudwatch_handler = {
     'use_queues': True,
 }
 
-# Set the use_queue to False in development environment, use_queue is True by default and runs into conflicts with Django runserver
-if os.getenv("APP_ENVIRONMENT") == "local" or os.getenv("APP_ENVIRONMENT") == "development":
+# Set the use_queue to False in local and dev environment
+# use_queue is True by default and runs into conflicts with Django runserver
+# django runserver is used for both dev and local environments 
+if os.getenv("APP_ENVIRONMENT") == "local" or os.getenv("APP_ENVIRONMENT") == "dev":
     # In development, avoid using CloudWatch handler or set use_queue to False
     cloudwatch_handler['use_queues'] = False
         
