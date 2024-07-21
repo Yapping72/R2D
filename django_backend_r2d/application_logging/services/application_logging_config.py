@@ -36,7 +36,7 @@ def get_short_container_id():
         return socket.gethostname()[:8]  # Fallback to the first 8 characters of hostname if not running in Docker
 
 def get_log_group_name():
-    return f"{os.getenv('APP_ENVIRONMENT')}/{os.getenv('CLOUDWATCH_LOG_GROUP_NAME', 'default-log-group')}"
+    return f"{os.getenv('APP_ENVIRONMENT', 'unknown-log-environment')}/{os.getenv('CLOUDWATCH_LOG_GROUP_NAME', 'unknown-log-group')}"
 
 def get_log_stream_name():
     service_name = os.getenv('CLOUDWATCH_LOG_STREAM_NAME', 'unknown-service')
