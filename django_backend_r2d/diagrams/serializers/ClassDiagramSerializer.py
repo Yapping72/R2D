@@ -4,7 +4,7 @@ from model_manager.models import ModelName
 
 class ClassDiagramSerializer(serializers.ModelSerializer):
     """
-    Define the serializer for the ClassDiagram model.
+    Define the serializer when retreiving or saving ClassDiagram model.
     fields:
         job: str - The job of the class diagram.
         model_name: str - The name of the model.
@@ -14,6 +14,7 @@ class ClassDiagramSerializer(serializers.ModelSerializer):
         classes: list - The classes of the class diagram.
         helper_classes: list - The helper classes of the class diagram.
         is_audited: bool - Whether the class diagram has
+    This serializer should match the response schema. 
     """
     model_name = serializers.CharField(write_only=True)  
     

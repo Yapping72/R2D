@@ -2,8 +2,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Import the Celery tasks to trigger 
-from diagrams.tasks import generate_class_diagram_task, generate_er_diagram_task
-from diagrams.services.DiagramConsumerExceptions import ClassDiagramTaskError, ERDiagramTaskError, DiagramCreationSignalError
+from diagrams.tasks import generate_class_diagram_task, generate_er_diagram_task, generate_sequence_diagram_task
+from diagrams.services.DiagramConsumerExceptions import ClassDiagramTaskError, ERDiagramTaskError, SequenceDiagramTaskError, DiagramCreationSignalError
 from jobs.models import JobQueue
 from jobs.constants import ValidJobTypes
 from model_manager.models import ModelName
@@ -66,21 +66,26 @@ def trigger_diagram_creation(sender, instance, created, **kwargs):
             )
            
         elif instance.job_type == ValidJobTypes.SEQUENCE_DIAGRAM.value:
-            # Add sequence diagram generation task here
-            pass
+            # Generate sequence diagram using the models defined in the JobQueue
+            generate_sequence_diagram_task.delay(
+                model_provider=model_information.provider,
+                model_name=model_information.name,
+                auditor_name=model_information.name,
+                job_id=job_id,
+            )
+            
         elif instance.job_type == ValidJobTypes.STATE_DIAGRAM.value:
             # Add flowchart generation task here
             pass
         else:
-            logger.error(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.")
+            logger.error(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.", stack_info=True)
             raise DiagramCreationSignalError(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.")
-        
     except ModelName.DoesNotExist:
-        logger.error(f"Model information for Job {instance.job_id} does not exist.")
+        logger.error(f"Model information for Job {instance.job_id} does not exist.", stack_info=True)
         raise DiagramCreationSignalError(f"Model information: {instance.model_id} not valid for Job: {instance.job_id}")
-    except (ClassDiagramTaskError, ERDiagramTaskError) as e:
-        logger.error(f"Error generating diagram for Job {instance.job_id}: {str(e)}")
+    except (ClassDiagramTaskError, ERDiagramTaskError, SequenceDiagramTaskError) as e:
+        logger.error(f"Error generating diagram for Job {instance.job_id}: {str(e)}", stack_info=True)
         raise DiagramCreationSignalError(f"Error occurred in trigger_diagram_creation_signal {instance.job_id}: {str(e)}")
     except Exception as e:
-        logger.error(f"Unexpected error generating diagram for Job {instance.job_id}: {str(e)}")
+        logger.error(f"Unexpected error generating diagram for Job {instance.job_id}: {str(e)}", stack_info=True)
         raise DiagramCreationSignalError(f"Unexpected error encountered in trigger_diagram_creation_signal {instance.job_id}: {str(e)}")

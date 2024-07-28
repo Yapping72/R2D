@@ -24,7 +24,7 @@ MERMAID_ER_DIAGRAM_SCHEMA = {
                     },
                     "description": {
                         "type": "string",
-                        "description": "The description of the entities, relationships, and attributes in the diagram"
+                        "description": "The detailed description of the classes, relationships, and attributes in the diagram"
                     },
                     "entities": {
                         "type": "array",

@@ -1,0 +1,66 @@
+{
+    "analysis_results": {
+        "diagrams": [
+            {
+                "feature": [
+                    "Logging Framework"
+                ],
+                "diagram": "sequenceDiagram\nactor User\nUser ->> ApplicationLogging: Request to log action\nApplicationLogging ->> CloudWatch: Log user action\nCloudWatch -->> ApplicationLogging: Log stored\nApplicationLogging -->> User: Log confirmation",
+                "description": "User logs an action for auditing and debugging purposes",
+                "interactions": [
+                    {
+                        "from": "User",
+                        "to": "ApplicationLogging",
+                        "message": "Request to log action"
+                    },
+                    {
+                        "from": "ApplicationLogging",
+                        "to": "CloudWatch",
+                        "message": "Log user action"
+                    },
+                    {
+                        "from": "CloudWatch",
+                        "to": "ApplicationLogging",
+                        "message": "Log stored"
+                    },
+                    {
+                        "from": "ApplicationLogging",
+                        "to": "User",
+                        "message": "Log confirmation"
+                    }
+                ]
+            },
+            {
+                "feature": [
+                    "Authorization Framework"
+                ],
+                "diagram": "sequenceDiagram\nactor User\nUser ->> JWT: Request login using gmail account\nalt User data not stored\nJWT ->> GoogleOAuth2: Login using gmail account\nGoogleOAuth2 -->> JWT: Login success\nJWT -->> User: Login successful\nelse User data stored\nJWT ->> GoogleOAuth2: Login using gmail account\nGoogleOAuth2 -->> JWT: Login success\nJWT -->> User: Login successful\nend",
+                "description": "User logs in using gmail account without storing user data",
+                "interactions": [
+                    {
+                        "from": "User",
+                        "to": "JWT",
+                        "message": "Request login using gmail account"
+                    },
+                    {
+                        "from": "JWT",
+                        "to": "GoogleOAuth2",
+                        "message": "Login using gmail account"
+                    },
+                    {
+                        "from": "GoogleOAuth2",
+                        "to": "JWT",
+                        "message": "Login success"
+                    },
+                    {
+                        "from": "JWT",
+                        "to": "User",
+                        "message": "Login successful"
+                    }
+                ]
+            }
+        ],
+        "is_audited": false,
+        "model_name": "gpt-3.5-turbo"
+    }
+}

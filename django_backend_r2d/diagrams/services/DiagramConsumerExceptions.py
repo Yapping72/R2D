@@ -28,6 +28,21 @@ class ERDiagramSignalError(Exception):
         self.error_message = f"ERDiagramSignalError: {message}"
         super().__init__(self.error_message)
 
+class SequenceDiagramTaskError(Exception):
+    def __init__(self, message="Error occurred in SequenceDiagramTask"):
+        self.error_message = f"SequenceDiagramTaskError: {message}"
+        super().__init__(self.error_message)
+
+class SequenceDiagramConsumerError(Exception):
+    def __init__(self, message="Error occurred in SequenceDiagramConsumer"):
+        self.error_message = f"SequenceDiagramConsumerError: {message}"
+        super().__init__(self.error_message)
+
+class SequenceDiagramSignalError(Exception):
+    def __init__(self, message="Error occurred in SequenceDiagramSignal"):
+        self.error_message = f"SequenceDiagramSignalError: {message}"
+        super().__init__(self.error_message)
+
 class DiagramCreationSignalError(Exception):
     def __init__(self, message="Error occurred in Signal"):
         self.error_message = f"DiagramCreationSignalError: {message}"

@@ -68,23 +68,16 @@ class SequenceDiagram(models.Model):
     diagram: str - The sequence diagram in Mermaid syntax.
     description: str - The description of the interactions and messages in the diagram.
     actors: list - The actors in the diagram.
-    messages: list - The messages exchanged in the diagram.
-    alt_flows: list - The alternative flows in the sequence diagram.
-    loops: list - The loops in the sequence diagram.
     is_audited: bool - Determines if the diagram has been audited.
     created_timestamp: datetime - The timestamp when the sequence diagram was created.
     last_updated_timestamp: datetime - The timestamp when the sequence diagram was last updated.
     """
-    
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     model = models.ForeignKey(ModelName, on_delete=models.CASCADE)  # Correct field name
-    feature = models.CharField(max_length=255)
+    feature = models.JSONField()  
     diagram = models.TextField()
     description = models.TextField()
     actors = models.JSONField()  # JSONField to store list of actors
-    messages = models.JSONField()  # JSONField to store list of messages
-    alt_flows = models.JSONField(blank=True, null=True)  # JSONField to store list of alternative flows
-    loops = models.JSONField(blank=True, null=True)  # JSONField to store list of loops
     is_audited = models.BooleanField(default=False)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)

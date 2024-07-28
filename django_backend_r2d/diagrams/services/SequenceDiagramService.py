@@ -4,7 +4,7 @@ from model_manager.chains.AnalyzeAndAuditChainPromptBuilder import AnalyzeAndAud
 from diagrams.chain_inputs.SequenceDiagramAuditAnalyzeChainInputs import SequenceDiagramAuditAnalyzeChainInputs
 from diagrams.interfaces.BaseDiagramService import BaseDiagramService
 
-from diagrams.serializers.CreateERDiagramSerializer import CreateERDiagramSerializer
+from diagrams.serializers.CreateSequenceDiagramSerializer import CreateSequenceDiagramSerializer
 from jobs.services.JobService import JobService
 from jobs.models import Job
 import json 
@@ -25,12 +25,13 @@ class SequenceDiagramService(BaseDiagramService):
         model_name (Enum): The model name to use.
         auditor_name (Enum): The auditor name to use.
         job_id (str): The job ID to use.
-        Serializer_class (class): The serializer class to use. Default is CreateSequenceDiagramSerializer.
+        Serializer_class (class): The serializer class to use. 
+            > Default is CreateSequenceDiagramSerializer.
             > Pass in UMLDiagramSerializer, If creating ER diagrams directly from User Stories.
     
     override the retrieve_job_parameters, retrieve_analysis_context and retrieve_audit_criteria functions to customize the sequence diagram chain.
     """
-    def __init__(self, model_provider:ModelProvider, model_name: Enum, auditor_name:Enum, job_id:str, serializer_class=CreateERDiagramSerializer):
+    def __init__(self, model_provider:ModelProvider, model_name: Enum, auditor_name:Enum, job_id:str, serializer_class=CreateSequenceDiagramSerializer):
         # Retrieve the job parameters, analysis context and audit criteria
         job_parameters = self.retrieve_job_parameters(job_id)
         analysis_context = self.retrieve_analysis_context(job_id)
@@ -56,7 +57,7 @@ class SequenceDiagramService(BaseDiagramService):
         Use job_id to retrieve user stories, additional information and pass them into embeddings service to retrieve the analysis context.
         
         """
-        return {"context": "Sequence diagram should have a clear flow of messages between actors and objects."}
+        return {"context": "For login flows, user must be able to login via SIT email."}
     
     def retrieve_audit_criteria(self, job_id) -> dict:
         """

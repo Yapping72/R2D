@@ -259,4 +259,15 @@ class BaseConsumer(ABC):
             raise BaseConsumerException(f"Failed to update job queue status to Error Failed to Process: {str(e)}")
         except Exception as e:
             raise BaseConsumerException(f"Unhandled exception occurred while trying to update job queue status to Error Failed to Process: {str(e)}")
-    
+
+    def complete_all_jobs(self, job_id:str):
+        """
+        The final consumer should invoke this function. 
+        It will set the status of all parent jobs to Completed.
+        """
+        try:
+            # Update the status of all parent jobs to Completed
+            self.job_service.update_all_parent_jobs_as_completed(job_id)
+        except (JobNotFoundException, JobUpdateException) as e:
+            logger.error(f"Error updating all parent jobs to Completed: {str(e)}")
+            raise BaseConsumerException(f"Error updating all parent jobs to Completed: {str(e)}")

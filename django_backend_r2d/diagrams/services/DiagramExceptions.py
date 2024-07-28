@@ -22,3 +22,13 @@ class ERDiagramRetrievalError(Exception):
     def __init__(self, message="Failed to retrieve ER diagrams"):
         self.error_message = f"ERDiagramRetrievalError: {message}"
         super().__init__(self.error_message)
+
+class SequenceDiagramSavingError(Exception):
+    def __init__(self, message="Failed to save sequence diagram"):
+        self.error_message = f"SequenceDiagramSavingError: {message}"
+        super().__init__(self.error_message)
+
+class SequenceDiagramRetrievalError(Exception):
+    def __init__(self, message="Failed to retrieve sequence diagrams"):
+        self.error_message = f"SequenceDiagramRetrievalError: {message}"
+        super().__init__(self.error_message)

@@ -7,6 +7,7 @@ from jobs.serializers.JobSerializer import JobSerializer
 from jobs.serializers.UpdateJobStatusSerializer import UpdateJobStatusSerializer
 from jobs.serializers.GetJobSerializer import GetJobSerializer
 from jobs.services.JobExceptions import *
+from jobs.constants import ValidJobStatus
 
 import logging 
 logger = logging.getLogger("application_logging") # Instantiate logger class
@@ -205,3 +206,80 @@ class JobService(JobServiceInterface):
         except Exception as e:
             logger.error(f"Error updating job status for job_id {job_id}")
             raise JobUpdateException(str(e))
+        
+    def get_job_parameters(self, job_id):
+        """
+        Retrieves the parameters of a job by its job_id.
+
+        Args:
+            job_id (str): The job ID.
+
+        Returns:
+            dict: The job parameters.
+
+        Raises:
+            JobNotFoundException: If the job does not exist.
+        """
+        try:
+            job = Job.objects.get(job_id = job_id)
+            return job.parameters
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Job with {job_id} does not exist.")
+    
+    def get_parent_job(self, job_id) -> Job:
+        """
+        Retrieves parent job by the job_id.
+
+        Args:
+            job_id (str): The job ID.
+
+        Returns:
+            job: The parent job.
+            None if no parent job exists.
+        Raises:
+            JobNotFoundException: If the job does not exist.
+        """
+        try:
+            job = Job.objects.get(job_id=job_id)
+            parent_job = job.parent_job
+            if parent_job is None:
+                # Return empty dict if parent job does not exist
+                return None
+            return parent_job
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Child job with {job_id} does not exist.")
+    
+    def update_all_parent_jobs_as_completed(self, job_id: str):
+        """
+        Recursively sets the status of all parent jobs to 'completed'.
+
+        This function should be invoked by final step of consumers to set all parent jobs to 'completed' status.
+        
+        Args:
+            job_id (str): The job ID to start the process.
+
+        Raises:
+            JobNotFoundException: If the job or any parent job does not exist.
+            JobUpdateException: If there is an error updating the job status.
+        """
+        try:
+            job = Job.objects.get(job_id=job_id)
+        except Job.DoesNotExist:
+            logger.error(f"Job with ID {job_id} does not exist.")
+            raise JobNotFoundException(f"Job with ID {job_id} does not exist.")
+        
+        while job.parent_job_id:
+            try:
+                parent_job = job.parent_job
+                if parent_job is None:
+                    break  # Break if no parent job exists
+
+                self.update_status_by_id(parent_job.job_id, ValidJobStatus.COMPLETED.value)
+                logger.info(f"Parent job {parent_job.job_id} set to completed.")
+                job = parent_job  # Move up to the next parent job
+            except Job.DoesNotExist:
+                logger.error(f"Parent job with ID {job.parent_job_id} does not exist.")
+                raise JobNotFoundException(f"Parent job with ID {job.parent_job_id} does not exist.")
+            except Exception as e:
+                logger.error(f"Error updating parent job status for job ID {job.parent_job_id}: {e}")
+                raise JobUpdateException(str(e))

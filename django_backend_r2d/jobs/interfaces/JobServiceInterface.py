@@ -34,3 +34,15 @@ class JobServiceInterface(ABC):
     def update_status_by_id(self, job_id, job_status):
         """Update the status of a job by its ID"""
         pass
+
+    def get_parent_job(self, job_id):
+        """Get the parent job"""
+        pass
+    
+    def get_job_parameters(self, job_id):
+        """Get the job parameters"""
+        pass    
+    
+    def update_all_parent_jobs_as_completed(self, job_id):
+        """Update all parent jobs as completed"""
+        pass
