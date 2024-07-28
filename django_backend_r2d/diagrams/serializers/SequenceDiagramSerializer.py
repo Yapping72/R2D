@@ -1,26 +1,25 @@
 from rest_framework import serializers
-from diagrams.models import ERDiagram
+from diagrams.models import SequenceDiagram
 from model_manager.models import ModelName
 
-class ERDiagramSerializer(serializers.ModelSerializer):
+class SequenceDiagramSerializer(serializers.ModelSerializer):
     """
-    Define the serializer when retrieving or saving the ERDiagram model.
+    Define the serializer when retrieving or saving the SequenceDiagram model.
     fields:
-        job: str - The job of the ER diagram.
+        job: str - The job of the sequence diagram.
         model_name: str - The name of the model.
-        feature: list - The feature of the ER diagram.
-        diagram: str - The mermaid representation of the ER diagram.
-        description: str - The description of the ER diagram.
-        entities: list - The entities of the er diagram.
-        is_audited: bool - Whether the er diagram has been audited
-    
+        feature: list - The feature of the sequence diagram.
+        diagram: str - The mermaid representation of the sequence diagram.
+        description: str - The description of the sequence diagram.
+        actors: list - The entities of the sequence diagram.
+        is_audited: bool - Whether the sequence diagram has been audited
     This serializer should match the response schema. 
     """
     model_name = serializers.CharField(write_only=True)  
     
     class Meta:
-        model = ERDiagram
-        fields = ['job', 'model_name', 'feature', 'diagram', 'description', 'entities', 'is_audited', 'created_timestamp', 'last_updated_timestamp']
+        model = SequenceDiagram
+        fields = ['job', 'model_name', 'feature', 'diagram', 'description', 'actors', 'is_audited', 'created_timestamp', 'last_updated_timestamp']
 
     def create(self, validated_data):
         model_name = validated_data.pop('model_name')

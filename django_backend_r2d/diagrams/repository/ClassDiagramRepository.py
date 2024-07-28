@@ -2,12 +2,13 @@ from diagrams.models import ClassDiagram
 from diagrams.serializers.ClassDiagramSerializer import ClassDiagramSerializer  
 from diagrams.services.DiagramExceptions import ClassDiagramSavingError
 from rest_framework.exceptions import ValidationError
+from diagrams.interfaces.BaseDiagramRepository import BaseDiagramRepository
 
 import logging 
 # Initialize the logger
 logger = logging.getLogger('application_logging')
 
-class ClassDiagramRepository:
+class ClassDiagramRepository(BaseDiagramRepository):
     def save_diagram(self, job_id:str, chain_response: dict) -> list[dict]:
         """
         Iterate through the chain_response and save the class diagrams.
@@ -91,6 +92,7 @@ class ClassDiagramRepository:
         """
         try:
             class_diagrams = ClassDiagram.objects.filter(job_id=job_id).values()
+            logger.debug(f"Retrieved class diagrams by job_id: {class_diagrams}")
             return list(class_diagrams)
         except Exception as e:
             logger.error(f"Error while retrieving class diagrams by job_id: {str(e)}")

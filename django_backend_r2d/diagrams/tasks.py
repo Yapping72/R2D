@@ -6,7 +6,8 @@ from jobs.constants import ValidJobStatus, ValidJobTypes
 
 from diagrams.consumers.ClassDiagramConsumer import ClassDiagramConsumer
 from diagrams.consumers.ERDiagramConsumer import ERDiagramConsumer
-from diagrams.services.DiagramConsumerExceptions import ClassDiagramConsumerError, ClassDiagramTaskError, ERDiagramConsumerError, ERDiagramTaskError
+from diagrams.consumers.SequenceDiagramConsumer import SequenceDiagramConsumer
+from diagrams.services.DiagramConsumerExceptions import ClassDiagramConsumerError, ClassDiagramTaskError, ERDiagramConsumerError, ERDiagramTaskError, SequenceDiagramConsumerError, SequenceDiagramTaskError
 
 
 import logging
@@ -77,5 +78,38 @@ def generate_er_diagram_task(model_provider:ModelProvider, model_name:Enum, audi
         return job_id
     
     except (BaseConsumerException, ERDiagramConsumerError) as e:
+        logger.error(f"Error generating ER diagram for - {job_id}")
+        raise ERDiagramTaskError(f"Error generating ER diagram for - {job_id} - {str(e)}")
+
+@shared_task
+def generate_sequence_diagram_task(model_provider:ModelProvider, model_name:Enum, auditor_name:Enum, job_id:str) -> str:
+    """
+    Celery task to generate sequence diagrams
+    args:
+        model_provider (str or Enum): The model provider.
+        model_name (str or Enum): The model name.
+        auditor_name (str or Enum): The auditor name.
+        job_id (str): The job ID.
+    raises:
+        SequenceDiagramTaskError if an error occurs.
+    returns:
+        Sequence diagram job_id (str): The job ID of the sequence diagram job.
+        No new job created after sequence diagram creation.
+    """
+    logger.debug(f"Generating sequence diagram for - {job_id}")
+    try:    
+        # Initialize the consumer and process the record
+        consumer = SequenceDiagramConsumer(model_provider=model_provider, model_name=model_name, 
+                                        auditor_name=auditor_name, job_id=job_id)
+        # Process the record 
+        sequence_diagrams = consumer.process_record(job_id)  
+        logger.info(f"Successfully created er diagram for - {job_id}")
+        
+        # No new jobs will be created after sequence diagram creation
+        # Mark all parent jobs as completed
+        consumer.complete_all_jobs(job_id) 
+        return job_id # Return the job id for sequence diagram job as no new jobs will be created
+    
+    except (BaseConsumerException, SequenceDiagramConsumer) as e:
         logger.error(f"Error generating ER diagram for - {job_id}")
         raise ERDiagramTaskError(f"Error generating ER diagram for - {job_id} - {str(e)}")

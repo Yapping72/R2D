@@ -23,15 +23,19 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
 
             Instructions:
             1. Analyze the job parameters provided and identify all relevant entities and their relationships.
-            2. Each class or story should be translated into an entity with appropriate attributes.
-            3. Ensure that relationships between entities are clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
-            4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
-            5. Use mermaid syntax to express the ER diagrams.
-            6. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
-            7. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
-            8. Tables should be normalized and relationships should be well-defined.
-            9. Ensure the entities and attributes are named meaningfully and consistently.
-
+            2. All classes and stories should be translated into entities with appropriate attributes. 
+            3. You are allowed to create new entities to better represent the data model. 
+            4. Relationships between entities must be clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
+            5. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
+            6. Use mermaid syntax to express the ER diagrams.
+            7. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
+            8. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
+            9. Tables must be normalized and relationships must be well-defined.
+            10. Ensure the entities and attributes are named meaningfully and consistently.
+            11. The provided job parameters may contain unclear or incomplete information. Use your expertise to fill in the gaps and create a comprehensive ER diagram.
+                > For example, if you see a login class you should extrapolate and create a failed login attempts entity to store the number of failed login attempts. Even if the job parameters do not explicitly mention it.
+                > For example, if you see a story related to customers placing orders, you are free to include entities like cart or payment to better represent the data model.
+            
             Example of Mermaid Syntax for ER Diagrams:
             erDiagram
                 CUSTOMER {{
@@ -69,15 +73,19 @@ class ERDiagramPromptTemplate(BasePromptTemplate):
 
             Instructions:
             1. Analyze the job parameters provided and identify all relevant entities and their relationships.
-            2. Each class or story should be translated into an entity with appropriate attributes.
-            3. Ensure that relationships between entities are clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
-            4. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
-            5. Use mermaid syntax to express the ER diagrams.
-            6. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
-            7. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
-            8. Tables should be normalized and relationships should be well-defined.
-            9. Ensure the entities and attributes are named meaningfully and consistently.
-  
+            2. All classes and stories should be translated into entities with appropriate attributes. 
+            3. You are allowed to create new entities to better represent the data model. 
+            4. Relationships between entities must be clearly defined, including primary keys (PK), foreign keys (FK), and cardinality.
+            5. Group the ER diagrams by features, ensuring each feature and sub-feature has one or more associated entities.
+            6. Use mermaid syntax to express the ER diagrams.
+            7. Prioritize CORRECTNESS over conciseness; these diagrams are intended to be used with little to no human intervention or modification.
+            8. Each entity should have a comprehensive description that explains what the entity represents, its purpose, and the user story or feature it corresponds to.
+            9. Tables must be normalized and relationships must be well-defined.
+            10. Ensure the entities and attributes are named meaningfully and consistently.
+            11. The provided job parameters may contain unclear or incomplete information. Use your expertise to fill in the gaps and create a comprehensive ER diagram.
+                > For example, if you see a login class you should extrapolate and create a failed login attempts entity to store the number of failed login attempts. Even if the job parameters do not explicitly mention it.
+                > For example, if you see a story related to customers placing orders, you are free to include entities like cart or payment to better represent the data model.
+          
             Example of Mermaid Syntax for ER Diagrams:
             erDiagram
             ENTITY_NAME {{

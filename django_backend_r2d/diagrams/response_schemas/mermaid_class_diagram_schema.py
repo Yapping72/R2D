@@ -24,7 +24,7 @@ MERMAID_CLASS_DIAGRAM_SCHEMA = {
                     },
                     "description": {
                         "type": "string",
-                        "description": "The description of the classes, relationships, and attributes in the diagram"
+                        "description": "The detailed description of the classes, relationships, and attributes in the diagram"
                     },
                     "classes": {
                         "type": "array",
@@ -35,7 +35,7 @@ MERMAID_CLASS_DIAGRAM_SCHEMA = {
                     },
                     "helper_classes": {
                         "type": "array",
-                        "description": "The views, controllers and/or interface classes in the diagram",
+                        "description": "The views, controllers and interface classes in the diagram",
                         "items": {
                             "type": "string"
                         }

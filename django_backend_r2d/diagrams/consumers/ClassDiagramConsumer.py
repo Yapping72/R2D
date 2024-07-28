@@ -95,7 +95,7 @@ class ClassDiagramConsumer(BaseConsumer):
                 descriptions.append(diagram['description'])
             if 'helper_classes' in diagram:
                 helper_classes.extend(diagram['helper_classes'])
-                
+
         job_parameters = {
             'features': list(set(features)),
             'classes': classes,
