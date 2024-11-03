@@ -157,7 +157,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60), # Access token expires every 1hr
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60), # Access token expires every 1hr (DEV), 15min (PROD)
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1), # refresh token allows user to be logged in for 1 days before needing to login again
     "ROTATE_REFRESH_TOKENS": True, # if user has used website within 1days new refresh token wil be automatically generated without the need to login
     "BLACKLIST_AFTER_ROTATION": True, # to prevent reusing of refresh tokens set to true i.e., only most recent token is used

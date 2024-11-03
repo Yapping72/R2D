@@ -49,7 +49,6 @@ const UserStoryCard = ({
       case 1:
         return (
           <>
-            
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               {feature || 'Feature'}
             </Typography>

@@ -3,7 +3,7 @@
 /**
  * The lifetime of the access token in minutes (10 Minutes).
  */
-export const ACCESS_TOKEN_LIFETIME = 10
+export const ACCESS_TOKEN_LIFETIME = 60
 
 /**
  * Intended audience for the access token, part of JWT claims

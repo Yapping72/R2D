@@ -61,18 +61,17 @@ class Job(models.Model):
         ('sequence_diagram', 'Sequence Diagram'),
         ('state_diagram', 'State Diagram')
     )
-    
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     job_status = models.ForeignKey(JobStatus, to_field='code', on_delete=models.PROTECT)
     job_details = models.TextField(max_length=100)
     tokens = models.IntegerField()
     parameters = models.JSONField()
+    job_type = models.CharField(max_length=50, choices=JOB_TYPES)
+    model = models.ForeignKey(ModelName, on_delete=models.PROTECT)
+    parent_job = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_jobs', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     last_updated_timestamp = models.DateTimeField(auto_now=True)
-    job_type = models.CharField(max_length=50, choices=JOB_TYPES)
-    parent_job = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_jobs', null=True, blank=True)
-    model = models.ForeignKey(ModelName, on_delete=models.PROTECT)
     
     def __str__(self):
         return f"Job Id: {self.job_id}\nCreated By:{self.user}\nStatus:{self.job_status}\nCreated on:{self.created_timestamp}\nUpdated on:{self.last_updated_timestamp}"
@@ -94,7 +93,7 @@ class Job(models.Model):
     
 class JobQueue(models.Model):
     """
-    JobQueue table will be referenced by Consumers e.g., LLM Service(s) to fetch jobs for processing.
+    JobQueue table will be referenced by Consumers to fetch jobs for processing.
     attributes:
         job: Job object that is in the queue
         status: Status of the job in the queue e.g., Queued, Processing, Completed, Failed

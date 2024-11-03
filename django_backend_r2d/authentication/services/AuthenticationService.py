@@ -98,13 +98,11 @@ class AuthenticationService(AuthenticationInterface):
         
         if user:
             otp = self.otp_authenticator.register(user)  # Start the 2FA flow.
-            logger.debug(f"User details - username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
         else:
             # Capture the user_id from the failed authentication
             user_id = None
             try:
                 user = User.objects.get(username=username)
-                logger.debug(f"User details - userid = {user.id} username: {user.username}, email: {user.email}, first_name: {user.first_name}, last_name: {user.last_name}, role: {user.role}, is_active: {user.is_active}, is_staff: {user.is_staff}, is_superuser: {user.is_superuser}, date_joined: {user.date_joined}, last_login: {user.last_login}")
                 user_id = user.id
             except User.DoesNotExist:
                raise AuthenticationError(f"This user does not exists.")
