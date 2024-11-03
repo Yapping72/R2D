@@ -27,6 +27,9 @@ def get_log_level():
                      
 # Retrieve the container ID 
 def get_short_container_id():
+    """
+    Retrieve the short container ID from the /proc/self/cgroup file. Default is the first 8 characters of the hostname.
+    """
     try:
         with open('/proc/self/cgroup', 'r') as f:
             for line in f:
@@ -36,14 +39,19 @@ def get_short_container_id():
         return socket.gethostname()[:8]  # Fallback to the first 8 characters of hostname if not running in Docker
 
 def get_log_group_name():
+    """
+    Retrieve the log group name from the environment variable. Default is unknown-log-group.
+    """
     return f"{os.getenv('APP_ENVIRONMENT', 'unknown-log-environment')}/{os.getenv('CLOUDWATCH_LOG_GROUP_NAME', 'unknown-log-group')}"
 
 def get_log_stream_name():
+    """
+    Retrieve the log stream name from the environment variable. Default is unknown-service.
+    """
     service_name = os.getenv('CLOUDWATCH_LOG_STREAM_NAME', 'unknown-service')
     short_container_id = get_short_container_id()
     timestamp = datetime.datetime.now().strftime('%Y%m%d')
     return f"{service_name}/{short_container_id}_{timestamp}"
-
 
 cloudwatch_handler = {
     'level': get_log_level(),

@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from framework.views.BaseView import BaseView
 

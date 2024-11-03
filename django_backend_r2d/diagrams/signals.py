@@ -74,9 +74,6 @@ def trigger_diagram_creation(sender, instance, created, **kwargs):
                 job_id=job_id,
             )
             
-        elif instance.job_type == ValidJobTypes.STATE_DIAGRAM.value:
-            # Add flowchart generation task here
-            pass
         else:
             logger.error(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.", stack_info=True)
             raise DiagramCreationSignalError(f"Invalid job_type: {instance.job_type} for Job {instance.job_id}.")

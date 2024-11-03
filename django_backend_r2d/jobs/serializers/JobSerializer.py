@@ -50,6 +50,17 @@ class JobSerializer(serializers.ModelSerializer):
         
         return super().create(validated_data)
     
+    def compute_tokens(self, parameters):
+        """
+        Compute the number of tokens in the parameters, including nested JSON structures.
+        """
+        # Convert the JSON to a string
+        json_string = json.dumps(parameters)
+        
+        # Count the words in the string
+        token_count = len(re.findall(r'\w+', json_string))
+        
+        return token_count 
     def update(self, instance, validated_data):
         # Retrieve the model_name and job_status from the validated data
         # If tokens are not present, compute the number of tokens in the parameters
@@ -73,14 +84,3 @@ class JobSerializer(serializers.ModelSerializer):
         ret['model_name'] = instance.model.name
         return ret
 
-    def compute_tokens(self, parameters):
-        """
-        Compute the number of tokens in the parameters, including nested JSON structures.
-        """
-        # Convert the JSON to a string
-        json_string = json.dumps(parameters)
-        
-        # Count the words in the string
-        token_count = len(re.findall(r'\w+', json_string))
-        
-        return token_count
