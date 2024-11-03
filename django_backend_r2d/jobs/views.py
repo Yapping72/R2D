@@ -28,9 +28,9 @@ class JobSaveView(APIView):
         """
         user = request.user
         request_payload = request.data["payload"]
-        logger.debug(user, request_payload)
+        logger.info("api/jobs/save/ invoked")
+        logger.info(f"Payload: {request_payload}")
         job = job_service.save_job(user, request_payload)
-        
         return SyncAPIReturnObject(
             data={'job_id': job.job_id},
             message="Job parameters saved successfully.",
@@ -90,9 +90,8 @@ class GetAllJobsView(APIView):
         Get all jobs for the authenticated user.
         """
         user = request.user
-        logger.debug(f"GetAllJobsView: {user}")
         jobs = job_service.get_all_jobs_for_user(user)
-        
+        logger.debug(f"GetAllJobsView: {jobs}")
         return SyncAPIReturnObject(
             data={'jobs': jobs},
             message="Jobs retrieved successfully.",

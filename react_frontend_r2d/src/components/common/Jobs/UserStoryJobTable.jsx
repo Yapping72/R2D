@@ -1,10 +1,9 @@
 import React from 'react';
 import { UserStoryJobQueueRepository } from '../../../utils/Repository/UserStoryJobQueueRepository'
-import {Button, Stack, Box, Divider } from '@mui/material'
+import {Stack, Box, Divider } from '@mui/material'
 import GenericJobTable from '../Tables/GenericJobTable';
 import UserStoryJobQueueButtons from './UserStoryJobQueueButtons';
 import JobStatusChipStack from '../Chips/JobStatusChipStack';
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
 const UserStoryJobTable = () => {
     return (
