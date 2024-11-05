@@ -125,6 +125,12 @@ class BaseView(APIView):
             except ERDiagramRetrievalError as e:
                 logger.error(repr(e), exc_info=True, extra={"http_status_code": status.HTTP_400_BAD_REQUEST})
                 return JSONResponse(data = {"error": str(e)}, message = "Failed to retrieve ER Diagrams", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except SequenceDiagramSavingError as e:
+                logger.error(repr(e), exc_info=True, extra={"http_status_code":  status.HTTP_400_BAD_REQUEST})
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to save sequence Diagram", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
+            except SequenceDiagramRetrievalError as e:
+                logger.error(repr(e), exc_info=True, extra={"http_status_code":  status.HTTP_400_BAD_REQUEST})
+                return JSONResponse(data = {"error": str(e)}, message = "Failed to retrieve sequence Diagram", success = False, status_code=status.HTTP_400_BAD_REQUEST).transform()
             # DiagramConsumerExceptions
             except ClassDiagramTaskError as e:
                 logger.error(repr(e), exc_info=True, extra={"http_status_code": status.HTTP_500_INTERNAL_SERVER_ERROR})

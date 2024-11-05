@@ -24,7 +24,7 @@ class UpdateJobSerializerTests(TestCase):
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
         cls.valid_job_status = ['Draft', 'Queued', 'Submitted', 'Error Failed to Submit', 'Processing', 'Error Failed to Process', 'Job Aborted', 'Completed']
         
-        cls.user = User.objects.create_user(username='testuser', password='testpassword', email='testuser@example.com')
+        cls.user = User.objects.create_user(username='testuser666', password='testpassword', email='testuser@example.com')
         cls.job_status_draft = JobStatus.objects.get(name='Draft')
         
         cls.model = ModelName.objects.get(name='gpt-4-turbo')

@@ -2,11 +2,17 @@ import GenericJobHandler, { JobStatus } from "./GenericJobHandler";
 import UserStoryJobValidator from "../Validators/UserStoryJobValidator";
 import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
 import { UserStoryJobQueueRepository } from "../Repository/UserStoryJobQueueRepository";
+import ApiManager from '../../utils/Api/ApiManager';
+import UrlsConfig from '../../utils/Api/UrlsConfig';
+import {ROUTES} from '../../utils/Pages/RoutesConfig';
+import { useAlert } from '../../components/common/Alerts/AlertContext';
+import JwtHandler from "../Jwt/JwtHandler";
 
 /**
  * Class responsible for managing User Story jobs
  */
 class UserStoryJobHandler extends GenericJobHandler {
+    
     constructor() {
         super(new UserStoryJobValidator(), new UserStoryJobSanitizer());
         this.repository = new UserStoryJobQueueRepository();
@@ -27,6 +33,8 @@ class UserStoryJobHandler extends GenericJobHandler {
             const job = {
                 ...this.job,
                 parameters: sanitizedData,
+                model_name : "gpt-4-turbo",
+                job_type: "class_diagram", // default
                 tokens: sanitizedData.tokens,
                 last_updated_timestamp: new Date().toISOString() // Validation ensures timestamp is correct
             }
@@ -96,16 +104,32 @@ class UserStoryJobHandler extends GenericJobHandler {
             // Step 1: Retrieve job parameters for the provided job identifier.
             // This includes all necessary data needed to submit the job to the backend.
             const data = await this.retrieveJobFromQueue(jobIdentifier);
-            console.debug("Data Retrieved: ", data);
+            // Add two keys to data payload
+            const requestPayload = {
+                payload: {
+                    ...data.data, // Spread the existing properties from data.data
+                    user_id: JwtHandler.getUserId(), // Add user_id within payload
+                    job_type: "class_diagram", // Add job_type within payload
+                    model_name: "gpt-4-turbo" // Add model_name within payload
+                }
+            };   
+ 
+            var jobSubmittedSuccessfully = false; 
 
-            // TODO:
-            // Step 2: Valid job status and parameters
-            // 1. Validate job state - job must be in valid job status i.e., one that can be submitted
-            // 2. Validate job parameters before sending them out, job parameters should include XXX keys
-
-            // TODO: 
-            // Step 3: Send the payload to backend and wait for response 
-            const jobSubmittedSuccessfully = false; // Mocked as false to simulate failure.
+            if ([JobStatus.DRAFT, JobStatus.QUEUED, JobStatus.ERROR_FAILED_TO_SUBMIT, JobStatus.ABORTED, JobStatus.COMPLETED].includes(requestPayload.payload.job_status)) {
+                // Update job status only if the job is in DRAFT, QUEUED, ERROR_FAILED_TO_SUBMIT, ABORTED, or COMPLETED state
+                requestPayload.payload.job_status = JobStatus.SUBMITTED;
+                requestPayload.payload.job_details = "Job Submitted Pending Response";
+                try {
+                    const result = await ApiManager.postData(UrlsConfig.endpoints.CREATE_JOB, requestPayload);
+                    if (result.success) {
+                        jobSubmittedSuccessfully = true; // Set to true so that job status will be flipped to submitted
+                    } 
+                } catch (error) {
+                    // Handle unexpected errors
+                    console.error('Job Processing Error:', error);
+                }
+            }
 
             // jobSubmittedSuccessfully denotes the backend response 
             if (jobSubmittedSuccessfully) {
@@ -313,6 +337,62 @@ class UserStoryJobHandler extends GenericJobHandler {
         });
     
         return { features: Array.from(features), subFeatures: Array.from(subFeatures) };
+    }
+    /**
+     * Syncs job data between the server and IndexedDB.
+     * @returns {Promise<Object>} - An object indicating the success or failure of the synchronization.
+     */
+    async syncJobsWithServer() {
+        try {
+            // Step 1: Fetch jobs from the server
+            const serverResponse = await ApiManager.postData(UrlsConfig.endpoints.GET_ALL_JOBS, {});           
+            const serverJobs = serverResponse.data.jobs;
+
+            // Step 2: Fetch jobs from IndexedDB
+            const localJobs = await this.repository.handleReadAll();
+
+            // Step 3: Compare job IDs and synchronize IndexedDB with server data
+            const serverJobIds = new Set(serverJobs.map(job => job.job_id));
+            const localJobIds = new Set(localJobs.data.map(job => job.job_id));
+
+              // Step 4: Add missing or update outdated jobs in IndexedDB
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        for (const serverJob of serverJobs) {
+            const matchingLocalJob = localJobs.data.find(localJob => localJob.job_id === serverJob.job_id);
+
+            if (!matchingLocalJob) {
+                // Add jobs from the server that are missing in IndexedDB
+                await this.repository.handleAddJobToQueue(serverJob, serverJob.job_details);
+            } else {
+                // Update scenario: if the job exists locally but has an older `last_updated_timestamp`, update it
+                const serverUpdatedTime = new Date(serverJob.last_updated_timestamp);
+                const localUpdatedTime = new Date(matchingLocalJob.last_updated_timestamp);
+
+                if (serverUpdatedTime > localUpdatedTime) {
+                    await this.repository.handleUpdateRecordById(serverJob);
+                    console.log(`Updated job ${serverJob.job_id} in IndexedDB to match server data.`);
+                }
+            }
+        }
+
+        // Step 5: Remove outdated jobs from IndexedDB that are not in the server data and are more than 7 days old
+        for (const localJob of localJobs.data) {
+            const jobCreatedDate = new Date(localJob.last_updated_timestamp);
+
+            if (!serverJobIds.has(localJob.job_id) && jobCreatedDate < sevenDaysAgo) {
+                await this.repository.handleDeleteById(localJob.job_id);
+                console.log(`Deleted job ${localJob.job_id} from IndexedDB as it is more than 7 days old and not found on the server.`);
+            }
+        }
+
+            console.log("Synchronization complete: IndexedDB is now up-to-date with server data.");
+            return { success: true, message: "Jobs synchronized successfully." };
+        } catch (error) {
+            console.error("Failed to synchronize jobs with server:", error);
+            return { success: false, message: "Failed to synchronize jobs.", error };
+        }
     }
 }
 

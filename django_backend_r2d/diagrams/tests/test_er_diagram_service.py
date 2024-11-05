@@ -130,7 +130,6 @@ class ERDiagramServiceTests(TestCase):
                 ]
             }
         )
-        
         logging.getLogger('application_logging').setLevel(logging.ERROR)
         
     @classmethod

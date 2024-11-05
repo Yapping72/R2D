@@ -82,5 +82,12 @@ class JobSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret['job_status'] = instance.job_status.name
         ret['model_name'] = instance.model.name
+        ret['last_updated_timestamp'] = instance.last_updated_timestamp
+        # Ensure parameters is returned as an object, not a string
+        if isinstance(ret['parameters'], str):
+            try:
+                ret['parameters'] = json.loads(ret['parameters'])
+            except json.JSONDecodeError:
+                # Handle cases where parameters might be an invalid JSON string
+                ret['parameters'] = {}
         return ret
-

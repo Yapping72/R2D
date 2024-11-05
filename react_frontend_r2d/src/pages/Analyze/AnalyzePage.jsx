@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Box, Tabs, Tab, Divider, Container, Typography } from '@mui/material'
 import { useAlert } from '../../components/common/Alerts/AlertContext';
 import UserStoryJobTable from '../../components/common/Jobs/UserStoryJobTable';
@@ -15,6 +15,16 @@ const AnalyzePage = () => {
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
+
+    useEffect(() => {
+        // Reconciles status differences between frontend and backend
+        const handler = new UserStoryJobHandler();
+        handler.syncJobsWithServer().then(response => {
+            if (!response.success) {
+                showAlert('error', response.message);
+            }
+        });
+    }, []);
 
     const handleViewUserStoryJobParameters = async (jobId) => {
         const handler = new UserStoryJobHandler();
@@ -172,6 +182,7 @@ const AnalyzePage = () => {
                 </Box>
                 {tabValue === 0 && (
                     <Box>
+                    <Divider sx={{ my: 1 }} />
                     <UserStoryJobTable></UserStoryJobTable>
                     </Box>
                 )}

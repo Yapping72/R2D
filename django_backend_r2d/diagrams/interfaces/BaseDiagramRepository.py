@@ -19,5 +19,25 @@ class BaseDiagramRepository(ABC):
         e.g., {"model_1":"model_1_output", "model_2":"model_2_output"} this allows repository to be chain agnostic.
         """
     
+    @abstractmethod
+    def get_by_id(self, job_id:str, is_audited:bool) -> dict:
+        """
+        Get the diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+            is_audited: bool - Denotes wheter the diagram retrieved should be the normal or audited version
+        returns:
+            list - The class diagrams for the job_id. 
+        """
+    
+    @abstractmethod
+    def get_audited_jobs_by_id(self, job_id:str) -> dict:
+        """
+        Get the audited diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+        returns:
+            list - The class diagrams for the job_id. 
+        """
     
     

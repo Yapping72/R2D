@@ -4,37 +4,64 @@ from rest_framework import status
 
 from framework.responses.SyncAPIReturnObject import SyncAPIReturnObject
 from framework.views.BaseView import BaseView
-
-from jobs.services.JobService import JobService
-from diagrams.services.ClassDiagramService import ClassDiagramService
-from diagrams.repository.ClassDiagramRepository import ClassDiagramRepository
-from model_manager.constants import ModelProvider, OpenAIModels
+from diagrams.services.DiagramRetrievalService import DiagramRetrievalService
 
 # Initialize logging class and retrieve the custom user model
 import logging
 logger = logging.getLogger('application_logging')
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-class CreateClassDiagram(APIView):
-    """
-    API Endpoint for creating class diagrams.
-    Payload: 
-        job_id (uuid) - The job id to retrieve job parameters.
-        diagram_type (str) - The type of diagram to create.
-    """
+# Initialize the diagram retrieval service
+diagram_retrieval_service = DiagramRetrievalService() 
+
+class RetrieveAllDiagramsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    # Create the class responsible for creating class diagrams
-    class_diagram_service = ClassDiagramService()
-    
-    # Create the class responsible for saving class diagrams
-    class_diagram_repository = ClassDiagramRepository()
-    
     @BaseView.handle_exceptions
     def post(self, request):
         """
-        Expects a payload containing job_id to retrieve job parameters.
-        Endpoint for creating or resubmitting a job.
+        Retrieves all diagrams for the authenticated user.
+        The payload should contain a job_id.
         """
-        pass 
+        user = request.user
+        request_payload = request.data
+        job_id = request_payload.get('job_id')
+        logger.info("api/diagrams/retrieve-diagrams/ invoked")
+        logger.debug(f"Payload: {request_payload}")
+        
+        diagrams = diagram_retrieval_service.retrieve_all_diagrams(user, job_id)
+        
+        return SyncAPIReturnObject(
+            data={'job_id': job_id, "diagrams": diagrams},
+            message= f"Retrieved diagrams for {job_id} successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+
+class RetrieveOneDiagramView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Retrieves a single diagram for the authenticated user.
+        The payload should contain a diagram_id.
+        """
+        user = request.user
+        request_payload = request.data
+        job_id = request_payload.get('job_id')
+        diagram_name = request_payload.get('diagram_name')
+        
+        logger.info("api/diagrams/retrieve-one-diagram/ invoked")
+        logger.debug(f"Payload: {request_payload}")
+        
+        diagram = diagram_retrieval_service.retrieve_diagram(diagram_id, diagram_name)
+        
+        return SyncAPIReturnObject(
+            data={'job_id': job_id, "diagram": diagram},
+            message= f"Retrieved diagram for {job_id} successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )

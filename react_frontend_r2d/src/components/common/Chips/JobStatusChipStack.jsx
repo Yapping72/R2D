@@ -85,7 +85,7 @@ const JobStatusChipStack = ({repository}) => {
             case "Completed":
                 return (
                     <Tooltip title="Total number of jobs that have been completed.">
-                        <Chip label={`Aborted (${count})`} color='success' />
+                        <Chip label={`Completed (${count})`} color='success' />
                     </Tooltip>
                 );
             default:

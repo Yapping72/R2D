@@ -98,3 +98,18 @@ class ClassDiagramRepository(BaseDiagramRepository):
             logger.error(f"Error while retrieving class diagrams by job_id: {str(e)}")
             raise ClassDiagramRetrievalError("An error occurred while retrieving the class diagrams.")
     
+    def get_audited_jobs_by_id(self, job_id:str) -> dict:
+        """
+        Get the class diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+        returns:
+            list - The class diagrams for the job_id. 
+        """
+        try:
+            class_diagrams = ClassDiagram.objects.filter(job_id=job_id, is_audited=True).values()
+            logger.debug(f"Retrieved class diagrams by job_id: {class_diagrams}")
+            return list(class_diagrams)
+        except Exception as e:
+            logger.error(f"Error while retrieving class diagrams by job_id: {str(e)}")
+            raise ClassDiagramRetrievalError("An error occurred while retrieving the class diagrams.")

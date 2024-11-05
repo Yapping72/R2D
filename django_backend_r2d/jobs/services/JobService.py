@@ -283,3 +283,58 @@ class JobService(JobServiceInterface):
             except Exception as e:
                 logger.error(f"Error updating parent job status for job ID {job.parent_job_id}: {e}")
                 raise JobUpdateException(str(e))
+        
+    def get_child_jobs(self, job_id: str, limit=10) -> list:
+        """
+        Retrieves all descendant jobs for a given job_id in a hierarchical structure.
+        Args:
+            job_id (str): The ID of the starting (root) job.
+            limit (int): The maximum number of child jobs to retrieve.
+        Returns:
+            list: A list of job IDs starting from the given job_id down the hierarchy.
+        """
+        jobs = []  # Initialize with the root job_id
+        queue = [job_id]    # Queue to process each job and find its children
+
+        try:
+            # Process each job in the queue and retrieve its children
+            # Stop when limit is reached or when queue is empty
+            while queue and len(jobs) < limit:
+                current_job_id = queue.pop(0)  # Get the next job to process
+                parent = Job.objects.get(job_id=current_job_id)
+
+                # Add the parent job's ID and type to the results list
+                job_meta = (parent.job_id, parent.job_type)
+                jobs.append(job_meta)
+
+                # Retrieve the single child of the current job, if it exists
+                child = Job.objects.filter(parent_job_id=current_job_id).first()
+                if child:
+                    queue.append(child.job_id)  # Add the child job_id to the queue
+
+                # Stop if the limit is reached
+                if len(jobs) >= limit:
+                    break
+            return jobs
+
+        except Exception as e:
+            logger.error(f"Error retrieving child jobs for job_id {job_id}: {str(e)}")
+            raise JobRetrievalException(f"Error retrieving child jobs for job_id {job_id}: {str(e)}")
+    
+    def has_access_to_job(self, user, job_id) -> bool:
+        """
+        Checks if a job belongs to a user.
+
+        Args:
+            user: The authenticated user.
+            job_id (str): The job ID.
+
+        Returns:
+            bool: True if the job belongs to the user, False otherwise.
+        """
+        try:
+            # Attempt to retrieve the job with the given job_id and user
+            return Job.objects.filter(job_id=job_id, user=user).exists()
+        except Exception as e:
+            logger.error(f"Error checking job ownership for user {user.id} and job_id {job_id}: {str(e)}")
+            return False

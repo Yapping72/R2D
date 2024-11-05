@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')), # URL for the accounts app
     path('api/auth/', include('authentication.urls')), # URL for the authentication app
     path('staff-administration/', include('admin_portal.urls')), # URL for the staff admin portal
-    path('api/jobs/', include('jobs.urls')) # URL for the jobs app
+    path('api/jobs/', include('jobs.urls')), # URL for the jobs app
+    path('api/diagrams/', include('diagrams.urls')) # URL for the diagrams app
 ]

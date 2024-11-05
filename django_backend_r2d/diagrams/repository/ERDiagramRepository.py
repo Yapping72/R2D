@@ -101,3 +101,18 @@ class ERDiagramRepository(BaseDiagramRepository):
             logger.error(f"Error while retrieving class diagrams by job_id: {str(e)}")
             raise ERDiagramRetrievalError("An error occurred while retrieving the class diagrams.")
     
+    def get_audited_jobs_by_id(self, job_id:str) -> dict:
+        """
+        Get audited er diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+        returns:
+            list - The er diagrams for the job_id. 
+        """
+        try:
+            er_diagrams = ERDiagram.objects.filter(job_id=job_id, is_audited=True).values()
+            return list(er_diagrams)
+        except Exception as e:
+            logger.error(f"Error while retrieving class diagrams by job_id: {str(e)}")
+            raise ERDiagramRetrievalError("An error occurred while retrieving the er diagrams.")
+    
