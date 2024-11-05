@@ -23,7 +23,7 @@ class UpdateJobQueueSerializer(TestCase):
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
         cls.valid_job_status = ['Submitted', 'Processing', 'Error Failed to Process', 'Job Aborted', 'Completed']        
-        cls.user = User.objects.create_user(username='testuser', password='testpassword', email='testuser@example.com')
+        cls.user = User.objects.create_user(username='testuser31415', password='testpassword', email='testuser@example.com')
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         
         cls.model = ModelName.objects.get(name='gpt-3.5-turbo')
@@ -37,7 +37,7 @@ class UpdateJobQueueSerializer(TestCase):
             job_details="Initial job details",
             tokens=100,
             parameters={},
-            job_type="state_diagram",
+            job_type="sequence_diagram",
             model=cls.model
         )
         
@@ -58,7 +58,7 @@ class UpdateJobQueueSerializer(TestCase):
         self.with_consumer = {
             "job_id": self.job_id, # Use a random job id
             "job_status": "",
-            "consumer": "StateDiagramConsumer"
+            "consumer": "SequenceDiagramConsumer"
         }
 
     def test_update_job_queue_without_consumer(self):
@@ -79,5 +79,5 @@ class UpdateJobQueueSerializer(TestCase):
             self.assertTrue(serializer.is_valid())
             validated_data = serializer.validated_data
             self.assertEqual(validated_data['job_status'].name, valid_job_status)
-            self.assertEqual(validated_data['consumer'], "StateDiagramConsumer")
+            self.assertEqual(validated_data['consumer'], "SequenceDiagramConsumer")
 

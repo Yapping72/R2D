@@ -87,8 +87,23 @@ class SequenceDiagramRepository(BaseDiagramRepository):
             list - The sequence diagrams for the job_id. 
         """
         try:
-            er_diagrams = SequenceDiagram.objects.filter(job_id=job_id).values()
-            return list(er_diagrams)
+            sequence_diagrams = SequenceDiagram.objects.filter(job_id=job_id).values()
+            return list(sequence_diagrams)
+        except Exception as e:
+            logger.error(f"Error while retrieving sequence diagrams by job_id: {str(e)}")
+            raise SequenceDiagramRetrievalError("An error occurred while retrieving the sequence diagrams.")
+    
+    def get_audited_jobs_by_id(self, job_id:str, is_audited:bool=True) -> dict:
+        """
+        Get the audited sequence diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+        returns:
+            list - The sequence diagrams for the job_id. 
+        """
+        try:
+            sequence_diagrams = SequenceDiagram.objects.filter(job_id=job_id, is_audited=True).values()
+            return list(sequence_diagrams)
         except Exception as e:
             logger.error(f"Error while retrieving sequence diagrams by job_id: {str(e)}")
             raise SequenceDiagramRetrievalError("An error occurred while retrieving the sequence diagrams.")

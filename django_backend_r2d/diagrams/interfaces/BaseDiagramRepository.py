@@ -29,6 +29,15 @@ class BaseDiagramRepository(ABC):
         returns:
             list - The class diagrams for the job_id. 
         """
-        
+    
+    @abstractmethod
+    def get_audited_jobs_by_id(self, job_id:str) -> dict:
+        """
+        Get the audited diagrams by job_id.
+        args:
+            job_id: str - The job_id to search for.
+        returns:
+            list - The class diagrams for the job_id. 
+        """
     
     

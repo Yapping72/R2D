@@ -30,7 +30,8 @@ class ClassDiagramServiceTests(TestCase):
         cls.job_status_submitted = JobStatus.objects.get(name='Submitted')
         cls.job_uuid = str(uuid4())
         cls.model = ModelName.objects.get(name='gpt-4-turbo')
-        
+        logging.getLogger('application_logging').setLevel(logging.ERROR)
+
         # Create a job record for the user stories
         cls.job_from_user_stories = Job.objects.create(
             job_id= cls.job_uuid,
