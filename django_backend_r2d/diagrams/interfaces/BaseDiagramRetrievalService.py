@@ -6,7 +6,7 @@ class BaseDiagramRetrievalService(ABC):
     This service will be responsible for extracting and parsing diagrams for frontend consumption.
     """
     @abstractmethod
-    def retrieve_diagrams(self, job_id:str) -> dict:
+    def retrieve_all_diagrams(self, job_id:str) -> dict:
         """
         Retrieve the diagrams for the given job_id.
         

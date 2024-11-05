@@ -32,3 +32,8 @@ class SequenceDiagramRetrievalError(Exception):
     def __init__(self, message="Failed to retrieve sequence diagrams"):
         self.error_message = f"SequenceDiagramRetrievalError: {message}"
         super().__init__(self.error_message)
+        
+class DiagramRepositoryInstantiationError(Exception):
+    def __init__(self, message="Failed to retrieve requested repository"):
+        self.error_message = f"DiagramRepositoryInstantiationError: {message}"
+        super().__init__(self.error_message)

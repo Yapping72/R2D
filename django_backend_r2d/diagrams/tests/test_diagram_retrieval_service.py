@@ -21,7 +21,7 @@ class DiagramRetrievalServiceTests(TestCase):
         test_count = len(test_methods)
         print(f"\nExecuting {cls.__name__} containing {test_count} test cases")
 
-        cls.user = User.objects.create_user(username='testuser', password='password')
+        cls.user = User.objects.create_user(username='testuser555', password='password')
         cls.job_status = JobStatus.objects.get(name='Draft', code=1) 
         cls.model_name = ModelName.objects.get(name='gpt-3.5-turbo')
         cls.job = Job.objects.create(
@@ -51,7 +51,7 @@ class DiagramRetrievalServiceTests(TestCase):
             classes=["Logger"],
             helper_classes=["Helper"],
             is_audited=False,
-            model_name=self.model_name
+            model=self.model_name
         )
         self.er_diagram = ERDiagram.objects.create(
             job=self.job,
@@ -60,7 +60,7 @@ class DiagramRetrievalServiceTests(TestCase):
             description="Test ER Diagram",
             entities=["Entity"],
             is_audited=False,
-            model_name=self.model_name
+            model=self.model_name
         )
         self.sequence_diagram = SequenceDiagram.objects.create(
             job=self.job,
@@ -69,7 +69,7 @@ class DiagramRetrievalServiceTests(TestCase):
             description="Test Sequence Diagram",
             actors=["Actor"],
             is_audited=False,
-            model_name=self.model_name
+            model=self.model_name
         )
 
     def test_retrieve_all_diagrams(self):
@@ -92,17 +92,27 @@ class DiagramRetrievalServiceTests(TestCase):
         self.assertEqual(class_diagram["feature"], ["Logging Framework"])
 
     def test_retrieve_diagram_class(self):
-        """
-        Test retrieve_diagram method for retrieving only class diagrams.
-        """
-        result = self.service.retrieve_diagram(self.job.job_id, "class")
+        """Test retrieve_diagram method for class diagrams."""
+        result = self.service.retrieve_diagram(self.job.job_id, "class_diagram")
         self.assertIn("class_diagrams", result)
         self.assertEqual(len(result["class_diagrams"]), 1)
         self.assertEqual(result["class_diagrams"][0]["feature"], ["Logging Framework"])
 
+    def test_retrieve_diagram_er(self):
+        """Test retrieve_diagram method for ER diagrams."""
+        result = self.service.retrieve_diagram(self.job.job_id, "er_diagram")
+        self.assertIn("er_diagrams", result)
+        self.assertEqual(len(result["er_diagrams"]), 1)
+        self.assertEqual(result["er_diagrams"][0]["feature"], ["Database Framework"])
+
+    def test_retrieve_diagram_sequence(self):
+        """Test retrieve_diagram method for sequence diagrams."""
+        result = self.service.retrieve_diagram(self.job.job_id, "sequence_diagram")
+        self.assertIn("sequence_diagrams", result)
+        self.assertEqual(len(result["sequence_diagrams"]), 1)
+        self.assertEqual(result["sequence_diagrams"][0]["feature"], ["Workflow Framework"])
+
     def test_retrieve_diagram_invalid_type(self):
-        """
-        Test retrieve_diagram method with an invalid diagram type.
-        """
-        with self.assertRaises(ValueError):
-            self.service.retrieve_diagram(self.job.job_id, "invalid")
+        """Test retrieve_diagram method with an invalid diagram type."""
+        result = self.service.retrieve_diagram(self.job.job_id, "invalid_diagram")
+        self.assertEqual(result, {})  # Expect an empty dictionary for an invalid type
