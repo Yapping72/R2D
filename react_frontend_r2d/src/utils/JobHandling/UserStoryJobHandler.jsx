@@ -4,10 +4,8 @@ import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
 import { UserStoryJobQueueRepository } from "../Repository/UserStoryJobQueueRepository";
 import ApiManager from '../../utils/Api/ApiManager';
 import UrlsConfig from '../../utils/Api/UrlsConfig';
-import {ROUTES} from '../../utils/Pages/RoutesConfig';
-import { useAlert } from '../../components/common/Alerts/AlertContext';
 import JwtHandler from "../Jwt/JwtHandler";
-
+import { v4 as uuidv4 } from 'uuid';
 /**
  * Class responsible for managing User Story jobs
  */
@@ -117,9 +115,16 @@ class UserStoryJobHandler extends GenericJobHandler {
             var jobSubmittedSuccessfully = false; 
 
             if ([JobStatus.DRAFT, JobStatus.QUEUED, JobStatus.ERROR_FAILED_TO_SUBMIT, JobStatus.ABORTED, JobStatus.COMPLETED].includes(requestPayload.payload.job_status)) {
-                // Update job status only if the job is in DRAFT, QUEUED, ERROR_FAILED_TO_SUBMIT, ABORTED, or COMPLETED state
-                requestPayload.payload.job_status = JobStatus.SUBMITTED;
-                requestPayload.payload.job_details = "Job Submitted Pending Response";
+                // For resubmit flow - resubmitting a job that was previously completed or failed
+                if (requestPayload.payload.job_status === JobStatus.COMPLETED) {
+                    requestPayload.payload.job_id = uuidv4();
+                    requestPayload.payload.job_details = "Resubmitted Job Pending Response";
+                }
+                // Update job status only if the job is in DRAFT, QUEUED, ERROR_FAILED_TO_SUBMIT, ABORTED state
+                if (requestPayload.payload.job_status !== JobStatus.COMPLETED) {
+                    requestPayload.payload.job_status = JobStatus.SUBMITTED;
+                    requestPayload.payload.job_details = "Job Submitted Pending Response";
+                }    
                 try {
                     const result = await ApiManager.postData(UrlsConfig.endpoints.CREATE_JOB, requestPayload);
                     if (result.success) {

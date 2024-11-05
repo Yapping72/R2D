@@ -103,7 +103,7 @@ class BaseConsumer(ABC):
             # Update the job status and job queue status to Completed
             self.update_job_status(job_id, ValidJobStatus.COMPLETED.value)
             self.update_job_queue_status(job_id, ValidJobStatus.COMPLETED.value)
-            
+            self.update_job_description(job_id, f"Job Completed")
             return self.diagrams
         except BaseConsumerException as e:
             logger.error(f"Error processing record: {e}")

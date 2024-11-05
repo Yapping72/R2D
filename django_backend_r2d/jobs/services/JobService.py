@@ -338,3 +338,39 @@ class JobService(JobServiceInterface):
         except Exception as e:
             logger.error(f"Error checking job ownership for user {user.id} and job_id {job_id}: {str(e)}")
             return False
+    
+    def get_all_completed_jobs_for_user(self, user):
+        """
+        Retrieves all jobs for a given user.
+
+        Args:
+            user: The authenticated user.
+
+        Returns:
+            list: A list of all jobs for the user.
+        """
+        jobs = Job.objects.filter(user=user, job_status__name=ValidJobStatus.COMPLETED.value)
+        logger.debug(f"Retrieved {jobs} jobs for user {user.id}")
+        return JobSerializer(jobs, many=True).data # Serialize the job objects
+
+    def update_job_description(self, job_id:str, description:str):
+        """
+        Updates the description of a job by its job_id.
+
+        Args:
+            job_id (str): The job ID.
+            description (str): The new description.
+
+        Returns:
+            dict: The job data.
+
+        Raises:
+            JobNotFoundException: If the job does not exist.
+        """
+        try:
+            job = Job.objects.get(job_id = job_id)
+            job.description = description
+            job.save()
+            return JobSerializer(job).data # Serialize the job object
+        except Job.DoesNotExist:
+            raise JobNotFoundException(f"Job with {job_id} does not exist.")

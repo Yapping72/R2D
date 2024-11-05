@@ -12,6 +12,7 @@ import AccountPortalPage from './pages/AccountPortal/AccountPortal.jsx';
 import ErrorPage from './pages/ErrorPage/ErrorPage.jsx';
 import OTPPage from './pages/AccountPortal/OTPPage.jsx';
 import LogoutPage from './pages/LogoutPage/LogoutPage.jsx';
+import HistoryPage from './pages/HistoryPage/HistoryPage.jsx';
 
 // Add providers, utils and other components here
 import { ROUTES } from './utils/Pages/RoutesConfig.jsx';
@@ -56,6 +57,7 @@ function App() {
                   {/*Pages that require users to be logged in*/}
                   <Route path={ROUTES.ANALYZE} element={<ProtectedRoute element={<Layout><AnalyzePage /></Layout>} />} />
                   <Route path={ROUTES.UPLOAD} element={<ProtectedRoute element={<Layout><UploadRequirementsPage /></Layout>} />} />
+                  <Route path={ROUTES.HISTORY} element={<ProtectedRoute element={<Layout><HistoryPage /></Layout>} />} />
                 </Routes>
               </main>
             </div>

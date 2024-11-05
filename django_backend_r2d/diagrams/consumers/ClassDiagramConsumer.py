@@ -107,4 +107,5 @@ class ClassDiagramConsumer(BaseConsumer):
         # Create a new job record with parent_id as the job_id, with status as 'Submitted' and type as 'er_diagram'
         job = self.create_new_job(parent_job_id=parent_id, job_parameters=job_parameters, 
                                   job_type=job_type, job_status=job_status)
+        self.job_service.update_job_description(parent_id, f"Job Completed")
         return job.job_id

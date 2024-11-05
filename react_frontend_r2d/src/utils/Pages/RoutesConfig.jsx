@@ -19,6 +19,7 @@ export const ROUTES = {
     ACCOUNT_PORTAL: '/account-portal', // Login & registration form.
     OTP: '/otp',
     LOGOUT: 'logout',
+    HISTORY: '/history',
     ERROR:'*'
 };
 
