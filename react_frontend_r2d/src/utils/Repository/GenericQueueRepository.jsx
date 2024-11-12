@@ -121,7 +121,7 @@ export class GenericQueueRepository {
      * @param {string} validNewStatus The new status to be set for the job. This field should be validated before passing
      * @returns {Promise} A Promise that resolves with the new updated record
      */
-    async updateJobStatusAndDetailsById(id, validNewStatus = "NO STATUS PROVIDED", validJobDetails = "NO JOB DETAILS PROVIDED") {
+    async updateJobStatusAndDetailsById(id, validNewStatus = "Pending Server Response", validJobDetails = "Pending Server Response") {
         const store = await this.initTransactionAndStore("readwrite");
 
         return new Promise((resolve, reject) => {

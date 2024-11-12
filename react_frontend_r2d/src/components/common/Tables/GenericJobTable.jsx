@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Typography, IconButton, Chip, CircularProgress, Tooltip, Collapse } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useAlert } from '../Alerts/AlertContext';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -115,7 +114,7 @@ function getComparator(order, orderBy) {
 */
 
 
-const GenericJobTable = ({ repository, buttonGroup = null }) => {
+const GenericJobTable = ({ repository, buttonGroup = null, showOnlyCompleted = false, renderButtonGroupChild = false }) => {
     const [order, setOrder] = useState('desc');
     const [orderBy, setOrderBy] = useState('');
     const [page, setPage] = useState(0);
@@ -142,7 +141,12 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                     }
                 });
 
-                setTopLevelJobs(nestedJobs);
+                // Apply filtering for "Completed" status if showOnlyCompleted is true
+                const filteredJobs = showOnlyCompleted
+                ? nestedJobs.filter(job => job.job_status === 'Completed')
+                : nestedJobs;
+
+                setTopLevelJobs(filteredJobs);
             } else {
                 showAlert('error', "We're having trouble retrieving uploaded files. Please try again shortly.");
             }
@@ -181,7 +185,7 @@ const GenericJobTable = ({ repository, buttonGroup = null }) => {
                     <TableCell>{renderStatus(job.job_status)}</TableCell>
                     <TableCell>{job.model_name}</TableCell>
                     <TableCell>{new Date(job.last_updated_timestamp).toLocaleString()}</TableCell>
-                    {buttonGroup && level === 0 && (
+                    {buttonGroup && (level === 0 || renderButtonGroupChild === true) && (
                         <TableCell align="left">
                             {React.cloneElement(buttonGroup, { jobStatus: job.job_status, jobId: job.job_id })}
                         </TableCell>

@@ -136,3 +136,31 @@ class GetCompletedJobsView(APIView):
             status_code=status.HTTP_200_OK
         )
 
+
+class DeleteJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @BaseView.handle_exceptions
+    def delete(self, request):
+        """
+        Delete  jobs for the authenticated user. If a job_id is provided in the request data,
+        it will delete that specific completed job; otherwise, it will delete all completed jobs for the user.
+        """
+        user = request.user
+        job_id = request.data.get("job_id", None)
+
+        if job_id:
+            logger.debug(f"DeleteJobs: {user} {job_id}")
+            job_service.delete_job(user, job_id)
+            data = {'job_id': job_id}
+            message = "Job deleted successfully."
+        else:
+            data = {}
+            message = "No job_id provided."
+                    
+        return SyncAPIReturnObject(
+            data=data,
+            message=message,
+            success=True,
+            status_code=status.HTTP_200_OK
+        )

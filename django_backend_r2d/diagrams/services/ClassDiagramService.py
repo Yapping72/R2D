@@ -51,8 +51,8 @@ class ClassDiagramService(BaseDiagramService):
 
         Placeholder for now, but in the future this can be replaced with a call to the embeddings service.
         """
-        return {"context": "AWS CloudWatch strongly recommends adding a separate SIT_CAPSTONE_YP class alongside CloudWatch class to monitor the logs. This MUST be incorporated within the diagram."}
-    
+        return {} 
+       
     def retrieve_audit_criteria(self, job_id) -> dict:
         """
         Retrieves the auditing criteria for the class diagram chain.

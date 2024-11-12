@@ -46,7 +46,7 @@ class JobService(JobServiceInterface):
             
             if serializer.is_valid():
                 # Save the job if the serializer is valid
-                job = serializer.save()
+                job = serializer.save()              
                 logger.debug(f"Job record Successfully saved for user {user.id}")
                 return job
             
@@ -374,3 +374,17 @@ class JobService(JobServiceInterface):
             return JobSerializer(job).data # Serialize the job object
         except Job.DoesNotExist:
             raise JobNotFoundException(f"Job with {job_id} does not exist.")
+        
+    def delete_job(self, user, job_id):
+        """
+        Deletes a specific completed job for the user.
+        """
+        try:
+            job = Job.objects.get(job_id=job_id, user=user)
+            if job.job_status.name == ValidJobStatus.PROCESSING.value: 
+                logger.debug("User should not be allowed to delete jobs in processing state")
+                return False       
+            job.delete()
+            return True
+        except Job.DoesNotExist:
+            return False

@@ -5,7 +5,8 @@ import UserStoryJobTable from '../../components/common/Jobs/UserStoryJobTable';
 import { UserStoryJobContextProvider } from '../../components/common/Jobs/UserStoryJobContextProvider';
 import UserStoryJobHandler from '../../utils/JobHandling/UserStoryJobHandler';
 import UserStoryJobParametersVisualizer from '../../components/common/Jobs/UserStoryJobParametersVisualizer';
-import HistoryTable from '../../components/common/Tables/HistoryTable';
+import CompletedJobTable from '../../components/common/Diagrams/CompletedJobTable';
+
 const AnalyzePage = () => {
     const { showAlert } = useAlert();
     const [jobParameters, setJobParameters] = useState("")
@@ -193,9 +194,7 @@ const AnalyzePage = () => {
                 {tabValue === 2 && (
                     <Box>
                         <Typography>View Completed Jobs</Typography>
-                        <HistoryTable
-                         jobHistory={jobHistoryData}
-                        ></HistoryTable>
+                        <CompletedJobTable></CompletedJobTable>
                     </Box>
                 )}
             </Container>

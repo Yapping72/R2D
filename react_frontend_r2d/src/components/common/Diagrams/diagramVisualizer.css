@@ -1,0 +1,7 @@
+.drawioGrid {
+    background-image:
+    repeating-linear-gradient(#ccc 0 0.5px, transparent 0.5px 100%),
+    repeating-linear-gradient(90deg, #ccc 0 0.5px, transparent 0.5px 100%);
+  background-size: 71px 71px;
+  background-color: rgb(255, 251, 255);
+  }

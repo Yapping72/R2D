@@ -45,10 +45,11 @@ class ClassDiagramConsumer(BaseConsumer):
                                                    auditor_name=auditor_name, job_id=job_id)
         # Initialize the repository
         self.repository = ClassDiagramRepository()
-        
+        self.job_service = job_service
+        self.job_queue_service = job_queue_service
         # Initialize BaseConsumer with the diagram service and repository
         super().__init__(consumer_name="ClassDiagramConsumer",diagram_service=self.diagram_service, 
-                         repository=self.repository, job_service=job_service, job_queue_service=job_queue_service)
+                         repository=self.repository, job_service=self.job_service, job_queue_service=self.job_queue_service)
     
     def get_specific_error(self, message: str) -> ClassDiagramConsumerError:
         """

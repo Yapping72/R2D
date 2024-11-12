@@ -27,6 +27,7 @@ services:
       - APP_ENVIRONMENT=${APP_ENVIRONMENT}
       - CLOUDWATCH_LOG_GROUP_NAME=${CLOUDWATCH_LOG_GROUP_NAME}
       - CLOUDWATCH_LOG_STREAM_NAME=${CLOUDWATCH_LOG_STREAM_NAME}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
 
     entrypoint: /app/entrypoint.sh  # bash script will create the database if it doesnt exists
     container_name: django_backend_r2d
@@ -82,6 +83,7 @@ services:
       - APP_ENVIRONMENT=${APP_ENVIRONMENT}
       - CLOUDWATCH_LOG_GROUP_NAME=${CLOUDWATCH_LOG_GROUP_NAME}
       - CLOUDWATCH_LOG_STREAM_NAME=${CLOUDWATCH_LOG_STREAM_NAME}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
     volumes:
       - ./django_backend_r2d:/app
 

@@ -8,10 +8,10 @@ const HomePage = () => {
     { imageUrl: "src/assets/images/img2.webp", title: "Our Work", description: "See what we've done" },
     { imageUrl: "src/assets/images/img3.webp", title: "Our Values", description: "Understand our core values" },
     { imageUrl: "src/assets/images/img4.webp", title: "Contact Us", description: "Get in touch with us" },
-    { imageUrl: "src/assets/images/img4.webp", title: "Contact Us", description: "Get in touch with us" },
-    { imageUrl: "src/assets/images/img4.webp", title: "Contact Us", description: "Get in touch with us" },
-    { imageUrl: "src/assets/images/img4.webp", title: "Contact Us", description: "Get in touch with us" },
-    { imageUrl: "src/assets/images/img4.webp", title: "Contact Us", description: "Get in touch with us" },
+    { imageUrl: "src/assets/images/img5.webp", title: "Showcase", description: "Start building" },
+    { imageUrl: "src/assets/images/img6.webp", title: "Expedite Development", description: "See our projects" },
+    { imageUrl: "src/assets/images/img7.webp", title: "Quick Design", description: "R2D helps with rapid design" },
+    { imageUrl: "src/assets/images/img8.webp", title: "Requirements To Deisgn", description: "Easily convert your requirements to software design" },
   ];
 
   return (
