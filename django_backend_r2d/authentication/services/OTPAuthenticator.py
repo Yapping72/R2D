@@ -6,6 +6,9 @@ from notification.services.EmailNotificationInterface import EmailNotificationIn
 from django.utils import timezone
 from ..models import OTP
 from ..models import FailedLoginAttempt
+from datetime import datetime, timedelta
+
+
 
 import logging 
 logger = logging.getLogger("application_logging") # Instantiate logger class
@@ -20,8 +23,11 @@ class OTPAuthenticator(AuthenticationInterface):
         """Generate an OTP, associate it with the user, and send it via email."""
         otp = self.otp_service.generate_otp(8)  # creates an 8-digit otp
         self.otp_service.store_otp(user, otp)
-        self.notification.send_email(user.email, "Secure Login - method: OTP.", f"This is your OTP: {otp}. Please enter it within 3 minutes.")
-        logger.debug(f"OTP: Your OTP is: {otp} Sent to {user.email}-- FROM OTPAuthenticator.py")
+        # Calculate the expiration time
+        expiration_time = datetime.now() + timedelta(minutes=3)
+        expiration_str = expiration_time.strftime('%Y-%m-%d %H:%M:%S')
+        self.notification.send_email(user.email, "Your One-Time Password to Access R2D.", f" Your One-Time Password for R2D is: {otp}. This password is valid for three minutes and will expire on {expiration_str}")
+        logger.debug(f"OTP: Your OTP is: {otp} Sent to {user.email}")
         return otp
 
     def authenticate(self, user_id:str, provided_otp:str) -> bool:
