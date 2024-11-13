@@ -26,6 +26,7 @@ jobs:
       APP_ENVIRONMENT: ${{ secrets.APP_ENVIRONMENT }}
       CLOUDWATCH_LOG_GROUP_NAME: ${{ secrets.CLOUDWATCH_LOG_GROUP_NAME }}
       CLOUDWATCH_LOG_STREAM_NAME: ${{ secrets.CLOUDWATCH_LOG_STREAM_NAME }}
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       
     steps:
     - name: Checkout repository
