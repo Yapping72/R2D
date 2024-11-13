@@ -47,7 +47,7 @@ class RetrieveOneDiagramView(APIView):
     def post(self, request):
         """
         Retrieves a single diagram for the authenticated user.
-        The payload should contain a diagram_id.
+        The payload should contain a job_id.
         """
         user = request.user
         request_payload = request.data
@@ -57,7 +57,7 @@ class RetrieveOneDiagramView(APIView):
         logger.info("api/diagrams/retrieve-one-diagram/ invoked")
         logger.debug(f"Payload: {request_payload}")
         
-        diagram = diagram_retrieval_service.retrieve_diagram(diagram_id, diagram_name)
+        diagram = diagram_retrieval_service.retrieve_diagram(user, job_id, diagram_name)
         
         return SyncAPIReturnObject(
             data={'job_id': job_id, "diagram": diagram},

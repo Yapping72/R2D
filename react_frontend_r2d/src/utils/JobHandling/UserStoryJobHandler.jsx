@@ -4,10 +4,8 @@ import UserStoryJobSanitizer from "../Sanitizers/UserStoryJobSanitizer";
 import { UserStoryJobQueueRepository } from "../Repository/UserStoryJobQueueRepository";
 import ApiManager from '../../utils/Api/ApiManager';
 import UrlsConfig from '../../utils/Api/UrlsConfig';
-import {ROUTES} from '../../utils/Pages/RoutesConfig';
-import { useAlert } from '../../components/common/Alerts/AlertContext';
 import JwtHandler from "../Jwt/JwtHandler";
-
+import { v4 as uuidv4 } from 'uuid';
 /**
  * Class responsible for managing User Story jobs
  */
@@ -115,15 +113,27 @@ class UserStoryJobHandler extends GenericJobHandler {
             };   
  
             var jobSubmittedSuccessfully = false; 
+            var jobDescription = "Failed to submit job";
 
             if ([JobStatus.DRAFT, JobStatus.QUEUED, JobStatus.ERROR_FAILED_TO_SUBMIT, JobStatus.ABORTED, JobStatus.COMPLETED].includes(requestPayload.payload.job_status)) {
-                // Update job status only if the job is in DRAFT, QUEUED, ERROR_FAILED_TO_SUBMIT, ABORTED, or COMPLETED state
-                requestPayload.payload.job_status = JobStatus.SUBMITTED;
-                requestPayload.payload.job_details = "Job Submitted Pending Response";
+                // For resubmit flow - resubmitting a job that was previously completed or failed
+                if (requestPayload.payload.job_status === JobStatus.COMPLETED) {
+                    requestPayload.payload.job_id = uuidv4();  // New job ID for resubmission
+                    requestPayload.payload.job_status = JobStatus.SUBMITTED;  // Set status to SUBMITTED for the new job
+                    jobDescription = requestPayload.payload.job_details // Retain the previous job details
+                    requestPayload.payload.job_details = "Resubmitted Job Pending Response";
+                } else {
+                    // For other statuses, change the status to SUBMITTED
+                    requestPayload.payload.job_status = JobStatus.SUBMITTED;
+                    requestPayload.payload.job_details = "Class Diagram Job";
+                    jobDescription = requestPayload.payload.job_details;
+                }
+                
                 try {
                     const result = await ApiManager.postData(UrlsConfig.endpoints.CREATE_JOB, requestPayload);
                     if (result.success) {
                         jobSubmittedSuccessfully = true; // Set to true so that job status will be flipped to submitted
+                        jobDescription = result.data.job_details;
                     } 
                 } catch (error) {
                     // Handle unexpected errors
@@ -133,7 +143,7 @@ class UserStoryJobHandler extends GenericJobHandler {
 
             // jobSubmittedSuccessfully denotes the backend response 
             if (jobSubmittedSuccessfully) {
-                return await this.repository.handleUpdateJobStatusAndDetailsById(jobIdentifier, JobStatus.SUBMITTED, "Job Submitted Pending Response");
+                return await this.repository.handleUpdateJobStatusAndDetailsById(jobIdentifier, JobStatus.SUBMITTED, jobDescription);
             }
             else {
                 const result = await this.repository.handleUpdateJobStatusAndDetailsById(jobIdentifier, JobStatus.ERROR_FAILED_TO_SUBMIT, "Failed to submit job");
@@ -367,6 +377,9 @@ class UserStoryJobHandler extends GenericJobHandler {
                 await this.repository.handleAddJobToQueue(serverJob, serverJob.job_details);
             } else {
                 // Update scenario: if the job exists locally but has an older `last_updated_timestamp`, update it
+                await this.repository.handleUpdateRecordById(serverJob);
+                
+                /*
                 const serverUpdatedTime = new Date(serverJob.last_updated_timestamp);
                 const localUpdatedTime = new Date(matchingLocalJob.last_updated_timestamp);
 
@@ -374,9 +387,10 @@ class UserStoryJobHandler extends GenericJobHandler {
                     await this.repository.handleUpdateRecordById(serverJob);
                     console.log(`Updated job ${serverJob.job_id} in IndexedDB to match server data.`);
                 }
+                */
             }
         }
-
+        /*
         // Step 5: Remove outdated jobs from IndexedDB that are not in the server data and are more than 7 days old
         for (const localJob of localJobs.data) {
             const jobCreatedDate = new Date(localJob.last_updated_timestamp);
@@ -386,6 +400,7 @@ class UserStoryJobHandler extends GenericJobHandler {
                 console.log(`Deleted job ${localJob.job_id} from IndexedDB as it is more than 7 days old and not found on the server.`);
             }
         }
+            */
 
             console.log("Synchronization complete: IndexedDB is now up-to-date with server data.");
             return { success: true, message: "Jobs synchronized successfully." };

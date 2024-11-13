@@ -99,7 +99,7 @@ class GetAllJobsView(APIView):
             status_code=status.HTTP_200_OK
         )
 
-class GetJobHistory(APIView):
+class GetJobHistoryView(APIView):
     permission_classes = [IsAuthenticated]
     
     @BaseView.handle_exceptions
@@ -114,6 +114,53 @@ class GetJobHistory(APIView):
         return SyncAPIReturnObject(
             data={'job_history': job_history},
             message="Job history retrieved successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+        
+class GetCompletedJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @BaseView.handle_exceptions
+    def post(self, request):
+        """
+        Get completed jobs for the authenticated user.
+        """
+        user = request.user
+        logger.debug(f"GetCompletedJobs: {user}")
+        completed_jobs = job_service.get_all_completed_jobs_for_user(user)    
+        return SyncAPIReturnObject(
+            data={'completed_jobs': completed_jobs},
+            message="Completed jobs for user successfully.",
+            success=True,
+            status_code=status.HTTP_200_OK
+        )
+
+
+class DeleteJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @BaseView.handle_exceptions
+    def delete(self, request):
+        """
+        Delete  jobs for the authenticated user. If a job_id is provided in the request data,
+        it will delete that specific completed job; otherwise, it will delete all completed jobs for the user.
+        """
+        user = request.user
+        job_id = request.data.get("job_id", None)
+
+        if job_id:
+            logger.debug(f"DeleteJobs: {user} {job_id}")
+            job_service.delete_job(user, job_id)
+            data = {'job_id': job_id}
+            message = "Job deleted successfully."
+        else:
+            data = {}
+            message = "No job_id provided."
+                    
+        return SyncAPIReturnObject(
+            data=data,
+            message=message,
             success=True,
             status_code=status.HTTP_200_OK
         )

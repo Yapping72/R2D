@@ -46,3 +46,8 @@ class JobServiceInterface(ABC):
     def update_all_parent_jobs_as_completed(self, job_id):
         """Update all parent jobs as completed"""
         pass
+    
+    @abstractmethod
+    def update_job_description(self, job_id, description):
+        """Update the job description"""
+        pass

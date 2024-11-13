@@ -5,6 +5,7 @@ import UserStoryJobTable from '../../components/common/Jobs/UserStoryJobTable';
 import { UserStoryJobContextProvider } from '../../components/common/Jobs/UserStoryJobContextProvider';
 import UserStoryJobHandler from '../../utils/JobHandling/UserStoryJobHandler';
 import UserStoryJobParametersVisualizer from '../../components/common/Jobs/UserStoryJobParametersVisualizer';
+import CompletedJobTable from '../../components/common/Diagrams/CompletedJobTable';
 
 const AnalyzePage = () => {
     const { showAlert } = useAlert();
@@ -90,9 +91,6 @@ const AnalyzePage = () => {
     // Function is invoked when user story job is added
     const handleAddUserStoryJob = (job) => {
         console.log(job);
-        // Add job parameters to queue
-        // Update token count here, logic should be: Existing count - count of old story + count of new story
-
     }
 
     const handleEditUserStoryJob = async (fileId, recordId, editedData) => {
@@ -196,6 +194,7 @@ const AnalyzePage = () => {
                 {tabValue === 2 && (
                     <Box>
                         <Typography>View Completed Jobs</Typography>
+                        <CompletedJobTable></CompletedJobTable>
                     </Box>
                 )}
             </Container>

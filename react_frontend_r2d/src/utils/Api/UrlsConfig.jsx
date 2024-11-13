@@ -9,6 +9,7 @@
  * @param {string} CREATE_JOB - "api/jobs/save/"
  * @param {string} GET_ALL_JOBS - "api/jobs/get-all-jobs/"
  * @param {string} GET_JOB_HISTORY - "api/jobs/get-job-history/"
+ * @param {string} GET_ALL_DIAGRAMS - "api/diagrams/retrieve-diagrams/"
  **/
 class UrlsConfig {
     static baseURL = 'http://localhost:8000/';
@@ -23,6 +24,7 @@ class UrlsConfig {
      * @param {string} CREATE_JOB - "api/jobs/save/"
      * @param {string} GET_ALL_JOBS - "api/jobs/get-all-jobs/"
      * @param {string} GET_JOB_HISTORY - "api/jobs/get-job-history/"
+     * @param {string} GET_ALL_DIAGRAMS - "api/diagrams/retrieve-diagrams/"
     */
     static endpoints = {
         LOGIN: "api/auth/login/",
@@ -34,6 +36,7 @@ class UrlsConfig {
         UPDATE_JOB_STATUS: "api/jobs/update/",
         GET_ALL_JOBS: "api/jobs/get-all-jobs/",
         GET_JOB_HISTORY: "api/jobs/get-job-history/",
+        GET_ALL_DIAGRAMS: "api/diagrams/retrieve-diagrams/"
     };
 }
 

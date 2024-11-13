@@ -11,16 +11,19 @@ services:
       - "8080:8080"
     environment:
       - JENKINS_ARGS=--prefix=/jenkins
-      - JAVA_OPTS=-Xmx2048m -Xms1024m  # Adjust the JVM settings for Jenkins
+      - JAVA_OPTS=-Xmx4096m -Xms2048m  # Increase JVM memory for Jenkins
+      - SONAR_SCANNER_OPTS=-Xmx2048m   # Increase heap size for SonarScanner if running within Jenkins
+      - DELAY=3000 
     volumes:
       - "jenkins_home:/var/jenkins_home"
-    mem_limit: 3500m  # Set memory limit to 3.5GB
+    mem_limit: 4000m  # Set memory limit to 3.5GB
     cpus: 1.5 # Limit to 1.5 Cores
-
+ 
   sonarqube:
     image: sonarqube:latest
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5433/sonar
+      - SONARQUBE_WEB_JVM_OPTS=-Xmx2048m -Xms1024m  # Increase memory for SonarQube JVM
     ports:
       - "9000:9000"
     depends_on:

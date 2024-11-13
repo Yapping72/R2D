@@ -25,6 +25,8 @@ export const useUserStoryJobContext = () => useContext(userStoryJobContext);
  * @param {Function} props.handleEditUserStoryJob - Modify an existing UserStoryJob parameter
  * @param {Function} props.handleRemoveUserStoryFromJob - Removes ONE user story from job parameters
  * @param {Function} props.handleAddUserStoryToJob - Adds ONE user story to job parameters
+ * @param {Function} props.handleViewResultsForDiagram - Function to view results for a diagram
+ * @param {Function} props.handleDownloadResultsForDiagram - Function to download results for a diagram
  * @param {React.ReactNode} props.children - Child components that will consume the context.
  */
 export const UserStoryJobContextProvider = ({ children,
@@ -35,7 +37,9 @@ export const UserStoryJobContextProvider = ({ children,
     handleAbortUserStoryJob,
     handleEditUserStoryJob,
     handleRemoveUserStoryFromJob,
-    handleAddUserStoryToJob
+    handleAddUserStoryToJob,
+    handleViewResultsForDiagram,
+    handleDownloadResultsForDiagram
 }) => (
     <userStoryJobContext.Provider value={{
         handleDeleteUserStoryJob,
@@ -45,7 +49,9 @@ export const UserStoryJobContextProvider = ({ children,
         handleAbortUserStoryJob,
         handleEditUserStoryJob,
         handleRemoveUserStoryFromJob,
-        handleAddUserStoryToJob
+        handleAddUserStoryToJob,
+        handleViewResultsForDiagram,
+        handleDownloadResultsForDiagram
     }}>
         {children}
     </userStoryJobContext.Provider>
