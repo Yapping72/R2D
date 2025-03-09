@@ -25,11 +25,11 @@ R2D aims to achieve the following goals:
 ## Technology Stack
 R2D was developed using React Frontend and Python Django Framework as backend with Postgres serving as the primary database. Redis and Celery workers were also incorporated to achieve distributed processing when interfacing with LLMs (LangChain).
 
-![Stack](documentation\stack.png)
+![Stack](https://raw.githubusercontent.com/Yapping72/R2D/main/documentation/stack.png)
 
 ## Overview of Processing Framework
 
-![Overview](documentation\overview.png)
+![Stack](https://raw.githubusercontent.com/Yapping72/R2D/main/documentation/overview.png)
 
 ## Project Structure
 The project directory is organized as follows:
