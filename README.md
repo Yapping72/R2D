@@ -37,3 +37,9 @@ The project directory is organized as follows:
 * [**jenkins**](jenkins): This directory is used for Jenkins CI/CD configurations (if applicable).
 * [**react_frontend_r2d**](react_frontend_r2d): This directory contains the React frontend code.
 * [**aws_configuration**](aws_configuration): This directory contains AWS configuration files e.g., UserData scripts, IAM policies etc.
+
+
+# Build Application
+1. ```` docker compose build ````
+2. ```` docker compose up ````
+3. R2D web pages deployed on port 5173.
